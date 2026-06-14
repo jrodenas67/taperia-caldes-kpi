@@ -110,18 +110,6 @@ def main() -> int:
         by_fecha[f] = entry
 
     historico = sorted(by_fecha.values(), key=lambda e: e["fecha"])
-
-    # Para entradas sin previsto, estimamos con mediana del mismo día de la semana
-    estimadas = 0
-    for entry in historico:
-        if entry.get("previsto", 0) > 0:
-            continue
-        estimado = _previsto_estimado(entry["fecha"], historico)
-        if estimado > 0:
-            entry["previsto"] = estimado
-            estimadas += 1
-    if estimadas:
-        print(f"   📈 {estimadas} previstos estimados por mediana del día de la semana")
     HISTORICO.write_text(json.dumps(historico, indent=2, ensure_ascii=False))
     print(f"✅ historico_caja.json: {len(historico)} entradas "
           f"({cambiados} cambiadas con datos del PDF)")
