@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Arqueo · La Taperia de Caldes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F3EF;--surface:#fff;--border:#E0D5C5;
+  --terra:#C05C2B;--terra-lt:#E8845A;
+  --green:#2D7A3A;--green-bg:#EEF7EF;--green-bdr:#B8DFC0;
+  --amber:#B8922A;--amber-bg:#FBF6E8;--amber-bdr:#E8D080;
+  --red:#B03020;--red-bg:#FDECEA;--red-bdr:#F2BDB8;
+  --blue:#1E50A0;--blue-bg:#EEF3FC;--blue-bdr:#B0CAEE;
+  --carbon:#2A2420;--stone:#6B6058;--muted:#9C9088;
+  --r:12px;--r-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--carbon);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh}
+
+/* Header */
+.header{background:var(--carbon);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.header-date{font-size:12px;color:rgba(255,255,255,.6);background:rgba(255,255,255,.08);padding:5px 12px;border-radius:20px}
+
+/* Tabs */
+.tabs{background:var(--surface);border-bottom:2px solid var(--border);display:flex;padding:0 24px;gap:4px}
+.tab{padding:14px 18px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;letter-spacing:.2px;white-space:nowrap}
+.tab:hover{color:var(--carbon)}
+.tab.active{color:var(--terra);border-bottom-color:var(--terra)}
+
+.main{padding:20px 24px;max-width:900px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+
+/* Auto-import banner */
+.import-banner{background:var(--blue-bg);border:1px solid var(--blue-bdr);border-radius:var(--r-sm);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;font-size:13px}
+.import-banner .i-icon{font-size:20px;flex-shrink:0}
+.import-banner .i-text{flex:1}
+.import-banner .i-date{font-weight:700;color:var(--blue)}
+.import-banner .i-btn{background:var(--blue);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+.import-banner .i-btn:hover{opacity:.9}
+
+/* Form fields */
+.form-grid{display:grid;gap:14px}
+.form-2{grid-template-columns:1fr 1fr}
+.form-3{grid-template-columns:1fr 1fr 1fr}
+.form-4{grid-template-columns:1fr 1fr 1fr 1fr}
+@media(max-width:600px){.form-2,.form-3,.form-4{grid-template-columns:1fr 1fr}}
+
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--stone)}
+.field input,.field select{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;font-size:14px;font-weight:500;color:var(--carbon);font-family:inherit;transition:border-color .15s;width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:var(--terra)}
+.field input.auto{background:var(--blue-bg);border-color:var(--blue-bdr);color:var(--blue);font-weight:600}
+.field input.manual{background:#fff;border-color:var(--border)}
+.field input[readonly].auto{cursor:default}
+.field .hint{font-size:10px;color:var(--muted)}
+.field input.result{background:var(--green-bg);border-color:var(--green-bdr);color:var(--green);font-weight:700;font-size:16px}
+.field input.result-warn{background:var(--amber-bg);border-color:var(--amber-bdr);color:var(--amber);font-weight:700;font-size:16px}
+
+/* Section divider */
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Buttons */
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--terra);color:#fff}.btn-primary:hover{background:#A04820}
+.btn-secondary{background:var(--surface);color:var(--stone);border:1.5px solid var(--border)}.btn-secondary:hover{border-color:var(--terra);color:var(--terra)}
+.btn-sm{padding:7px 14px;font-size:12px}
+
+/* Table */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#F8F5F0;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);border-bottom:2px solid var(--border)}
+td{padding:9px 12px;border-bottom:1px solid var(--bg)}
+tr:hover td{background:#FDFBF8}
+.rn{text-align:right;font-family:monospace;font-size:12px}
+.rb{font-weight:700}
+td.pos{color:var(--green);font-weight:600}
+td.neg{color:var(--red);font-weight:600}
+.month-row td{background:#F8F5F0;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--stone);padding:6px 12px}
+
+/* Month summary cards */
+.month-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.month-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+.month-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--terra),var(--amber))}
+.month-card .mc-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px}
+.month-card .mc-total{font-size:26px;font-weight:700;color:var(--carbon);letter-spacing:-1px;line-height:1}
+.month-card .mc-unit{font-size:11px;color:var(--muted);margin-top:2px}
+.month-card .mc-days{font-size:11px;color:var(--stone);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+
+/* ── Banc pendent ── */
+.banc-total-box{background:var(--terra);border-radius:var(--r);padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.banc-total-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.7)}
+.banc-total-amount{font-size:40px;font-weight:700;color:#fff;letter-spacing:-1px;line-height:1}
+.banc-total-unit{font-size:13px;color:rgba(255,255,255,.8);margin-top:2px}
+
+.banc-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.banc-item:last-child{border-bottom:none}
+.banc-item input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--green);flex-shrink:0}
+.banc-item.pagat{opacity:.45}
+.banc-item.pagat .banc-item-amount{text-decoration:line-through;color:var(--muted)}
+.banc-item-date{font-size:11px;color:var(--muted);min-width:60px;flex-shrink:0}
+.banc-item-amount{font-size:16px;font-weight:700;color:var(--terra);min-width:90px;text-align:right;flex-shrink:0}
+.banc-item-desc{flex:1;font-size:13px;color:var(--stone)}
+.banc-item-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;border-radius:4px;flex-shrink:0}
+.banc-item-del:hover{color:var(--red);background:var(--red-bg)}
+.banc-empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--carbon);color:#fff;padding:12px 18px;border-radius:var(--r);font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translateY(60px);opacity:0;transition:all .25s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-left:4px solid var(--green)}
+.toast.err{border-left:4px solid var(--red)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div style="color:#fff;font-size:15px;font-weight:700">🏧 Arqueo · La Taperia de Caldes</div>
+    <div class="header-sub">Registre diari de caixa · 2026</div>
+  </div>
+  <div class="header-date" id="live-date"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="nav(this,'arqueo')">📋 Arqueo Diari</div>
+  <div class="tab" onclick="nav(this,'resum')">📊 Resum Mensual</div>
+  <div class="tab" onclick="nav(this,'banc')">🏦 Pendent Banc</div>
+</div>
+
+<div class="main">
+
+<!-- ══════════ ARQUEO DIARI ══════════ -->
+<div id="page-arqueo" class="page active">
+
+  <div class="import-banner" id="importBanner" style="display:none">
+    <div class="i-icon">📧</div>
+    <div class="i-text">
+      Cierre de caja detectat del <span class="i-date" id="importDate"></span>
+      · Importos sense IVA (10%) calculats automàticament
+    </div>
+    <button class="i-btn" onclick="carregarCierre()">⬇ Carregar</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Identificació</div>
+    <div class="form-grid form-3">
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="a-fecha" class="manual" onchange="onDateChange(this.value)"/>
+      </div>
+      <div class="field">
+        <label>Nº Tancament</label>
+        <input type="text" id="a-num" readonly class="auto" placeholder="—"/>
+      </div>
+      <div class="field">
+        <label>Observacions</label>
+        <input type="text" id="a-obs" class="manual" placeholder="Pluja, event…"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      Altres Pagaments
+      <span style="font-size:10px;font-weight:500;color:var(--blue);background:var(--blue-bg);padding:2px 8px;border-radius:10px;text-transform:none">● Auto des de correu</span>
+    </div>
+    <div class="form-grid form-3">
+      <div class="field">
+        <label>Contado (neto s/IVA)</label>
+        <input type="number" id="a-contado" step="0.01" readonly class="auto" placeholder="—"/>
+        <span class="hint">Ventas efectivo ÷ 1.10</span>
+      </div>
+      <div class="field">
+        <label>Visa / Tarjeta (neto s/IVA)</label>
+        <input type="number" id="a-visa" step="0.01" readonly class="auto" placeholder="—"/>
+        <span class="hint">Ventas tarjeta ÷ 1.10</span>
+      </div>
+      <div class="field">
+        <label>Passo de Cuinar (neto s/IVA)</label>
+        <input type="number" id="a-passo" step="0.01" readonly class="auto" placeholder="—"/>
+        <span class="hint">Ticket Restaurant ÷ 1.10</span>
+      </div>
+    </div>
+    <div class="divider">Total altres pagaments</div>
+    <div class="form-grid form-2">
+      <div class="field">
+        <label>Total brut (amb IVA)</label>
+        <input type="number" id="a-total-brut" step="0.01" readonly class="auto" placeholder="—"/>
+      </div>
+      <div class="field">
+        <label>Total net (sense IVA)</label>
+        <input type="number" id="a-total-net" step="0.01" readonly class="result" placeholder="—"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      Caixa 1
+      <span style="font-size:10px;font-weight:500;color:var(--stone);background:var(--bg);padding:2px 8px;border-radius:10px;text-transform:none">✏ Entrada manual</span>
+    </div>
+    <div class="form-grid form-4">
+      <div class="field">
+        <label>Reciclajes (€)</label>
+        <input type="number" id="a-reciclajes" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+      <div class="field">
+        <label>Invitaciones (€)</label>
+        <input type="number" id="a-invitaciones" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+      <div class="field">
+        <label>Personal (€)</label>
+        <input type="number" id="a-personal" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+      <div class="field">
+        <label>Retiros (€)</label>
+        <input type="number" id="a-retiros" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+    </div>
+    <div class="divider">Ingressos Caixa 1</div>
+    <div class="form-grid form-3">
+      <div class="field">
+        <label>Contado Caixa 1 (€)</label>
+        <input type="number" id="a-c1-contado" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+      <div class="field">
+        <label>Visa Caixa 1 (€)</label>
+        <input type="number" id="a-c1-visa" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+      <div class="field">
+        <label>Ingreso (€)</label>
+        <input type="number" id="a-ingreso" step="0.01" class="manual" placeholder="0.00" oninput="calcArqueo()"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Resultat del Dia</div>
+    <div class="form-grid form-3">
+      <div class="field">
+        <label>Total Caixa Dia (€)</label>
+        <input id="r-total" readonly class="result" placeholder="—"/>
+      </div>
+      <div class="field">
+        <label>Efectiu (€)</label>
+        <input id="r-efectiu" readonly class="result" placeholder="—"/>
+      </div>
+      <div class="field">
+        <label>% Targetes</label>
+        <input id="r-pct" readonly class="auto" placeholder="—"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="clearArqueo()">🗑 Netejar</button>
+    <button class="btn btn-primary" onclick="saveArqueo()">💾 Guardar arqueo</button>
+  </div>
+
+</div><!-- /page-arqueo -->
+
+<!-- ══════════ RESUM MENSUAL ══════════ -->
+<div id="page-resum" class="page">
+  <div class="month-cards" id="monthCards"></div>
+  <div class="card">
+    <div class="card-title">Detall per Dies</div>
+    <div class="tbl-wrap">
+      <table id="resumTable">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th class="rn">Previst</th>
+            <th class="rn">Desv.</th>
+            <th class="rn">Total Net</th>
+          </tr>
+        </thead>
+        <tbody id="resumBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /page-resum -->
+
+<!-- ══════════ PENDENT BANC ══════════ -->
+<div id="page-banc" class="page">
+
+  <div class="banc-total-box">
+    <div>
+      <div class="banc-total-label">Pendent d'ingressar al Banc</div>
+      <div class="banc-total-amount" id="banc-total">0,00</div>
+      <div class="banc-total-unit">€ pendents</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:4px" id="banc-count"></div>
+    </div>
+  </div>
+
+  <!-- Formulari afegir -->
+  <div class="card">
+    <div class="card-title">Afegir partida pendent</div>
+    <div class="form-grid form-3" style="align-items:flex-end">
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="b-fecha" class="manual"/>
+      </div>
+      <div class="field">
+        <label>Import (€)</label>
+        <input type="number" id="b-importe" step="0.01" class="manual" placeholder="0.00"/>
+      </div>
+      <div class="field">
+        <label>Descripció</label>
+        <input type="text" id="b-desc" class="manual" placeholder="Efectiu dia X, retiro…"/>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-primary btn-sm" onclick="addBanc()">+ Afegir</button>
+    </div>
+  </div>
+
+  <!-- Llista -->
+  <div class="card">
+    <div class="card-title">
+      Partides
+      <span style="font-size:10px;font-weight:400;color:var(--muted);text-transform:none">✓ marca quan ingressis al banc</span>
+    </div>
+    <div id="banc-list"></div>
+  </div>
+
+</div><!-- /page-banc -->
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Storage ────────────────────────────────────────────────────────────────
+const STORE_KEY = 'taperia_arqueos_v2';
+const BANC_KEY  = 'taperia_banc_v1';
+
+// Dades inicials extretes de l'Excel (columna Ingreso - BBVA = pendent)
+const BANC_DEFAULT = [{"id":"1000000","fecha":"2026-01-02","importe":133.5,"desc":"Efectiu 02/01/2026","pagat":false},{"id":"1000001","fecha":"2026-01-03","importe":291.35,"desc":"Efectiu 03/01/2026","pagat":false},{"id":"1000002","fecha":"2026-01-04","importe":9.75,"desc":"Efectiu 04/01/2026","pagat":false},{"id":"1000003","fecha":"2026-01-07","importe":26.0,"desc":"Efectiu 07/01/2026","pagat":false},{"id":"1000004","fecha":"2026-01-09","importe":153.15,"desc":"Efectiu 09/01/2026","pagat":false},{"id":"1000005","fecha":"2026-01-10","importe":595.7,"desc":"Efectiu 10/01/2026","pagat":false},{"id":"1000006","fecha":"2026-01-11","importe":217.15,"desc":"Efectiu 11/01/2026","pagat":false},{"id":"1000007","fecha":"2026-01-16","importe":599.1,"desc":"Efectiu 16/01/2026","pagat":false},{"id":"1000008","fecha":"2026-01-17","importe":288.95,"desc":"Efectiu 17/01/2026","pagat":false},{"id":"1000009","fecha":"2026-01-18","importe":247.65,"desc":"Efectiu 18/01/2026","pagat":false},{"id":"1000010","fecha":"2026-01-21","importe":47.7,"desc":"Efectiu 21/01/2026","pagat":false},{"id":"1000011","fecha":"2026-01-22","importe":51.65,"desc":"Efectiu 22/01/2026","pagat":false},{"id":"1000012","fecha":"2026-01-23","importe":18.9,"desc":"Efectiu 23/01/2026","pagat":false},{"id":"1000013","fecha":"2026-01-24","importe":393.15,"desc":"Efectiu 24/01/2026","pagat":false},{"id":"1000014","fecha":"2026-01-25","importe":759.1,"desc":"Efectiu 25/01/2026","pagat":false},{"id":"1000015","fecha":"2026-01-29","importe":7.8,"desc":"Efectiu 29/01/2026","pagat":false},{"id":"1000016","fecha":"2026-01-30","importe":295.2,"desc":"Efectiu 30/01/2026","pagat":false},{"id":"1000017","fecha":"2026-01-31","importe":549.2,"desc":"Efectiu 31/01/2026","pagat":false},{"id":"1000018","fecha":"2026-02-01","importe":296.25,"desc":"Efectiu 01/02/2026","pagat":false},{"id":"1000019","fecha":"2026-02-05","importe":83.0,"desc":"Efectiu 05/02/2026","pagat":false},{"id":"1000020","fecha":"2026-02-06","importe":214.6,"desc":"Efectiu 06/02/2026","pagat":false},{"id":"1000021","fecha":"2026-02-07","importe":1516.0,"desc":"Efectiu 07/02/2026","pagat":false},{"id":"1000022","fecha":"2026-02-08","importe":369.05,"desc":"Efectiu 08/02/2026","pagat":false},{"id":"1000023","fecha":"2026-02-11","importe":7.6,"desc":"Efectiu 11/02/2026","pagat":false},{"id":"1000024","fecha":"2026-02-13","importe":46.25,"desc":"Efectiu 13/02/2026","pagat":false},{"id":"1000025","fecha":"2026-02-14","importe":624.1,"desc":"Efectiu 14/02/2026","pagat":false},{"id":"1000026","fecha":"2026-02-15","importe":51.55,"desc":"Efectiu 15/02/2026","pagat":false},{"id":"1000027","fecha":"2026-02-18","importe":108.15,"desc":"Efectiu 18/02/2026","pagat":false},{"id":"1000028","fecha":"2026-02-20","importe":24.23,"desc":"Efectiu 20/02/2026","pagat":false},{"id":"1000029","fecha":"2026-02-22","importe":103.05,"desc":"Efectiu 22/02/2026","pagat":false},{"id":"1000030","fecha":"2026-03-11","importe":1.5,"desc":"Efectiu 11/03/2026","pagat":false},{"id":"1000031","fecha":"2026-03-13","importe":227.8,"desc":"Efectiu 13/03/2026","pagat":false},{"id":"1000032","fecha":"2026-03-15","importe":566.65,"desc":"Efectiu 15/03/2026","pagat":false},{"id":"1000033","fecha":"2026-03-18","importe":4.0,"desc":"Efectiu 18/03/2026","pagat":false},{"id":"1000034","fecha":"2026-03-20","importe":37.25,"desc":"Efectiu 20/03/2026","pagat":false},{"id":"1000035","fecha":"2026-03-21","importe":439.05,"desc":"Efectiu 21/03/2026","pagat":false},{"id":"1000036","fecha":"2026-03-25","importe":21.15,"desc":"Efectiu 25/03/2026","pagat":false},{"id":"1000037","fecha":"2026-03-26","importe":2.7,"desc":"Efectiu 26/03/2026","pagat":false},{"id":"1000038","fecha":"2026-03-27","importe":269.9,"desc":"Efectiu 27/03/2026","pagat":false},{"id":"1000039","fecha":"2026-03-28","importe":30.55,"desc":"Efectiu 28/03/2026","pagat":false},{"id":"1000040","fecha":"2026-03-29","importe":420.6,"desc":"Efectiu 29/03/2026","pagat":false},{"id":"1000041","fecha":"2026-04-02","importe":276.95,"desc":"Efectiu 02/04/2026","pagat":false},{"id":"1000042","fecha":"2026-04-03","importe":242.8,"desc":"Efectiu 03/04/2026","pagat":false},{"id":"1000043","fecha":"2026-04-04","importe":97.45,"desc":"Efectiu 04/04/2026","pagat":false},{"id":"1000044","fecha":"2026-04-05","importe":347.95,"desc":"Efectiu 05/04/2026","pagat":false},{"id":"1000045","fecha":"2026-04-08","importe":22.35,"desc":"Efectiu 08/04/2026","pagat":false},{"id":"1000046","fecha":"2026-04-10","importe":164.25,"desc":"Efectiu 10/04/2026","pagat":false},{"id":"1000047","fecha":"2026-04-11","importe":42.85,"desc":"Efectiu 11/04/2026","pagat":false},{"id":"1000048","fecha":"2026-04-18","importe":56.1,"desc":"Efectiu 18/04/2026","pagat":false},{"id":"1000049","fecha":"2026-04-23","importe":332.5,"desc":"Efectiu 23/04/2026","pagat":false},{"id":"1000050","fecha":"2026-04-24","importe":45.7,"desc":"Efectiu 24/04/2026","pagat":false},{"id":"1000051","fecha":"2026-04-25","importe":558.8,"desc":"Efectiu 25/04/2026","pagat":false},{"id":"1000052","fecha":"2026-04-26","importe":292.0,"desc":"Efectiu 26/04/2026","pagat":false},{"id":"1000053","fecha":"2026-04-29","importe":46.7,"desc":"Efectiu 29/04/2026","pagat":false},{"id":"1000054","fecha":"2026-05-01","importe":372.3,"desc":"Efectiu 01/05/2026","pagat":false},{"id":"1000055","fecha":"2026-05-02","importe":743.8,"desc":"Efectiu 02/05/2026","pagat":false},{"id":"1000056","fecha":"2026-05-07","importe":23.9,"desc":"Efectiu 07/05/2026","pagat":false},{"id":"1000057","fecha":"2026-05-08","importe":238.2,"desc":"Efectiu 08/05/2026","pagat":false},{"id":"1000058","fecha":"2026-05-10","importe":200.05,"desc":"Efectiu 10/05/2026","pagat":false},{"id":"1000059","fecha":"2026-05-15","importe":115.7,"desc":"Efectiu 15/05/2026","pagat":false},{"id":"1000060","fecha":"2026-05-16","importe":163.85,"desc":"Efectiu 16/05/2026","pagat":false},{"id":"1000061","fecha":"2026-05-17","importe":553.7,"desc":"Efectiu 17/05/2026","pagat":false},{"id":"1000062","fecha":"2026-05-21","importe":630.0,"desc":"Efectiu 21/05/2026","pagat":false},{"id":"1000063","fecha":"2026-05-23","importe":14.9,"desc":"Efectiu 23/05/2026","pagat":false},{"id":"1000064","fecha":"2026-05-24","importe":486.1,"desc":"Efectiu 24/05/2026","pagat":false},{"id":"1000065","fecha":"2026-05-27","importe":14.9,"desc":"Efectiu 27/05/2026","pagat":false},{"id":"1000066","fecha":"2026-05-29","importe":50.75,"desc":"Efectiu 29/05/2026","pagat":false},{"id":"1000067","fecha":"2026-05-30","importe":384.3,"desc":"Efectiu 30/05/2026","pagat":false},{"id":"1000068","fecha":"2026-05-31","importe":181.6,"desc":"Efectiu 31/05/2026","pagat":false},{"id":"1000069","fecha":"2026-06-03","importe":234.9,"desc":"Efectiu 03/06/2026","pagat":false},{"id":"1000070","fecha":"2026-06-04","importe":20.2,"desc":"Efectiu 04/06/2026","pagat":false},{"id":"1000071","fecha":"2026-06-05","importe":210.15,"desc":"Efectiu 05/06/2026","pagat":false},{"id":"1000072","fecha":"2026-06-06","importe":196.0,"desc":"Efectiu 06/06/2026","pagat":false}];
+
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch { return []; }
+}
+function saveStore(data) { localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+function loadBancStore() {
+  try {
+    const raw = localStorage.getItem(BANC_KEY);
+    if (raw) return JSON.parse(raw);
+    // Primera vegada: carregar dades de l'Excel
+    saveBancStore(BANC_DEFAULT);
+    return BANC_DEFAULT.map(i => ({...i}));
+  } catch { return BANC_DEFAULT.map(i => ({...i})); }
+}
+function saveBancStore(data) { localStorage.setItem(BANC_KEY, JSON.stringify(data)); }
+
+// Afegeix entrades de BANC_DEFAULT que no existeixin al localStorage (preserva pagat)
+function syncBancDefault() {
+  const current = loadBancStore();
+  const existing = new Set(current.map(i => i.fecha));
+  let added = 0;
+  BANC_DEFAULT.forEach(def => {
+    if (!existing.has(def.fecha)) {
+      current.push({ ...def, id: (Date.now() + added).toString() });
+      existing.add(def.fecha);
+      added++;
+    }
+  });
+  if (added > 0) {
+    current.sort((a, b) => a.fecha.localeCompare(b.fecha));
+    saveBancStore(current);
+  }
+  return added;
+}
+
+// ── DB ─────────────────────────────────────────────────────────────────────
+let historicoDB = [];
+fetch('historico_caja.json?_=' + Date.now())
+  .then(r => r.ok ? r.json() : [])
+  .then(data => { historicoDB = data || []; })
+  .catch(() => {});
+
+// Sync silenciós en càrrega (afegeix dies nous sense tocar els marcats)
+syncBancDefault();
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function nav(el, page) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('page-' + page).classList.add('active');
+  if (page === 'resum') renderResum();
+  if (page === 'banc')  { syncBancDefault(); renderBanc(); }
+}
+
+// ── Live date ──────────────────────────────────────────────────────────────
+function updateDate() {
+  const now = new Date();
+  document.getElementById('live-date').textContent =
+    now.toLocaleDateString('ca-ES', {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+updateDate(); setInterval(updateDate, 60000);
+
+// ── Init ───────────────────────────────────────────────────────────────────
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('a-fecha').value = today;
+document.getElementById('b-fecha').value = today;
+
+// ── Últim cierre ───────────────────────────────────────────────────────────
+let ultimoCierre = null;
+
+fetch('ultimo_cierre.json?_=' + Date.now())
+  .then(r => r.ok ? r.json() : null)
+  .then(data => {
+    if (!data) return;
+    ultimoCierre = data;
+    if (!document.getElementById('a-contado').value) {
+      carregarCierre();
+    } else {
+      const [y, m, d] = data.fecha.split('-');
+      document.getElementById('importDate').textContent = `${d}/${m}/${y}`;
+      document.getElementById('importBanner').style.display = 'flex';
+    }
+  })
+  .catch(() => {});
+
+function carregarCierre() {
+  if (!ultimoCierre) return;
+  const d = ultimoCierre;
+  document.getElementById('a-fecha').value   = d.fecha || '';
+  document.getElementById('a-num').value     = d.num_cierre || '';
+  document.getElementById('a-contado').value = d.contado != null ? d.contado.toFixed(2) : '';
+  document.getElementById('a-visa').value    = d.visa    != null ? d.visa.toFixed(2)    : '';
+  document.getElementById('a-passo').value   = d.passo   != null ? d.passo.toFixed(2)   : '';
+  const brut = (d.contado || 0) + (d.visa || 0) + (d.passo || 0);
+  document.getElementById('a-total-net').value  = brut.toFixed(2);
+  document.getElementById('a-total-brut').value = (brut * 1.10).toFixed(2);
+  document.getElementById('importBanner').style.display = 'none';
+  calcArqueo();
+  toast('✓ Dades del cierre carregades', 'ok');
+}
+
+// ── Canvi de data ──────────────────────────────────────────────────────────
+function onDateChange(fecha) {
+  if (!fecha) return;
+  // 1. Buscar en localStorage
+  const store = loadStore();
+  const rec = store.find(r => r.fecha === fecha);
+  if (rec) {
+    fillForm(rec);
+    toast('✓ Dades del ' + fmtDate(fecha) + ' carregades', 'ok');
+    return;
+  }
+  // 2. No hi ha dades → netejar camps (mantenint la data)
+  clearFormFields();
+}
+
+function fillForm(rec) {
+  document.getElementById('a-fecha').value       = rec.fecha || '';
+  document.getElementById('a-num').value         = rec.num_cierre || '';
+  document.getElementById('a-obs').value         = rec.obs || '';
+  document.getElementById('a-contado').value     = rec.contado    ? rec.contado.toFixed(2)    : '';
+  document.getElementById('a-visa').value        = rec.visa       ? rec.visa.toFixed(2)       : '';
+  document.getElementById('a-passo').value       = rec.passo      ? rec.passo.toFixed(2)      : '';
+  document.getElementById('a-total-brut').value  = '';
+  document.getElementById('a-total-net').value   = '';
+  document.getElementById('a-reciclajes').value  = rec.reciclajes   || '';
+  document.getElementById('a-invitaciones').value= rec.invitaciones || '';
+  document.getElementById('a-personal').value    = rec.personal     || '';
+  document.getElementById('a-retiros').value     = rec.retiros      || '';
+  document.getElementById('a-c1-contado').value  = rec.c1_contado   || '';
+  document.getElementById('a-c1-visa').value     = rec.c1_visa      || '';
+  document.getElementById('a-ingreso').value     = rec.ingreso      || '';
+
+  // Recalcular total brut/net
+  const brut = (rec.contado || 0) + (rec.visa || 0) + (rec.passo || 0);
+  if (brut > 0) {
+    document.getElementById('a-total-net').value  = brut.toFixed(2);
+    document.getElementById('a-total-brut').value = (brut * 1.10).toFixed(2);
+  }
+  calcArqueo();
+}
+
+function clearFormFields() {
+  ['a-num','a-obs','a-contado','a-visa','a-passo','a-total-brut','a-total-net',
+   'a-c1-contado','a-c1-visa','a-ingreso',
+   'a-reciclajes','a-invitaciones','a-personal','a-retiros',
+   'r-total','r-efectiu','r-pct'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+function fmtDate(fecha) {
+  const [y, m, d] = fecha.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// ── Calculs ────────────────────────────────────────────────────────────────
+function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function calcArqueo() {
+  const contado   = v('a-contado');
+  const visa      = v('a-visa');
+  const passo     = v('a-passo');
+  const c1contado = v('a-c1-contado');
+  const c1visa    = v('a-c1-visa');
+  const ingreso   = v('a-ingreso');
+  const total   = contado + visa + passo + c1contado + c1visa + ingreso;
+  const efectiu = contado + c1contado - v('a-reciclajes') - v('a-retiros') - v('a-personal');
+  const pct = total > 0 ? ((visa + passo + c1visa) / total * 100) : 0;
+  document.getElementById('r-total').value   = total.toFixed(2);
+  document.getElementById('r-efectiu').value = efectiu.toFixed(2);
+  document.getElementById('r-pct').value     = pct.toFixed(1) + '%';
+}
+
+// ── Guardar arqueo ─────────────────────────────────────────────────────────
+function saveArqueo() {
+  const fecha = document.getElementById('a-fecha').value;
+  if (!fecha) { toast('⚠ Posa la data', 'err'); return; }
+  const record = {
+    fecha,
+    num_cierre:    document.getElementById('a-num').value,
+    contado:       v('a-contado'),
+    visa:          v('a-visa'),
+    passo:         v('a-passo'),
+    c1_contado:    v('a-c1-contado'),
+    c1_visa:       v('a-c1-visa'),
+    ingreso:       v('a-ingreso'),
+    reciclajes:    v('a-reciclajes'),
+    invitaciones:  v('a-invitaciones'),
+    personal:      v('a-personal'),
+    retiros:       v('a-retiros'),
+    total:         parseFloat(document.getElementById('r-total').value) || 0,
+    obs:           document.getElementById('a-obs').value,
+    ts:            new Date().toISOString(),
+  };
+  const store = loadStore();
+  const idx = store.findIndex(r => r.fecha === fecha);
+  if (idx >= 0) store[idx] = record; else store.push(record);
+  store.sort((a, b) => a.fecha.localeCompare(b.fecha));
+  saveStore(store);
+
+  // ── Sync Pendent Banc: si hi ha Contado Caixa 1, afegir/actualitzar partida ──
+  const c1 = v('a-c1-contado');
+  if (c1 > 0) {
+    const bancItems = loadBancStore();
+    const existIdx = bancItems.findIndex(i => i.fecha === fecha && !i.pagat);
+    if (existIdx >= 0) {
+      bancItems[existIdx].importe = c1;
+      toast('✓ Arqueo guardat · 🏦 Pendent Banc actualitzat', 'ok');
+    } else {
+      bancItems.push({
+        id: Date.now().toString(),
+        fecha,
+        importe: c1,
+        desc: `Efectiu ${fmtDate(fecha)}`,
+        pagat: false
+      });
+      toast('✓ Arqueo guardat · 🏦 Afegit a Pendent Banc', 'ok');
+    }
+    saveBancStore(bancItems);
+    if (document.getElementById('page-banc').classList.contains('active')) renderBanc();
+  } else {
+    toast('✓ Arqueo guardat', 'ok');
+  }
+}
+
+// ── Netejar ────────────────────────────────────────────────────────────────
+function clearArqueo() {
+  clearFormFields();
+  document.getElementById('a-fecha').value = today;
+  document.getElementById('importBanner').style.display = ultimoCierre ? 'flex' : 'none';
+}
+
+// ── Resum mensual ──────────────────────────────────────────────────────────
+const MESOS = ['Gener','Febrer','Març','Abril','Maig','Juny','Juliol','Agost',
+               'Setembre','Octubre','Novembre','Desembre'];
+
+function renderResum() {
+  const manual = loadStore();
+  const manualByFecha = {};
+  manual.forEach(r => { manualByFecha[r.fecha] = r; });
+
+  const all = historicoDB.map(r => {
+    const m = manualByFecha[r.fecha];
+    return m ? { ...r, ...m, fromDB: true } : { ...r, fromDB: true };
+  });
+  manual.forEach(r => {
+    if (!historicoDB.find(d => d.fecha === r.fecha)) all.push(r);
+  });
+  all.sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+  if (!all.length) {
+    document.getElementById('resumBody').innerHTML =
+      '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted)">Sense dades.</td></tr>';
+    document.getElementById('monthCards').innerHTML = '';
+    return;
+  }
+
+  // Agrupar per mes
+  const byMonth = {};
+  all.forEach(r => {
+    const [y, m] = r.fecha.split('-');
+    const key = `${y}-${m}`;
+    if (!byMonth[key]) byMonth[key] = { y, m: parseInt(m), recs: [] };
+    byMonth[key].recs.push(r);
+  });
+
+  // Cards
+  const cardsEl = document.getElementById('monthCards');
+  cardsEl.innerHTML = '';
+  Object.keys(byMonth).sort().forEach(key => {
+    const g = byMonth[key];
+    const totalMes = g.recs.reduce((s, r) => s + (r.total || 0), 0);
+    const card = document.createElement('div');
+    card.className = 'month-card';
+    card.innerHTML = `
+      <div class="mc-name">${MESOS[g.m - 1]} ${g.y}</div>
+      <div class="mc-total">${totalMes.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+      <div class="mc-unit">€ vendes netes</div>
+      <div class="mc-days">${g.recs.length} dies registrats</div>`;
+    cardsEl.appendChild(card);
+  });
+
+  // Taula
+  const tbody = document.getElementById('resumBody');
+  tbody.innerHTML = '';
+  let lastMonth = '';
+
+  all.slice().reverse().forEach(r => {
+    const [y, m] = r.fecha.split('-');
+    const mesKey = `${y}-${m}`;
+    if (mesKey !== lastMonth) {
+      lastMonth = mesKey;
+      const g = byMonth[mesKey];
+      const totalMes = g.recs.reduce((s, rec) => s + (rec.total || 0), 0);
+      const tr = document.createElement('tr');
+      tr.className = 'month-row';
+      tr.innerHTML = `<td colspan="3">${MESOS[g.m - 1]} ${y} · ${g.recs.length} dies</td>
+        <td class="rn rb">${totalMes.toLocaleString('ca-ES', {minimumFractionDigits:2})} €</td>`;
+      tbody.appendChild(tr);
+    }
+    const [yy, mm, dd] = r.fecha.split('-');
+    const total = r.total || 0;
+    const previsto = r.previsto || 0;
+    const desv = previsto > 0 ? ((total - previsto) / previsto * 100) : null;
+    const dClass = desv === null ? '' : desv >= 0 ? 'pos' : 'neg';
+    const dStr   = desv !== null ? `${desv >= 0 ? '+' : ''}${desv.toFixed(1)}%` : '—';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${dd}/${mm}/${yy}${r.evento ? ` <span style="font-size:10px;color:var(--amber)">★ ${r.evento}</span>` : ''}</td>
+      <td class="rn">${previsto > 0 ? previsto.toLocaleString('ca-ES', {minimumFractionDigits:0}) + ' €' : '—'}</td>
+      <td class="rn ${dClass}">${dStr}</td>
+      <td class="rn rb pos">${total.toFixed(2)} €</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Pendent Banc ───────────────────────────────────────────────────────────
+function renderBanc() {
+  const items = loadBancStore();
+  const pending = items.filter(i => !i.pagat);
+  const total   = pending.reduce((s, i) => s + (i.importe || 0), 0);
+  const pagats  = items.filter(i => i.pagat).length;
+
+  document.getElementById('banc-total').textContent =
+    total.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('banc-count').textContent =
+    `${pending.length} pendent${pending.length !== 1 ? 's' : ''} · ${pagats} ingressat${pagats !== 1 ? 's' : ''}`;
+
+  const listEl = document.getElementById('banc-list');
+  if (!items.length) {
+    listEl.innerHTML = '<div class="banc-empty">Cap partida registrada.<br>Afegeix els efectius pendents d\'ingressar.</div>';
+    return;
+  }
+
+  listEl.innerHTML = '';
+  // Pendents primer, pagats al final
+  const sorted = [...items].sort((a, b) => {
+    if (a.pagat !== b.pagat) return a.pagat ? 1 : -1;
+    return b.fecha.localeCompare(a.fecha);
+  });
+
+  sorted.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'banc-item' + (item.pagat ? ' pagat' : '');
+    const [y, m, d] = item.fecha.split('-');
+    div.innerHTML = `
+      <input type="checkbox" ${item.pagat ? 'checked' : ''} onchange="toggleBanc('${item.id}',this.checked)" title="${item.pagat ? 'Marcar com a pendent' : 'Marcar com a ingressat'}"/>
+      <span class="banc-item-date">${d}/${m}/${y}</span>
+      <span class="banc-item-amount">${(item.importe||0).toLocaleString('ca-ES',{minimumFractionDigits:2})} €</span>
+      <span class="banc-item-desc">${item.desc || '—'}</span>
+      <button class="banc-item-del" onclick="deleteBanc('${item.id}')" title="Eliminar">✕</button>`;
+    listEl.appendChild(div);
+  });
+}
+
+function addBanc() {
+  const fecha   = document.getElementById('b-fecha').value;
+  const importe = parseFloat(document.getElementById('b-importe').value);
+  const desc    = document.getElementById('b-desc').value.trim();
+  if (!fecha || !importe || importe <= 0) {
+    toast('⚠ Posa la data i un import vàlid', 'err'); return;
+  }
+  const items = loadBancStore();
+  items.push({ id: Date.now().toString(), fecha, importe, desc, pagat: false });
+  saveBancStore(items);
+  document.getElementById('b-importe').value = '';
+  document.getElementById('b-desc').value    = '';
+  renderBanc();
+  toast('✓ Partida afegida', 'ok');
+}
+
+function toggleBanc(id, pagat) {
+  const items = loadBancStore();
+  const idx = items.findIndex(i => i.id === id);
+  if (idx >= 0) { items[idx].pagat = pagat; saveBancStore(items); }
+  renderBanc();
+  toast(pagat ? '✓ Marcat com a ingressat' : '↩ Marcat com a pendent', 'ok');
+}
+
+function deleteBanc(id) {
+  if (!confirm('Eliminar aquesta partida?')) return;
+  saveBancStore(loadBancStore().filter(i => i.id !== id));
+  renderBanc();
+  toast('Partida eliminada', 'ok');
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

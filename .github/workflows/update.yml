@@ -1,0 +1,48 @@
+name: Actualizar Arqueo Taperia
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install requests pypdf --quiet
+
+      - name: Regenerar JSONs desde Gmail
+        env:
+          GMAIL_CLIENT_ID:     ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+        run: python generar_arqueo.py
+
+      - name: Commit JSONs actualizados
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ultimo_cierre.json historico_caja.json
+          git diff --cached --quiet || git commit -m "auto: actualizar arqueo $(date +'%d/%m/%Y %H:%M')"
+          git push || true
+
+      - name: Deploy a Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npm install -g netlify-cli --silent
+          netlify deploy --prod \
+            --auth    "$NETLIFY_AUTH_TOKEN" \
+            --site    "$NETLIFY_SITE_ID"   \
+            --dir     .                    \
+            --message "Auto-update $(date +'%d/%m/%Y %H:%M')"
