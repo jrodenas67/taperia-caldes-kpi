@@ -95,12 +95,19 @@ def main() -> int:
         except json.JSONDecodeError:
             historico_actual = []
 
-    by_fecha: dict[str, dict] = {e["fecha"]: e for e in historico_actual
-                                 if isinstance(e, dict) and e.get("fecha")}
+    # Filtrar fuera entradas que no sean del año actual (purga datos de 2025
+    # si se colaron en runs anteriores).
+    año_actual = datetime.date.today().year
+    by_fecha: dict[str, dict] = {
+        e["fecha"]: e for e in historico_actual
+        if isinstance(e, dict) and e.get("fecha", "").startswith(str(año_actual))
+    }
 
-    # Aplicamos los totales de los PDFs (sobrescribe / añade por fecha)
+    # Aplicamos los totales de los PDFs SOLO del año actual
     cambiados = 0
     for c in cierres_ord:
+        if c["fecha"].year != año_actual:
+            continue
         f = c["fecha"].strftime("%Y-%m-%d")
         entry = by_fecha.get(f, {"fecha": f, "previsto": 0, "evento": ""})
         nuevo_total = neto(c["total"])
