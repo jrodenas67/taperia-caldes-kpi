@@ -41,13 +41,13 @@ def _access_token() -> str:
     return resp.json()["access_token"]
 
 
-def _list_message_ids(token: str, query: str) -> list[str]:
-    """Devuelve hasta 200 IDs de mensajes que coincidan con `query`."""
+def _list_message_ids(token: str, query: str, max_ids: int = 800) -> list[str]:
+    """Devuelve hasta `max_ids` IDs de mensajes que coincidan con `query`."""
     ids: list[str] = []
     page = None
     headers = {"Authorization": f"Bearer {token}"}
     while True:
-        params = {"q": query, "maxResults": 100}
+        params = {"q": query, "maxResults": 200}
         if page:
             params["pageToken"] = page
         r = requests.get(f"{GMAIL_API}/messages", headers=headers, params=params, timeout=20)
@@ -55,7 +55,7 @@ def _list_message_ids(token: str, query: str) -> list[str]:
         data = r.json()
         ids.extend(m["id"] for m in data.get("messages", []))
         page = data.get("nextPageToken")
-        if not page or len(ids) >= 200:
+        if not page or len(ids) >= max_ids:
             break
     return ids
 
