@@ -22,11 +22,39 @@ import os
 import sys
 from pathlib import Path
 
+import datetime
+import statistics
+
 from gmail_cierres import fetch_cierres
 
 IVA = 1.10
 HISTORICO = Path("historico_caja.json")
 ULTIMO    = Path("ultimo_cierre.json")
+
+
+def _previsto_estimado(fecha_str: str, historico: list[dict]) -> float:
+    """Estima el previsto como mediana de los mismos días de la semana
+    de los últimos 8 valores conocidos (>0)."""
+    try:
+        d = datetime.date.fromisoformat(fecha_str)
+    except ValueError:
+        return 0.0
+    dow = d.weekday()
+    candidatos = []
+    for e in reversed(historico):
+        if e.get("previsto", 0) <= 0:
+            continue
+        try:
+            ed = datetime.date.fromisoformat(e["fecha"])
+        except (ValueError, KeyError):
+            continue
+        if ed >= d:
+            continue
+        if ed.weekday() == dow:
+            candidatos.append(e["previsto"])
+            if len(candidatos) >= 8:
+                break
+    return round(statistics.median(candidatos), 2) if candidatos else 0.0
 
 
 def neto(bruto: float) -> float:
@@ -82,6 +110,18 @@ def main() -> int:
         by_fecha[f] = entry
 
     historico = sorted(by_fecha.values(), key=lambda e: e["fecha"])
+
+    # Para entradas sin previsto, estimamos con mediana del mismo día de la semana
+    estimadas = 0
+    for entry in historico:
+        if entry.get("previsto", 0) > 0:
+            continue
+        estimado = _previsto_estimado(entry["fecha"], historico)
+        if estimado > 0:
+            entry["previsto"] = estimado
+            estimadas += 1
+    if estimadas:
+        print(f"   📈 {estimadas} previstos estimados por mediana del día de la semana")
     HISTORICO.write_text(json.dumps(historico, indent=2, ensure_ascii=False))
     print(f"✅ historico_caja.json: {len(historico)} entradas "
           f"({cambiados} cambiadas con datos del PDF)")
