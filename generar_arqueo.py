@@ -62,8 +62,8 @@ def neto(bruto: float) -> float:
 
 
 def main() -> int:
-    print("📨 Descargando cierres de Gmail...")
-    cierres = fetch_cierres(days=180)
+    print("📨 Descargando cierres de Gmail (2025 + 2026)...")
+    cierres = fetch_cierres(days=600)
     if not cierres:
         print("⚠  No se obtuvo ningún cierre desde Gmail. Nada que hacer.")
         return 0
@@ -110,9 +110,31 @@ def main() -> int:
         by_fecha[f] = entry
 
     historico = sorted(by_fecha.values(), key=lambda e: e["fecha"])
+
+    # Calcular previsto: ventas del mismo día de la semana del año anterior × 1.03
+    # (364 días = exactamente 52 semanas → siempre cae en el mismo weekday)
+    # Sólo aplica a entradas SIN evento (los eventos los gestiona el usuario manualmente).
+    ventas_anteriores: dict[datetime.date, float] = {
+        c["fecha"]: neto(c["total"]) for c in cierres_ord
+    }
+    previstos_actualizados = 0
+    for entry in historico:
+        if entry.get("evento", "").strip():
+            continue
+        try:
+            fecha = datetime.date.fromisoformat(entry["fecha"])
+        except ValueError:
+            continue
+        ref = fecha - datetime.timedelta(days=364)
+        if ref in ventas_anteriores:
+            nuevo = round(ventas_anteriores[ref] * 1.03, 2)
+            if entry.get("previsto") != nuevo:
+                entry["previsto"] = nuevo
+                previstos_actualizados += 1
+
     HISTORICO.write_text(json.dumps(historico, indent=2, ensure_ascii=False))
     print(f"✅ historico_caja.json: {len(historico)} entradas "
-          f"({cambiados} cambiadas con datos del PDF)")
+          f"({cambiados} totales actualizados, {previstos_actualizados} previstos = ventas_2025×1.03)")
 
     return 0
 
