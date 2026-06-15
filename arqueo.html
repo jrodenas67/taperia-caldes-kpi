@@ -417,6 +417,12 @@ document.getElementById('b-fecha').value = today;
 
 // ── Últim cierre ───────────────────────────────────────────────────────────
 let ultimoCierre = null;
+let cierresDiarios = {};
+
+fetch('cierres_diarios.json?_=' + Date.now())
+  .then(r => r.ok ? r.json() : {})
+  .then(data => { cierresDiarios = data || {}; })
+  .catch(() => {});
 
 fetch('ultimo_cierre.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : null)
@@ -452,7 +458,7 @@ function carregarCierre() {
 // ── Canvi de data ──────────────────────────────────────────────────────────
 function onDateChange(fecha) {
   if (!fecha) return;
-  // 1. Buscar en localStorage
+  // 1. Buscar en localStorage (arqueos guardados manualmente)
   const store = loadStore();
   const rec = store.find(r => r.fecha === fecha);
   if (rec) {
@@ -460,7 +466,14 @@ function onDateChange(fecha) {
     toast('✓ Dades del ' + fmtDate(fecha) + ' carregades', 'ok');
     return;
   }
-  // 2. No hi ha dades → netejar camps (mantenint la data)
+  // 2. Buscar en cierres_diarios.json (auto desde correu)
+  const cierre = cierresDiarios[fecha];
+  if (cierre) {
+    fillForm(cierre);
+    toast('✓ Cierre del ' + fmtDate(fecha) + ' carregat des de correu', 'ok');
+    return;
+  }
+  // 3. No hi ha dades → netejar camps (mantenint la data)
   clearFormFields();
 }
 

@@ -30,6 +30,7 @@ from gmail_cierres import fetch_cierres
 IVA = 1.10
 HISTORICO = Path("historico_caja.json")
 ULTIMO    = Path("ultimo_cierre.json")
+DIARIOS   = Path("cierres_diarios.json")
 
 
 def _previsto_estimado(fecha_str: str, historico: list[dict]) -> float:
@@ -85,6 +86,25 @@ def main() -> int:
     ULTIMO.write_text(json.dumps(ultimo_json, indent=2, ensure_ascii=False))
     print(f"✅ ultimo_cierre.json: cierre #{ultimo['numero']} fecha "
           f"{ultimo_json['fecha']} total={ultimo_json['total']} €")
+
+    # ── cierres_diarios.json (todos los cierres del año) ──────────────────
+    año_actual = datetime.date.today().year
+    diarios = {}
+    for c in cierres_ord:
+        if c["fecha"].year != año_actual:
+            continue
+        f = c["fecha"].strftime("%Y-%m-%d")
+        diarios[f] = {
+            "fecha":        f,
+            "num_cierre":   str(c["numero"]),
+            "contado":      neto(c["efectivo"]),
+            "visa":         neto(c["tarjeta"]),
+            "passo":        neto(c["tickets"]),
+            "tickets_rest": neto(c["tickets"]),
+            "total":        neto(c["total"]),
+        }
+    DIARIOS.write_text(json.dumps(diarios, indent=2, ensure_ascii=False))
+    print(f"✅ cierres_diarios.json: {len(diarios)} cierres del {año_actual}")
 
     # ── historico_caja.json ───────────────────────────────────────────────
     # Cargamos el existente para preservar campos como "previsto" y "evento"
