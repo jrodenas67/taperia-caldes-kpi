@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Taperia de Caldes · KPIs 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --cream:    #FAF7F2;
+    --ivory:    #F3EDE3;
+    --terra:    #C05C2B;
+    --terra-lt: #E8845A;
+    --olive:    #5A6B3A;
+    --olive-lt: #7A8F54;
+    --gold:     #B8922A;
+    --gold-lt:  #D4AA4A;
+    --carbon:   #2A2420;
+    --stone:    #6B6058;
+    --border:   #E0D5C5;
+    --green:    #3A7D44;
+    --amber:    #C07A20;
+    --red:      #B03020;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--carbon);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--carbon);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #2A2420 0%, #3D2E28 50%, #2A2420 100%);
+  }
+  .header-inner {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 32px 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .brand-logo {
+    width: 52px;
+    height: 52px;
+    background: var(--terra);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    font-weight: 700;
+    letter-spacing: -1px;
+    flex-shrink: 0;
+    border: 2px solid var(--gold);
+  }
+  .brand-text h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.5px;
+  }
+  .brand-text .sub {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--gold-lt);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-meta {
+    text-align: right;
+  }
+  .header-meta .period {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--gold-lt);
+  }
+  .header-meta .updated {
+    font-size: 11px;
+    color: var(--stone);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Divider ── */
+  .gold-line {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 32px 60px;
+  }
+
+  /* ── Section title ── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--carbon);
+  }
+  .section-header .section-pill {
+    background: var(--terra);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--stone);
+    margin-top: -16px;
+    margin-bottom: 28px;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  .section-sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── Hasta Objectiu Cards ── */
+  .objectiu-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media(max-width: 800px) {
+    .objectiu-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media(max-width: 500px) {
+    .objectiu-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .obj-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 16px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .obj-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  }
+  .obj-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+  .obj-card.exceeded::before { background: var(--green); }
+  .obj-card.pending::before  { background: var(--amber); }
+
+  .obj-card .month {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 10px;
+  }
+  .obj-card .amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .obj-card.exceeded .amount { color: var(--green); }
+  .obj-card.pending .amount  { color: var(--amber); }
+
+  .obj-card .label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .obj-card.exceeded .label {
+    background: #E8F5EB;
+    color: var(--green);
+  }
+  .obj-card.pending .label {
+    background: #FDF3E3;
+    color: var(--amber);
+  }
+
+  /* Mini progress bar */
+  .mini-progress {
+    height: 5px;
+    background: var(--ivory);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .mini-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .8s ease;
+  }
+  .obj-card.exceeded .mini-progress-fill { background: var(--green); }
+  .obj-card.pending  .mini-progress-fill { background: var(--amber); }
+
+  .obj-card .vs-line {
+    font-size: 10px;
+    color: var(--stone);
+    font-weight: 300;
+  }
+  .obj-card .vs-line span {
+    font-weight: 500;
+    color: var(--carbon);
+  }
+
+  /* ── Bar chart comparison ── */
+  .chart-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 28px 20px;
+    margin-bottom: 16px;
+  }
+  .chart-card .chart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--carbon);
+    margin-bottom: 4px;
+  }
+  .chart-card .chart-subtitle {
+    font-size: 11px;
+    color: var(--stone);
+    margin-bottom: 20px;
+  }
+  .chart-wrap {
+    position: relative;
+    height: 280px;
+  }
+
+  /* ── Ticket Mig cards + chart ── */
+  .ticket-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media(max-width: 700px) {
+    .ticket-kpi-row { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .tk-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .tk-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--terra-lt), var(--gold-lt));
+  }
+  .tk-card .t-month {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 8px;
+  }
+  .tk-card .t-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--terra);
+    line-height: 1;
+  }
+  .tk-card .t-unit {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--stone);
+    margin-top: 2px;
+  }
+  .tk-card .t-pax {
+    font-size: 10px;
+    color: var(--stone);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .tk-card .t-delta {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .tk-card .t-delta.up   { color: var(--green); }
+  .tk-card .t-delta.down { color: var(--red); }
+  .tk-card .t-delta.same { color: var(--stone); }
+
+  /* ── Comissió cards ── */
+  .comissio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .com-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 14px 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .com-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+  .com-card.superada::before { background: var(--green); }
+  .com-card.pendent::before  { background: var(--amber); }
+  .com-card .c-mes {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 10px;
+  }
+  .com-card .c-badge {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  .com-card.superada .c-badge { background:#E8F5EB; color:var(--green); }
+  .com-card.pendent  .c-badge { background:#FDF3E3; color:var(--amber); }
+  .com-card .c-falta {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .com-card.superada .c-falta { color: var(--green); }
+  .com-card.pendent  .c-falta { color: var(--amber); }
+  .com-card .c-falta-label {
+    font-size: 9px;
+    color: var(--stone);
+    margin-bottom: 12px;
+  }
+  .com-card .c-sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+  }
+  .com-card .c-com-label {
+    font-size: 9px;
+    color: var(--stone);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .com-card .c-com-valor {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--terra);
+  }
+  .com-card .c-com-sub {
+    font-size: 9px;
+    color: var(--stone);
+    margin-top: 2px;
+  }
+
+  /* Legend */
+  .legend-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--stone);
+    align-items: center;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  /* ── Incentius table ── */
+  .inc-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+  .inc-table th { background:#f5f0e8; color:#5a3e1b; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.5px; padding:8px 10px; text-align:right;
+    border-bottom:2px solid #d4b483; white-space:nowrap; }
+  .inc-table th:first-child { text-align:left; }
+  .inc-table td { padding:7px 10px; border-bottom:1px solid #ede8df; text-align:right;
+    font-variant-numeric:tabular-nums; color:#3a2f20; }
+  .inc-table td:first-child { text-align:left; font-weight:600; }
+  .inc-table tr:hover td { background:#fdf8f0; }
+  .inc-table .pos { color:#3A7D44; font-weight:700; }
+  .inc-table .neg { color:#C05C2B; }
+  .inc-table .incentiu-pos { color:#3A7D44; font-weight:700; background:rgba(58,125,68,.07); }
+  .inc-table .incentiu-zero { color:#999; }
+  /* ── Trams table ── */
+  .trams-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  .trams-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--stone);
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .trams-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .trams-table td:last-child {
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--terra);
+  }
+  .trams-table tr.tram-0 td { color: var(--stone); }
+  .trams-table tr.tram-0 td:last-child { color: var(--stone); font-size:13px; font-family:'Inter',sans-serif; font-weight:400; }
+  .trams-table tr.tram-1 { background: #FFFBF0; }
+  .trams-table tr.tram-2 { background: #FFF5E0; }
+  .trams-table tr.tram-3 { background: #FFF0D0; }
+  .trams-table tr.active-tram td { font-weight: 700; }
+  .trams-table .tram-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: var(--gold);
+    color: #fff;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--carbon);
+    padding: 20px 32px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--stone);
+    letter-spacing: 0.5px;
+  }
+  footer span {
+    color: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-logo">LT</div>
+      <div class="brand-text">
+        <h1>La Taperia de Caldes</h1>
+        <div class="sub">Panel de Seguiment · 2026</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="period">Gener – Maig 2026</div>
+      <div class="updated">Actualitzat: Maig 2026</div>
+    </div>
+  </div>
+</header>
+<div class="gold-line"></div>
+
+<main>
+
+  <!-- ══════════════════════════
+       SECCIÓ 1: FINS A OBJECTIU
+       ══════════════════════════ -->
+  <div class="section-header">
+    <h2>Fins a Objectiu</h2>
+    <span class="section-pill">Incentius</span>
+  </div>
+  <!-- Gràfic barres comparatiu -->
+  <div class="chart-card">
+    <div class="chart-title">Vendes Reals 2026 vs Previsió</div>
+    <div class="chart-subtitle">€ per mes — tots els mesos amb dades</div>
+    <div class="legend-row">
+      <span><span class="legend-dot" style="background:#C05C2B"></span>Vendes 2026</span>
+      <span><span class="legend-dot" style="background:#B8922A"></span>Previsió 2026</span>
+      <span><span class="legend-dot" style="background:#5A6B3A;opacity:.5"></span>Referència 2025</span>
+    </div>
+    <div class="chart-wrap"><canvas id="objChart"></canvas></div>
+  </div>
+
+  <!-- Taula detall incentius -->
+  <div class="chart-card" style="margin-top:20px;overflow-x:auto">
+    <div class="chart-title">Detall Facturació Neta i Incentius per Mes</div>
+    <div class="chart-subtitle" style="font-size:11px;color:#8a7560;margin-bottom:12px">Imports nets sense IVA 10% · Font: BD TPV</div>
+    <table class="inc-table" id="incTable">
+      <thead><tr>
+        <th>Mes</th><th>Vendes 2025</th><th>Previsió</th><th>Vendes 2026</th>
+        <th>% s/25</th><th>Diferència</th><th>Dies</th><th>€/Dia</th>
+        <th>Fins Obj</th><th>Incentiu (10%)</th>
+      </tr></thead>
+      <tbody id="incTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Comissió cards -->
+  <div class="comissio-grid" id="comissioCards"></div>
+
+  <hr class="section-sep">
+
+  <!-- ═══════════════════════════════
+       SECCIÓ 2: EVOLUCIÓ TICKET MITJÀ
+       ═══════════════════════════════ -->
+  <div class="section-header">
+    <h2>Evolució Ticket Mitjà</h2>
+    <span class="section-pill">per Comensal</span>
+  </div>
+  <p class="section-desc">
+    Ticket mitjà per comensal calculat a partir dels tickets de Caixa 2.
+    Import net (sense IVA 10%) per persona.
+  </p>
+
+  <!-- Mini KPI cards -->
+  <div class="ticket-kpi-row" id="ticketCards"></div>
+
+  <!-- Gràfic línia evolució -->
+  <div class="chart-card">
+    <div class="chart-title">Evolució del Ticket Mitjà per Comensal</div>
+    <div class="chart-subtitle">€/comensal · Caixa 2 · Gener–Maig 2026</div>
+    <div class="legend-row">
+      <span><span class="legend-dot" style="background:#C05C2B"></span>Ticket Mitjà (€)</span>
+      <span><span class="legend-dot" style="background:rgba(184,146,42,.3);border-radius:0;width:24px;height:2px;display:inline-block;vertical-align:middle"></span>Objectiu 20€</span>
+    </div>
+    <div class="chart-wrap"><canvas id="ticketChart"></canvas></div>
+  </div>
+
+  <hr class="section-sep">
+
+  <!-- ═══════════════════════════════════
+       SECCIÓ 3: INCENTIU TICKET MITJÀ
+       ═══════════════════════════════════ -->
+  <div class="section-header">
+    <h2>Incentiu Ticket Mitjà</h2>
+    <span class="section-pill">Upselling</span>
+  </div>
+
+  <!-- Taula de trams -->
+  <div class="chart-card" style="margin-bottom:20px">
+    <div class="chart-title">Trams de Comissió per Equip</div>
+    <div class="chart-subtitle">Comissió mensual fixa segons ticket mitjà assolit</div>
+    <table class="trams-table">
+      <thead><tr><th>Ticket mitjà mes</th><th>Comissió equip</th></tr></thead>
+      <tbody>
+        <tr class="tram-0"><td>Menys de 20,00 €</td><td>0 €</td></tr>
+        <tr class="tram-1"><td>20,00 € – 22,00 €</td><td>200 €</td></tr>
+        <tr class="tram-2"><td>22,00 € – 24,00 €</td><td>350 €</td></tr>
+        <tr class="tram-3"><td>Més de 24,00 €</td><td>500 €</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cards resultat per mes -->
+  <div class="comissio-grid" id="ticketIncentCards"></div>
+
+</main>
+
+<footer>
+  <span>La Taperia de Caldes</span> · Dades extretes del TPV · 2026 ·
+  Generat automàticament
+</footer>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────
+const OBJECTIU = [{"mes": "Enero", "v2025": 22382.26, "prevision": 23053.73, "v2026": 25876.45, "pct24": 15.6, "diferencia": 671.47, "dias": 23, "invDia": 29.19, "hastaObj": 2822.73, "incentivo": 282.27}, {"mes": "Febrero", "v2025": 22499.24, "prevision": 23174.22, "v2026": 27744.92, "pct24": 23.3, "diferencia": 674.98, "dias": 16, "invDia": 42.19, "hastaObj": 4570.7, "incentivo": 457.07}, {"mes": "Marzo", "v2025": 21443.45, "prevision": 22086.75, "v2026": 19903.08, "pct24": -7.2, "diferencia": 643.3, "dias": 15, "invDia": 42.89, "hastaObj": -2183.68, "incentivo": 0.0}, {"mes": "Abril", "v2025": 31530.01, "prevision": 32475.91, "v2026": 30141.92, "pct24": -4.4, "diferencia": 945.9, "dias": 22, "invDia": 43.0, "hastaObj": -2333.99, "incentivo": 0.0}, {"mes": "Mayo", "v2025": 29362.16, "prevision": 30243.02, "v2026": 33575.64, "pct24": 14.4, "diferencia": 880.86, "dias": 23, "invDia": 38.3, "hastaObj": 3332.62, "incentivo": 333.26}, {"mes": "Junio", "v2025": 33832.98, "prevision": 34847.97, "v2026": 2852.51, "pct24": null, "diferencia": 1014.99, "dias": 3, "invDia": 46.13, "hastaObj": -31995.46, "incentivo": 0.0}];
+
+const TICKET = [{"mes": "Enero", "ticket": 12.56, "pax": 1828, "vendes": 22953.64}, {"mes": "Febrero", "ticket": 12.9, "pax": 1739, "vendes": 22438.92}, {"mes": "Marzo", "ticket": 12.28, "pax": 1334, "vendes": 16377.02}, {"mes": "Abril", "ticket": 13.46, "pax": 1834, "vendes": 24685.28}, {"mes": "Mayo", "ticket": 16.35, "pax": 1189, "vendes": 19443.4}];
+
+const OBJECTIVE_TICKET = 20.0; // Objectiu ticket mitjà €
+
+// ── Chart 1: Barres Vendes vs Previsió ───────────────────────────────────
+const ctx1 = document.getElementById('objChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'bar',
+  data: {
+    labels: OBJECTIU.map(d => d.mes),
+    datasets: [
+      {
+        label: 'Vendes 2026',
+        data: OBJECTIU.map(d => d.v2026),
+        backgroundColor: OBJECTIU.map(d => d.v2026 >= d.prevision ? '#3A7D44' : '#C05C2B'),
+        borderRadius: 6,
+        borderSkipped: false,
+      },
+      {
+        label: 'Previsió 2026',
+        data: OBJECTIU.map(d => d.prevision),
+        backgroundColor: 'rgba(184,146,42,0.15)',
+        borderColor: '#B8922A',
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+        type: 'bar',
+      },
+      {
+        label: 'Referència 2025',
+        data: OBJECTIU.map(d => d.v2025),
+        type: 'line',
+        borderColor: 'rgba(90,107,58,0.5)',
+        borderDash: [5,4],
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: 'rgba(90,107,58,0.6)',
+        fill: false,
+        tension: 0.3,
+        yAxisID: 'y',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#2A2420',
+        titleColor: '#D4AA4A',
+        bodyColor: '#FAF7F2',
+        padding: 12,
+        callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: ${(ctx.parsed.y/1000).toFixed(2)}k€`
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family:'Inter', size:12 }, color:'#6B6058' }
+      },
+      y: {
+        grid: { color:'rgba(0,0,0,.05)' },
+        ticks: {
+          font: { family:'Inter', size:11 },
+          color:'#6B6058',
+          callback: v => (v/1000).toFixed(0)+'k€'
+        },
+        border: { dash:[4,4] }
+      }
+    }
+  }
+});
+
+// ── Taula Detall Incentius ────────────────────────────────────────────────
+const incBody = document.getElementById('incTableBody');
+const fmt = (v, dec=2) => v != null ? v.toLocaleString('es-ES',{minimumFractionDigits:dec,maximumFractionDigits:dec})+' €' : '—';
+const fmtN = v => v != null ? v.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:0}) : '—';
+OBJECTIU.forEach(d => {
+  const pos = d.hastaObj > 0;
+  const incCls = d.incentivo > 0 ? 'incentiu-pos' : 'incentiu-zero';
+  const objCls = pos ? 'pos' : 'neg';
+  const pct = d.pct24 != null ? (d.pct24 > 0 ? '+' : '') + d.pct24.toFixed(1) + '%' : '—';
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${d.mes}</td>
+    <td>${fmt(d.v2025)}</td>
+    <td>${fmt(d.prevision)}</td>
+    <td>${fmt(d.v2026)}</td>
+    <td class="${pos?'pos':'neg'}">${pct}</td>
+    <td>${fmtN(d.diferencia)} €</td>
+    <td>${d.dias}</td>
+    <td>${fmt(d.invDia)}</td>
+    <td class="${objCls}">${(pos?'+':'')+fmt(d.hastaObj)}</td>
+    <td class="${incCls}">${d.incentivo > 0 ? fmt(d.incentivo) : '0,00 €'}</td>`;
+  incBody.appendChild(tr);
+});
+
+// ── Comissió Cards ────────────────────────────────────────────────────────
+const cGrid = document.getElementById('comissioCards');
+OBJECTIU.forEach(d => {
+  const superada = d.hastaObj > 0;
+  const cls = superada ? 'superada' : 'pendent';
+  const badge = superada ? '✓ Objectiu superat' : 'Pendent';
+  const faltaAbs = Math.abs(d.hastaObj);
+  const faltaStr = superada
+    ? '+' + faltaAbs.toLocaleString('ca-ES', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' €'
+    : '-' + faltaAbs.toLocaleString('ca-ES', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' €';
+  const faltaLabel = superada ? 'per sobre de l\'objectiu' : 'per arribar a l\'objectiu';
+  const comVal = superada
+    ? d.incentivo.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'
+    : '0,00 €';
+  const efVal = d.efectivo > 0
+    ? d.efectivo.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'
+    : '0,00 €';
+
+  const card = document.createElement('div');
+  card.className = `com-card ${cls}`;
+  card.innerHTML = `
+    <div class="c-mes">${d.mes}</div>
+    <div class="c-badge">${badge}</div>
+    <div class="c-falta">${faltaStr}</div>
+    <div class="c-falta-label">${faltaLabel}</div>
+    <hr class="c-sep">
+    <div class="c-com-label">Comissió incentiu</div>
+    <div class="c-com-valor">${comVal}</div>
+    <div class="c-com-sub">Efectiu total: ${efVal}</div>`;
+  cGrid.appendChild(card);
+});
+
+// ── Ticket Mig Cards ──────────────────────────────────────────────────────
+const tRow = document.getElementById('ticketCards');
+TICKET.forEach((d, i) => {
+  const prev = i > 0 ? TICKET[i-1].ticket : null;
+  const delta = prev ? ((d.ticket - prev) / prev * 100) : null;
+  const deltaClass = delta === null ? 'same' : delta > 0 ? 'up' : 'down';
+  const deltaStr = delta === null ? '' : (delta > 0 ? '▲' : '▼') + ' ' + Math.abs(delta).toFixed(1) + '% vs anterior';
+
+  const card = document.createElement('div');
+  card.className = 'tk-card';
+  card.innerHTML = `
+    <div class="t-month">${d.mes}</div>
+    <div class="t-value">${d.ticket.toFixed(2)}</div>
+    <div class="t-unit">€ / comensal</div>
+    <div class="t-pax">${d.pax.toLocaleString('ca-ES')} comensals</div>
+    ${delta !== null ? `<div class="t-delta ${deltaClass}">${deltaStr}</div>` : ''}`;
+  tRow.appendChild(card);
+});
+
+// ── Chart 2: Línia Ticket Mig ─────────────────────────────────────────────
+const ctx2 = document.getElementById('ticketChart').getContext('2d');
+
+// Gradient
+const grad = ctx2.createLinearGradient(0, 0, 0, 280);
+grad.addColorStop(0, 'rgba(192,92,43,0.18)');
+grad.addColorStop(1, 'rgba(192,92,43,0)');
+
+new Chart(ctx2, {
+  type: 'line',
+  data: {
+    labels: TICKET.map(d => d.mes),
+    datasets: [
+      {
+        label: 'Ticket Mitjà (€)',
+        data: TICKET.map(d => d.ticket),
+        borderColor: '#C05C2B',
+        backgroundColor: grad,
+        borderWidth: 3,
+        pointRadius: 6,
+        pointBackgroundColor: '#C05C2B',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        fill: true,
+        tension: 0.35,
+      },
+      {
+        label: 'Objectiu 14€',
+        data: TICKET.map(() => OBJECTIVE_TICKET),
+        borderColor: 'rgba(184,146,42,0.7)',
+        borderDash: [6, 4],
+        borderWidth: 2,
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#2A2420',
+        titleColor: '#D4AA4A',
+        bodyColor: '#FAF7F2',
+        padding: 12,
+        callbacks: {
+          label: ctx => {
+            if (ctx.datasetIndex === 0) {
+              const pax = TICKET[ctx.dataIndex].pax;
+              return [
+                ` Ticket: ${ctx.parsed.y.toFixed(2)}€`,
+                ` Comensals: ${pax.toLocaleString('ca-ES')}`
+              ];
+            }
+            return ` Objectiu: ${ctx.parsed.y.toFixed(2)}€`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family:'Inter', size:12 }, color:'#6B6058' }
+      },
+      y: {
+        min: 10,
+        max: 20,
+        grid: { color:'rgba(0,0,0,.05)' },
+        ticks: {
+          font: { family:'Inter', size:11 },
+          color:'#6B6058',
+          callback: v => v.toFixed(0)+'€'
+        },
+        border: { dash:[4,4] }
+      }
+    }
+  }
+});
+
+// ── Incentiu Ticket Mitjà ─────────────────────────────────────────────────
+const TICKET_TRAMS = [
+  { min: 0,  max: 20,       com: 0,   label: '< 20,00 €',        tram: 0 },
+  { min: 20, max: 22,       com: 200, label: '20,00 € – 22,00 €', tram: 1 },
+  { min: 22, max: 24,       com: 350, label: '22,00 € – 24,00 €', tram: 2 },
+  { min: 24, max: Infinity, com: 500, label: '> 24,00 €',         tram: 3 },
+];
+
+function getTicketIncentiu(ticket) {
+  const t = TICKET_TRAMS.find(t => ticket >= t.min && ticket < t.max);
+  return t || TICKET_TRAMS[0];
+}
+
+// Marcar tram actiu del mes actual a la taula (últim mes amb dades)
+if (TICKET.length > 0) {
+  const lastTicket = TICKET[TICKET.length - 1].ticket;
+  const activeTram = getTicketIncentiu(lastTicket);
+  const rows = document.querySelectorAll('.trams-table tbody tr');
+  rows[activeTram.tram].classList.add('active-tram');
+  rows[activeTram.tram].querySelector('td').innerHTML +=
+    `<span class="tram-badge">● Ara mateix</span>`;
+}
+
+// Cards per mes
+const tiGrid = document.getElementById('ticketIncentCards');
+TICKET.forEach(d => {
+  const tram = getTicketIncentiu(d.ticket);
+  const superada = tram.com > 0;
+  const cls = superada ? 'superada' : 'pendent';
+  const badge = superada ? `✓ Tram ${tram.label}` : 'Sense incentiu';
+  const faltaNext = TICKET_TRAMS.find(t => t.tram === tram.tram + 1);
+  const faltaStr = faltaNext
+    ? ((faltaNext.min - d.ticket) > 0
+        ? `Falten ${(faltaNext.min - d.ticket).toFixed(2)} € per pujar de tram`
+        : '')
+    : 'Tram màxim assolit ★';
+
+  const card = document.createElement('div');
+  card.className = `com-card ${cls}`;
+  card.innerHTML = `
+    <div class="c-mes">${d.mes}</div>
+    <div class="c-badge">${badge}</div>
+    <div class="c-falta" style="font-size:28px">${d.ticket.toFixed(2)} €</div>
+    <div class="c-falta-label">ticket mitjà / comensal</div>
+    <hr class="c-sep">
+    <div class="c-com-label">Comissió equip</div>
+    <div class="c-com-valor">${tram.com > 0 ? tram.com.toLocaleString('ca-ES') + ' €' : '0 €'}</div>
+    ${faltaStr ? `<div class="c-com-sub">${faltaStr}</div>` : ''}`;
+  tiGrid.appendChild(card);
+});
+</script>
+</body>
+</html>
