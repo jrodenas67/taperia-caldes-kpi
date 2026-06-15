@@ -533,6 +533,13 @@ function calcArqueo() {
   document.getElementById('r-total').value   = total.toFixed(2);
   document.getElementById('r-efectiu').value = efectiu.toFixed(2);
   document.getElementById('r-pct').value     = pct.toFixed(1) + '%';
+
+  // Total Net/Brut Altres Pagaments incluye Contado Caixa 1 cuando hay saldo
+  const netoCaixa = contado + visa + passo + c1contado;
+  if (netoCaixa > 0) {
+    document.getElementById('a-total-net').value  = netoCaixa.toFixed(2);
+    document.getElementById('a-total-brut').value = (netoCaixa * 1.10).toFixed(2);
+  }
 }
 
 // ── Guardar arqueo ─────────────────────────────────────────────────────────
