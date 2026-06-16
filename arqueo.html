@@ -364,23 +364,31 @@ function loadBancStore() {
 }
 function saveBancStore(data) { localStorage.setItem(BANC_KEY, JSON.stringify(data)); }
 
-// Afegeix entrades de BANC_DEFAULT que no existeixin al localStorage (preserva pagat)
+// Afegeix entrades noves i actualitza imports no pagats quan el BANC_DEFAULT difereix
 function syncBancDefault() {
   const current = loadBancStore();
-  const existing = new Set(current.map(i => i.fecha));
-  let added = 0;
+  const byFecha = {};
+  current.forEach((item, idx) => { byFecha[item.fecha] = idx; });
+  let changed = 0;
   BANC_DEFAULT.forEach(def => {
-    if (!existing.has(def.fecha)) {
-      current.push({ ...def, id: (Date.now() + added).toString() });
-      existing.add(def.fecha);
-      added++;
+    if (byFecha[def.fecha] !== undefined) {
+      const idx = byFecha[def.fecha];
+      if (!current[idx].pagat && current[idx].importe !== def.importe) {
+        current[idx].importe = def.importe;
+        current[idx].desc    = def.desc;
+        changed++;
+      }
+    } else {
+      current.push({ ...def, id: (Date.now() + changed).toString() });
+      byFecha[def.fecha] = current.length - 1;
+      changed++;
     }
   });
-  if (added > 0) {
+  if (changed > 0) {
     current.sort((a, b) => a.fecha.localeCompare(b.fecha));
     saveBancStore(current);
   }
-  return added;
+  return changed;
 }
 
 // ── DB ─────────────────────────────────────────────────────────────────────
