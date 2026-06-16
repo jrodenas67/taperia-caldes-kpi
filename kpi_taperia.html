@@ -639,7 +639,7 @@
 
 <script>
 // ── Data ──────────────────────────────────────────────────────────────────
-const OBJECTIU = [{"mes": "Enero", "v2025": 22382.26, "prevision": 23053.73, "v2026": 25876.45, "pct24": 15.6, "diferencia": 671.47, "dias": 23, "invDia": 29.19, "hastaObj": 2822.73, "incentivo": 282.27}, {"mes": "Febrero", "v2025": 22499.24, "prevision": 23174.22, "v2026": 27744.92, "pct24": 23.3, "diferencia": 674.98, "dias": 16, "invDia": 42.19, "hastaObj": 4570.7, "incentivo": 457.07}, {"mes": "Marzo", "v2025": 21443.45, "prevision": 22086.75, "v2026": 19903.08, "pct24": -7.2, "diferencia": 643.3, "dias": 15, "invDia": 42.89, "hastaObj": -2183.68, "incentivo": 0.0}, {"mes": "Abril", "v2025": 31530.01, "prevision": 32475.91, "v2026": 30141.92, "pct24": -4.4, "diferencia": 945.9, "dias": 22, "invDia": 43.0, "hastaObj": -2333.99, "incentivo": 0.0}, {"mes": "Mayo", "v2025": 29362.16, "prevision": 30243.02, "v2026": 33575.64, "pct24": 14.4, "diferencia": 880.86, "dias": 23, "invDia": 38.3, "hastaObj": 3332.62, "incentivo": 333.26}, {"mes": "Junio", "v2025": 33832.98, "prevision": 34847.97, "v2026": 2852.51, "pct24": null, "diferencia": 1014.99, "dias": 3, "invDia": 46.13, "hastaObj": -31995.46, "incentivo": 0.0}];
+const OBJECTIU = [{"mes": "Enero", "v2025": 22382.26, "prevision": 23053.73, "v2026": 25876.45, "pct24": 15.6, "diferencia": 671.47, "dias": 23, "invDia": 29.19, "hastaObj": 2822.73, "incentivo": 282.27, "efectivo": 25741.47}, {"mes": "Febrero", "v2025": 22499.24, "prevision": 23174.22, "v2026": 27744.92, "pct24": 23.3, "diferencia": 674.98, "dias": 16, "invDia": 42.19, "hastaObj": 4570.7, "incentivo": 457.07, "efectivo": 26991.51}, {"mes": "Marzo", "v2025": 21443.45, "prevision": 22086.75, "v2026": 19903.08, "pct24": -7.2, "diferencia": 643.3, "dias": 15, "invDia": 42.89, "hastaObj": -2183.68, "incentivo": 0.0, "efectivo": 20240.31}, {"mes": "Abril", "v2025": 31530.01, "prevision": 32475.91, "v2026": 30141.92, "pct24": -4.4, "diferencia": 945.9, "dias": 22, "invDia": 43.0, "hastaObj": -2333.99, "incentivo": 0.0, "efectivo": 31449.79}, {"mes": "Mayo", "v2025": 29362.16, "prevision": 30243.02, "v2026": 33575.64, "pct24": 14.4, "diferencia": 880.86, "dias": 23, "invDia": 38.3, "hastaObj": 3332.62, "incentivo": 333.26, "efectivo": 37397.63}, {"mes": "Junio", "v2025": 33832.98, "prevision": 34847.97, "v2026": 2852.51, "pct24": null, "diferencia": 1014.99, "dias": 3, "invDia": 46.13, "hastaObj": -31995.46, "incentivo": 0.0, "efectivo": 6531.38}];
 
 const TICKET = [{"mes": "Enero", "ticket": 12.56, "pax": 1828, "vendes": 22953.64}, {"mes": "Febrero", "ticket": 12.9, "pax": 1739, "vendes": 22438.92}, {"mes": "Marzo", "ticket": 12.28, "pax": 1334, "vendes": 16377.02}, {"mes": "Abril", "ticket": 13.46, "pax": 1834, "vendes": 24685.28}, {"mes": "Mayo", "ticket": 16.35, "pax": 1189, "vendes": 19443.4}];
 
@@ -770,7 +770,7 @@ OBJECTIU.forEach(d => {
     <hr class="c-sep">
     <div class="c-com-label">Comissió incentiu</div>
     <div class="c-com-valor">${comVal}</div>
-    <div class="c-com-sub">Efectiu total: ${efVal}</div>`;
+    <div class="c-com-sub">Pendent Banc: ${efVal}</div>`;
   cGrid.appendChild(card);
 });
 
