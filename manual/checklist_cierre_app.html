@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Checklist de cierre</title>
+<style>
+  /* LOGIN OVERLAY */
+  #login-overlay {
+    position: fixed; inset: 0; background: #f2f2ee;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; padding: 24px;
+  }
+  #login-overlay.hidden { display: none; }
+  .login-card {
+    background: #fff; border-radius: 18px; padding: 32px 24px;
+    width: 100%; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    text-align: center;
+  }
+  .login-logo { font-size: 36px; margin-bottom: 8px; }
+  .login-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: #999; margin-bottom: 24px; }
+  .login-card input {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #ddd;
+    border-radius: 10px; font-size: 15px; margin-bottom: 12px;
+    outline: none; transition: border-color .15s; font-family: inherit;
+  }
+  .login-card input:focus { border-color: #1D9E75; }
+  .login-btn {
+    width: 100%; padding: 13px; background: #1D9E75; color: #fff;
+    border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s; font-family: inherit;
+  }
+  .login-btn:active { opacity: .85; }
+  .login-error { color: #e53e3e; font-size: 13px; margin-top: 10px; display: none; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f2f2ee;
+    color: #111;
+    font-size: 16px;
+    min-height: 100vh;
+  }
+  h1 { font-size: 20px; font-weight: 700; padding: 16px 16px 4px; }
+  .sub { font-size: 13px; color: #999; padding: 0 16px 14px; }
+  .tab-radio { display: none; }
+  .tab-bar {
+    display: flex; background: #fff; border-bottom: 1px solid #ddd;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .tab-bar label {
+    flex: 1; text-align: center; padding: 12px 4px; font-size: 13px;
+    font-weight: 500; color: #888; cursor: pointer;
+    border-bottom: 3px solid transparent; transition: all 0.15s;
+    line-height: 1.3; touch-action: manipulation;
+  }
+  .tab-bar label:active { background: #f5f5f0; }
+  #t1:checked ~ .tab-bar label[for="t1"],
+  #t2:checked ~ .tab-bar label[for="t2"],
+  #t3:checked ~ .tab-bar label[for="t3"] {
+    color: #1D9E75; border-bottom-color: #1D9E75; font-weight: 700;
+  }
+  .tab-content { display: none; padding: 14px; }
+  #t1:checked ~ .tab-content.c1,
+  #t2:checked ~ .tab-content.c2,
+  #t3:checked ~ .tab-content.c3 { display: block; }
+  .section { background: #fff; border-radius: 14px; border: 1px solid #ddd; overflow: hidden; }
+  label.item {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    border-bottom: 1px solid #f0f0ea; cursor: pointer; min-height: 52px;
+    touch-action: manipulation;
+  }
+  label.item:last-child { border-bottom: none; }
+  label.item:active { background: #f5f5f0; }
+  input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 26px; height: 26px; min-width: 26px; border-radius: 8px;
+    border: 2px solid #ccc; background: #fff; cursor: pointer;
+    position: relative; flex-shrink: 0; transition: all 0.15s;
+  }
+  input[type="checkbox"]:checked { background: #1D9E75; border-color: #1D9E75; }
+  input[type="checkbox"]:checked::after {
+    content: ''; position: absolute; left: 5px; top: 2px;
+    width: 12px; height: 7px;
+    border-left: 2.5px solid #fff; border-bottom: 2.5px solid #fff;
+    transform: rotate(-45deg);
+  }
+  .item-label { font-size: 15px; line-height: 1.45; flex: 1; }
+  input[type="checkbox"]:checked + .item-label { color: #bbb; text-decoration: line-through; }
+  .nota { font-size: 12px; color: #bbb; text-align: center; padding: 16px 0 8px; }
+</style>
+</head>
+<body>
+
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-logo">✅</div>
+    <div class="login-title">Checklist de cierre</div>
+    <div class="login-sub">La Taperia de Caldes — Acceso personal</div>
+    <input type="email" id="email-input" placeholder="Correo electrónico" autocomplete="email">
+    <input type="password" id="pass-input" placeholder="Contraseña" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Correo o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<h1>Checklist de cierre</h1>
+<p class="sub">Toca cada tarea al completarla</p>
+
+<input class="tab-radio" type="radio" name="tab" id="t1" checked>
+<input class="tab-radio" type="radio" name="tab" id="t2">
+<input class="tab-radio" type="radio" name="tab" id="t3">
+
+<div class="tab-bar">
+  <label for="t1">📋 Entre<br>semana</label>
+  <label for="t2">🌅 Fin de<br>semana</label>
+  <label for="t3">⭐ Los<br>domingos</label>
+</div>
+
+<div class="tab-content c1">
+  <div class="section">
+    <label class="item"><input type="checkbox"><span class="item-label">Fichaje correcto en Yurest.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Área de cafetería limpia y jarras tapadas.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Verificar que los congeladores estén encendidos y funcionando.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Lavavajillas vaciada y apagada.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Vasos de café y tapas para llevar repuestos.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Reponer azúcares.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Servilleteros llenos y servilletas del servicio.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Cubiertos limpios y ordenados.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Bayetas en detergente.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Área de postres limpia.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Revisar que haya café normal y descafeinado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Papel para datafonos e impresoras.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Cafetera limpia.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Salón montado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Pizarra de apertura colgada.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Foto de tickets enviada en grupo.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Aires apagados.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Tirador de cerveza limpio.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Botellero completado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Lavabos hechos. (Revisar papel, jabón y basureros).</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Los miércoles: dejar hechos los pedidos de DISAVA y CB98.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Revisar insumos de postres llenos y listos. (Chupitos, azúcar, nutella, etc).</span></label>
+  </div>
+  <p class="nota">Al cerrar la página se pierden las marcas</p>
+</div>
+
+<div class="tab-content c2">
+  <div class="section">
+    <label class="item"><input type="checkbox"><span class="item-label">Fichaje correcto en Yurest.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Área de cafetería limpia y jarras tapadas.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Verificar que los congeladores estén encendidos y funcionando.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Lavavajillas vaciada y apagada.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Vasos de café y tapas para llevar repuestos.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Reponer azúcares.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Servilleteros llenos y servilletas del servicio.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Cubiertos limpios y ordenados.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Bayetas en detergente.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Área de postres limpia.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Revisar que haya café normal y descafeinado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Papel para datafonos e impresoras.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Cafetera limpia.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Salón montado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Pizarra de apertura colgada.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Foto de tickets enviada en grupo.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Aires apagados.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Tirador de cerveza limpio.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Botellero completado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Lavabos hechos. (Revisar papel, jabón y basureros).</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Revisar insumos de postres llenos y listos. (Chupitos, azúcar, nutella, etc).</span></label>
+    <label class="item" style="background:#fffef0"><input type="checkbox"><span class="item-label">➕ Mesas desmontadas y cartas de desayunos puestas.</span></label>
+    <label class="item" style="background:#fffef0"><input type="checkbox"><span class="item-label">➕ Pizarra de desayunos colgada.</span></label>
+  </div>
+  <p class="nota">Al cerrar la página se pierden las marcas</p>
+</div>
+
+<div class="tab-content c3">
+  <div class="section">
+    <label class="item"><input type="checkbox"><span class="item-label">Fichaje correcto en Yurest.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Área de cafetería limpia y jarras tapadas.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Verificar que los congeladores estén encendidos y funcionando.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Lavavajillas vaciada y apagada.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Vasos de café y tapas para llevar repuestos.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Reponer azúcares.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Servilleteros llenos y servilletas del servicio.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Cubiertos limpios y ordenados.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Bayetas en detergente.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Área de postres limpia.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Revisar que haya café normal y descafeinado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Papel para datafonos e impresoras.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Cafetera limpia.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Salón montado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Pizarra de apertura colgada.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Foto de tickets enviada en grupo.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Aires apagados.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Tirador de cerveza limpio.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Botellero completado.</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Lavabos hechos. (Revisar papel, jabón y basureros).</span></label>
+    <label class="item"><input type="checkbox"><span class="item-label">Revisar insumos de postres llenos y listos. (Chupitos, azúcar, nutella, etc).</span></label>
+    <label class="item" style="background:#fffef0"><input type="checkbox"><span class="item-label">➕ Mesas desmontadas y cartas de desayunos puestas.</span></label>
+    <label class="item" style="background:#fffef0"><input type="checkbox"><span class="item-label">➕ Pizarra de desayunos colgada.</span></label>
+    <label class="item" style="background:#fff5f0"><input type="checkbox"><span class="item-label">⭐ Menús puestos en portamenús y paredes.</span></label>
+    <label class="item" style="background:#fff5f0"><input type="checkbox"><span class="item-label">⭐ Pedido de UNIC hecho y enviado a Lourdes.</span></label>
+    <label class="item" style="background:#fff5f0"><input type="checkbox"><span class="item-label">⭐ Puertas bien cerradas.</span></label>
+    <label class="item" style="background:#fff5f0"><input type="checkbox"><span class="item-label">⭐ Congeladores funcionando y bien cerrados.</span></label>
+  </div>
+  <p class="nota">Al cerrar la página se pierden las marcas</p>
+</div>
+
+<script>
+const ALLOWED_EMAILS = new Set([
+  "adria@cardona.com", "aina@rosallo.com", "alejandravalencia0330@gmail.com",
+  "alejandros@gmail.com", "bleiva841@gmail.com", "ayalalarisa01@icloud.com",
+  "genesis@genesis.com", "calerojonathan76@gmail.com",
+  "juan.rodenas@romahosteleria.com", "lourdes.martinez@romahosteleria.com",
+  "marietu@gmail.com", "mireia.marquez@romahosteleria.com",
+  "tejadaperezbelkisrubi@gmail.com", "sv110292@gmail.com",
+  "info@romahosteleria.com", "admintaperiadecaldes@yurest.com",
+  "mastertaperiadecaldes@yurest.com"
+]);
+const CORRECT_HASH = "75cfb41bb1cb34d51ba6b8e9f2e5084e5c39c6dc0b065c18755fcdbced884656";
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function showApp() {
+  document.getElementById("login-overlay").classList.add("hidden");
+}
+
+async function doLogin() {
+  const email = document.getElementById("email-input").value.trim().toLowerCase();
+  const pass  = document.getElementById("pass-input").value;
+  const hash  = await sha256(pass);
+  if (ALLOWED_EMAILS.has(email) && hash === CORRECT_HASH) {
+    sessionStorage.setItem("taperia_auth", "1");
+    showApp();
+  } else {
+    const err = document.getElementById("login-error");
+    err.style.display = "block";
+    setTimeout(() => { err.style.display = "none"; }, 3000);
+  }
+}
+
+document.getElementById("pass-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") doLogin();
+});
+
+if (sessionStorage.getItem("taperia_auth") === "1") showApp();
+</script>
+
+</body>
+</html>
