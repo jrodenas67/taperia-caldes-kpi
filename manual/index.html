@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Procedimientos — Camarero/a · La Taperia de Caldes</title>
+<style>
+  :root {
+    --navy: #1A2E40;
+    --blue: #2E6DA4;
+    --blue-light: #D6E8F7;
+    --green-light: #E8F4E8;
+    --yellow: #FFF3CD;
+    --white: #ffffff;
+    --gray: #f4f6f9;
+    --text: #222;
+    --border: #BBBBBB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 15px; color: var(--text); background: var(--gray); line-height: 1.6; }
+
+  /* ══ LOGIN OVERLAY ══════════════════════════════════════════════════ */
+  #login-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, #1A2E40 0%, #1a4a70 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #login-box {
+    background: #fff; border-radius: 16px; padding: 48px 40px 40px;
+    width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  #login-box .logo {
+    text-align: center; margin-bottom: 28px;
+  }
+  #login-box .logo img { height: 56px; }
+  #login-box .logo-text {
+    font-size: 20px; font-weight: 800; color: var(--navy); line-height: 1.2;
+  }
+  #login-box .logo-sub { font-size: 13px; color: #888; margin-top: 4px; }
+  #login-box label { display: block; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; margin-top: 18px; }
+  #login-box input {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #dde2ea; border-radius: 8px;
+    font-size: 15px; outline: none; transition: border .2s;
+  }
+  #login-box input:focus { border-color: var(--blue); }
+  #login-btn {
+    margin-top: 24px; width: 100%; padding: 14px; border: none; border-radius: 8px;
+    background: var(--blue); color: #fff; font-size: 16px; font-weight: 700;
+    cursor: pointer; transition: background .2s;
+  }
+  #login-btn:hover { background: #1a5a8f; }
+  #login-error {
+    display: none; margin-top: 14px; padding: 11px 14px; border-radius: 8px;
+    background: #fff0f0; border: 1px solid #f5c6c6; color: #c0392b; font-size: 14px; text-align: center;
+  }
+  #login-footer { margin-top: 20px; text-align: center; font-size: 12px; color: #aaa; }
+
+  /* ══ LOGOUT BUTTON ══════════════════════════════════════════════════ */
+  #logout-btn {
+    position: fixed; top: 12px; right: 14px; z-index: 200;
+    background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+    color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px;
+    cursor: pointer; display: none; transition: background .2s;
+  }
+  #logout-btn:hover { background: rgba(255,255,255,.25); }
+
+  /* ══ SIDEBAR NAV ═══════════════════════════════════════════════════ */
+  #sidebar {
+    position: fixed; top: 0; left: 0; width: 240px; height: 100vh;
+    background: var(--navy); overflow-y: auto; z-index: 100;
+    padding: 0 0 40px 0; display: none;
+  }
+  #sidebar .brand {
+    background: var(--blue); padding: 20px 18px; color: #fff;
+    font-size: 13px; font-weight: bold; letter-spacing: .5px; line-height: 1.4;
+  }
+  #sidebar .brand span { display: block; font-size: 11px; font-weight: normal; opacity: .8; margin-top: 4px; }
+  #sidebar nav a {
+    display: block; padding: 10px 18px; color: #b8cfe8; font-size: 13px;
+    text-decoration: none; border-left: 3px solid transparent; transition: all .2s;
+  }
+  #sidebar nav a:hover, #sidebar nav a.active {
+    color: #fff; background: rgba(255,255,255,.08); border-left-color: var(--blue);
+  }
+  #sidebar nav .section-label {
+    padding: 14px 18px 4px; color: #6a8caa; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ══ MAIN ═══════════════════════════════════════════════════════════ */
+  #main { margin-left: 240px; display: none; }
+
+  /* ══ HERO ════════════════════════════════════════════════════════════ */
+  #hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a4a70 100%);
+    color: #fff; padding: 80px 60px 60px;
+  }
+  #hero .label { background: var(--blue); display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; letter-spacing: 1px; margin-bottom: 18px; }
+  #hero h1 { font-size: 42px; font-weight: 800; line-height: 1.15; margin-bottom: 12px; }
+  #hero p { font-size: 17px; opacity: .8; max-width: 560px; margin-bottom: 32px; }
+  .hero-pills { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-pill { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); padding: 8px 18px; border-radius: 24px; font-size: 13px; }
+
+  /* ══ CONTENT SECTIONS ════════════════════════════════════════════════ */
+  .section { background: #fff; margin: 24px 40px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,.07); overflow: hidden; }
+  .section-header { background: var(--navy); color: #fff; padding: 22px 30px; }
+  .section-header .num { background: var(--blue); display: inline-block; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; font-weight: bold; font-size: 14px; margin-right: 10px; }
+  .section-header h2 { display: inline; font-size: 20px; font-weight: 700; }
+  .section-body { padding: 28px 30px; }
+  .section-body p { margin-bottom: 14px; }
+
+  h3 { font-size: 16px; color: var(--blue); margin: 20px 0 10px; }
+
+  /* ══ STEPS ════════════════════════════════════════════════════════════ */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step { display: flex; gap: 0; border: 1px solid #e0e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+  .step-num { background: var(--blue); color: #fff; font-size: 22px; font-weight: bold; padding: 18px 22px; display: flex; align-items: center; justify-content: center; min-width: 62px; }
+  .step-content { padding: 14px 18px; flex: 1; }
+  .step-content strong { display: block; font-size: 15px; margin-bottom: 4px; }
+  .step-content span { font-size: 13px; color: #555; }
+
+  /* ══ TABLES ════════════════════════════════════════════════════════════ */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13.5px; }
+  thead tr { background: var(--navy); color: #fff; }
+  thead th { padding: 11px 14px; text-align: left; font-size: 13px; }
+  tbody tr:nth-child(even) { background: var(--blue-light); }
+  tbody tr:nth-child(odd) { background: #fff; }
+  td { padding: 10px 14px; border-bottom: 1px solid #e8edf2; vertical-align: top; }
+  td:first-child { font-weight: 600; color: var(--navy); }
+
+  /* ══ CHECKLIST ═════════════════════════════════════════════════════════ */
+  .checklist { list-style: none; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box { width: 20px; height: 20px; border: 2px solid var(--blue); border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+  .checklist.green li { background: transparent; }
+  .checklist.green .check-box { border-color: #2e8a4a; }
+
+  /* ══ INFO BOXES ════════════════════════════════════════════════════════ */
+  .box { padding: 16px 20px; border-radius: 8px; margin: 14px 0; border-left: 4px solid; }
+  .box.blue { background: var(--blue-light); border-color: var(--blue); }
+  .box.green { background: var(--green-light); border-color: #2e8a4a; }
+  .box.yellow { background: var(--yellow); border-color: #d4a017; }
+  .box strong { display: block; margin-bottom: 5px; }
+  .box.blue strong { color: var(--blue); }
+  .box.green strong { color: #2e8a4a; }
+  .box.yellow strong { color: #a07000; }
+
+  /* ══ QUOTE ══════════════════════════════════════════════════════════════ */
+  .quote { background: var(--navy); color: #fff; padding: 30px 40px; border-radius: 10px; text-align: center; font-style: italic; font-size: 16px; line-height: 1.7; margin: 20px 0; }
+
+  /* ══ GRID CARDS ═════════════════════════════════════════════════════════ */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 16px 0; }
+  .card { background: var(--blue-light); border-radius: 8px; padding: 18px; border-top: 4px solid var(--blue); }
+  .card h4 { font-size: 14px; color: var(--navy); margin-bottom: 6px; }
+  .card p { font-size: 13px; color: #444; }
+
+  /* ══ PHRASES ════════════════════════════════════════════════════════════ */
+  .phrases { display: flex; flex-direction: column; gap: 10px; }
+  .phrase { background: #f8fafc; border-radius: 8px; padding: 12px 16px; border-left: 3px solid var(--blue); }
+  .phrase .situation { font-size: 11px; text-transform: uppercase; color: var(--blue); font-weight: bold; letter-spacing: .5px; margin-bottom: 4px; }
+  .phrase .text { font-size: 14px; color: #333; }
+
+  /* ══ TIMINGS ════════════════════════════════════════════════════════════ */
+  .timings { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+  .timing { background: var(--navy); color: #fff; border-radius: 8px; padding: 14px 18px; text-align: center; flex: 1; min-width: 130px; }
+  .timing .time { font-size: 22px; font-weight: bold; color: #7ec8f0; }
+  .timing .label { font-size: 11px; opacity: .8; margin-top: 3px; }
+
+  /* ══ GLOSSARY ═══════════════════════════════════════════════════════════ */
+  .glossary dt { font-weight: bold; color: var(--navy); margin-top: 10px; }
+  .glossary dd { margin-left: 18px; color: #444; font-size: 14px; margin-bottom: 4px; }
+
+  /* ══ RESPONSIVE ═════════════════════════════════════════════════════════ */
+  @media (max-width: 800px) {
+    #sidebar { display: none !important; }
+    #main { margin-left: 0 !important; }
+    #hero { padding: 40px 20px 32px; }
+    #hero h1 { font-size: 28px; }
+    .section { margin: 14px 12px; }
+    .section-body { padding: 20px 16px; }
+    .timings { flex-direction: column; }
+    .cards { grid-template-columns: 1fr; }
+    #login-box { padding: 36px 24px 28px; margin: 16px; }
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN OVERLAY ═══════════════════════════════════════════════════ -->
+<div id="login-overlay">
+  <div id="login-box">
+    <div class="logo">
+      <div class="logo-text">La Taperia de Caldes</div>
+      <div class="logo-sub">Portal de Personal · Acceso Restringido</div>
+    </div>
+    <label for="email-input">Correo electrónico</label>
+    <input type="email" id="email-input" placeholder="tu@email.com" autocomplete="email" />
+    <label for="pass-input">Contraseña</label>
+    <input type="password" id="pass-input" placeholder="••••••••" autocomplete="current-password" />
+    <button id="login-btn" onclick="doLogin()">Entrar</button>
+    <div id="login-error">Email o contraseña incorrectos. Contacta con tu responsable.</div>
+    <div id="login-footer">Manual de Procedimientos v2.0 · Uso interno</div>
+  </div>
+</div>
+
+<!-- ══ LOGOUT ════════════════════════════════════════════════════════════ -->
+<button id="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+
+<!-- ══ SIDEBAR ═══════════════════════════════════════════════════════════ -->
+<div id="sidebar">
+  <div class="brand">Manual de Procedimientos<span>Puesto: Camarero/a · v2.0</span></div>
+  <nav>
+    <div class="section-label">Contenidos</div>
+    <a href="#sec1">1. Introducción</a>
+    <a href="#sec2">2. Responsabilidades</a>
+    <a href="#sec3">3. Presentación e Higiene</a>
+    <a href="#sec4">4. Mise en Place</a>
+    <a href="#sec5">5. Protocolo de Servicio</a>
+    <a href="#sec6">6. Servicio de Bebidas</a>
+    <a href="#sec7">7. Upselling</a>
+    <a href="#sec8">8. Gestión del Cobro</a>
+    <a href="#sec9">9. Maquinaria y Equipos</a>
+    <a href="#sec10">10. Durante el Servicio</a>
+    <a href="#sec11">11. Reservas</a>
+    <a href="#sec12">12. Higiene y Seguridad</a>
+    <a href="#sec13">13. Cierre y Limpieza</a>
+    <a href="#sec14">14. Conclusión</a>
+    <a href="#glosario">Glosario</a>
+  </nav>
+</div>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════════════ -->
+<div id="main">
+
+<div id="hero">
+  <div class="label">MANUAL OPERATIVO · ABRIL 2026</div>
+  <h1>Manual de Procedimientos<br>del Puesto Camarero/a</h1>
+  <p>Guía completa para la excelencia en el servicio gastronómico. Cada interacción es una oportunidad de crear una experiencia memorable.</p>
+  <div class="hero-pills">
+    <div class="hero-pill">⭐ Calidad</div>
+    <div class="hero-pill">⚡ Rapidez</div>
+    <div class="hero-pill">❤ Satisfacción</div>
+    <div class="hero-pill">🤝 Trabajo en equipo</div>
+  </div>
+</div>
+
+<div class="section" id="sec1">
+  <div class="section-header"><span class="num">1</span><h2>Introducción y Objetivos</h2></div>
+  <div class="section-body">
+    <p>Este manual tiene como propósito orientar al camarero/a en sus funciones diarias, garantizando un servicio eficiente, profesional y de alta calidad. El camarero/a es la cara visible del establecimiento, el primer punto de contacto con el cliente y quien define en gran medida la experiencia gastronómica.</p>
+    <p>Seguir procedimientos claros y estandarizados asegura la calidad del servicio, la rapidez en la ejecución y la satisfacción plena del cliente.</p>
+    <div class="cards">
+      <div class="card"><h4>⭐ Calidad</h4><p>Estándares superiores en cada interacción con el cliente.</p></div>
+      <div class="card"><h4>⚡ Rapidez</h4><p>Servicio ágil y eficiente que respeta el tiempo del cliente.</p></div>
+      <div class="card"><h4>❤ Satisfacción</h4><p>Clientes contentos y fidelizados que repiten y recomiendan.</p></div>
+      <div class="card"><h4>🔒 Seguridad</h4><p>Entorno de trabajo seguro e higiénico para personal y clientes.</p></div>
+    </div>
+    <div class="box blue"><strong>📌 Cómo usar este manual</strong>Consulta este documento antes de tu primer turno y en caso de dudas operativas. Es una herramienta viva: si detectas algo mejorable, comunícalo a tu responsable.</div>
+  </div>
+</div>
+
+<div class="section" id="sec2">
+  <div class="section-header"><span class="num">2</span><h2>Identificación del Puesto y Responsabilidades</h2></div>
+  <div class="section-body">
+    <p>El puesto de camarero/a ocupa un lugar estratégico dentro de la estructura organizativa del establecimiento. Su función va más allá del simple servicio de alimentos y bebidas: representa la imagen del establecimiento.</p>
+    <table>
+      <thead><tr><th>Responsabilidad</th><th>Descripción detallada</th></tr></thead>
+      <tbody>
+        <tr><td>Atención al cliente</td><td>Recepción cordial, toma de pedidos, atención personalizada y despedida.</td></tr>
+        <tr><td>Servicio de alimentos</td><td>Servir platos con la temperatura, presentación y protocolo adecuados.</td></tr>
+        <tr><td>Servicio de bebidas</td><td>Preparar y servir bebidas; conocer la carta de vinos y combinados.</td></tr>
+        <tr><td>Mise en place</td><td>Preparar y reponer el área de trabajo antes y durante el servicio.</td></tr>
+        <tr><td>Cobro</td><td>Gestionar la cuenta y el pago de forma precisa y agradable.</td></tr>
+        <tr><td>Limpieza y orden</td><td>Mantener la sala, barra y estaciones impecables en todo momento.</td></tr>
+        <tr><td>Comunicación interna</td><td>Coordinar con cocina, barra y otros departamentos eficientemente.</td></tr>
+        <tr><td>Reservas</td><td>Gestionar solicitudes y registrar en Tableo según protocolo.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="sec3">
+  <div class="section-header"><span class="num">3</span><h2>Presentación e Higiene Personal</h2></div>
+  <div class="section-body">
+    <p>La imagen del personal es parte inseparable de la imagen del establecimiento. Presentarse correctamente es una muestra de respeto hacia el cliente y hacia el equipo.</p>
+    <h3>Uniforme y Apariencia</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Uniforme limpio, planchado y en perfecto estado al inicio de cada turno.</li>
+      <li><div class="check-box"></div>Calzado cómodo, cerrado, antideslizante y en buen estado.</li>
+      <li><div class="check-box"></div>Cabello recogido o corto; barba aseada.</li>
+      <li><div class="check-box"></div>Uñas cortas, limpias y sin esmalte de colores llamativos.</li>
+      <li><div class="check-box"></div>Sin joyas (anillos, pulseras, relojes) que puedan contaminar alimentos o suponer riesgo.</li>
+      <li><div class="check-box"></div>Perfume discreto o ninguno.</li>
+    </ul>
+    <h3>Higiene de Manos — ¿Cuándo lavarse?</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Al inicio del turno.</li>
+      <li><div class="check-box"></div>Después de tocar dinero, basura, cara o cabello.</li>
+      <li><div class="check-box"></div>Antes y después de manipular alimentos.</li>
+      <li><div class="check-box"></div>Después de usar el baño.</li>
+    </ul>
+    <div class="box yellow"><strong>⚠️ Recuerda</strong>Lava las manos con jabón antibacterial durante al menos 20 segundos. El gel hidroalcohólico complementa, pero no sustituye el lavado con agua y jabón.</div>
+  </div>
+</div>
+
+<div class="section" id="sec4">
+  <div class="section-header"><span class="num">4</span><h2>Preparación y Mise en Place</h2></div>
+  <div class="section-body">
+    <p>El mise en place es la base de un servicio exitoso. Una preparación meticulosa antes de que lleguen los clientes permite responder con rapidez y profesionalismo.</p>
+    <h3>✅ Checklist de Apertura (Inicio de Turno)</h3>
+    <ul class="checklist green">
+      <li><div class="check-box"></div>Revisar la reserva del día en Tableo: número de cubiertos, horarios y notas especiales.</li>
+      <li><div class="check-box"></div>Montar las mesas: mantel sin arrugas, cubiertos en posición correcta, cristalería impecable.</li>
+      <li><div class="check-box"></div>Colocar servilletas dobladas según el estándar del establecimiento.</li>
+      <li><div class="check-box"></div>Revisar que las sillas estén limpias y bien colocadas.</li>
+      <li><div class="check-box"></div>Preparar la estación de servicio: soporte de comandas, bolis, abrebotellas, encendedor.</li>
+      <li><div class="check-box"></div>Asegurarse de tener suficientes cartas de menú y carta de vinos.</li>
+      <li><div class="check-box"></div>Revisar el stock de la barra: bebidas frías, cafetería, complementos.</li>
+      <li><div class="check-box"></div>Preparar los vasos con cubiertos de postre (cucharitas, cucharas café con leche, cuchillos y tenedores).</li>
+      <li><div class="check-box"></div>Verificar limpieza y funcionamiento de cafetera, grifo de cerveza y demás máquinas.</li>
+      <li><div class="check-box"></div>Leer el parte de cocina: platos del día, producto no disponible, alérgenos.</li>
+      <li><div class="check-box"></div>Informarse de promociones o eventos especiales del día.</li>
+      <li><div class="check-box"></div>Asegurarse de llevar cambio suficiente en la caja.</li>
+    </ul>
+    <h3>Montaje de Mesa — Posiciones</h3>
+    <table>
+      <thead><tr><th>Elemento</th><th>Posición / Estándar</th></tr></thead>
+      <tbody>
+        <tr><td>Plato base</td><td>Centrado, a 2 cm del borde de la mesa</td></tr>
+        <tr><td>Tenedor</td><td>A la izquierda del plato</td></tr>
+        <tr><td>Cuchillo</td><td>A la derecha del plato, filo hacia adentro</td></tr>
+        <tr><td>Cuchara de sopa</td><td>A la derecha del cuchillo</td></tr>
+        <tr><td>Copa de agua</td><td>Arriba del cuchillo</td></tr>
+        <tr><td>Copa de vino</td><td>Arriba y a la derecha de la copa de agua</td></tr>
+        <tr><td>Servilleta</td><td>Sobre el plato o a la izquierda, doblada</td></tr>
+        <tr><td>Pan y mantequilla</td><td>A la izquierda, con cuchillo de mantequilla</td></tr>
+      </tbody>
+    </table>
+    <div class="box blue"><strong>💡 Punto clave</strong>El orden y la limpieza no son opcionales: son requisitos esenciales. Un espacio organizado permite respuestas rápidas y reduce errores significativamente.</div>
+  </div>
+</div>
+
+<div class="section" id="sec5">
+  <div class="section-header"><span class="num">5</span><h2>Protocolo de Servicio al Cliente</h2></div>
+  <div class="section-body">
+    <p>El servicio al cliente es un arte que requiere cortesía, profesionalismo y atención al detalle. Cada interacción debe reflejar los más altos estándares de hospitalidad.</p>
+    <h3>Flujo del Servicio — Paso a Paso</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Recepción cálida (máx. 30 seg.)</strong><span>Saludar con cordialidad, confirmar reserva o verificar disponibilidad. Acompañar a la mesa con elegancia. Retirar silla si procede.</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Bebida de bienvenida (1-2 min)</strong><span>Preguntar si desean algo para beber mientras ven la carta. Tomar nota y servir con prontitud.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Presentación de la carta</strong><span>Entregar menú abierto. Presentar platos del día, especialidades y menú degustación. Mencionar alérgenos si se pregunta.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Toma de pedido con precisión</strong><span>Anotar en la comanda con letra clara: mesa, número de cubiertos, platos por posición. Confirmar puntos de cocción, alérgenos y peticiones especiales.</span></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><strong>Servicio de primeros platos</strong><span>Servir por la izquierda, retirar por la derecha. Anunciar el plato si es necesario. Comprobar satisfacción 2 minutos después.</span></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-content"><strong>Cambio de cubiertos entre platos</strong><span>Retirar cubiertos usados y reponer los necesarios para el siguiente plato.</span></div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-content"><strong>Servicio de segundos platos</strong><span>Mismo protocolo que primeros. Coordinar con cocina para salida simultánea.</span></div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-content"><strong>Oferta de postre y café</strong><span>Presentar carta de postres o describir las opciones. Ofrecer digestivos o licores.</span></div></div>
+      <div class="step"><div class="step-num">9</div><div class="step-content"><strong>Gestión de la cuenta</strong><span>Presentar la cuenta cuando se solicite o cuando sea evidente que el cliente quiere marcharse.</span></div></div>
+      <div class="step"><div class="step-num">10</div><div class="step-content"><strong>Despedida y preparación de mesa</strong><span>Despedir con calidez, agradecer la visita e invitar a volver. Limpiar y montar la mesa para el siguiente servicio.</span></div></div>
+    </div>
+    <h3>Tipos de Servicio</h3>
+    <table>
+      <thead><tr><th>Tipo</th><th>Descripción y uso</th></tr></thead>
+      <tbody>
+        <tr><td>Servicio Americano</td><td>Platos emplatados en cocina. Servicio rápido y eficiente. El más habitual en restauración contemporánea.</td></tr>
+        <tr><td>Servicio Inglés</td><td>Platos presentados en bandeja; el cliente se sirve. Adecuado para eventos y grupos.</td></tr>
+        <tr><td>Servicio Francés</td><td>Emplatar frente al cliente desde gueridón. Máxima elegancia. Reservado para ocasiones especiales.</td></tr>
+        <tr><td>Servicio informal</td><td>El cliente recoge en barra o formato tapas. Muy ágil, ideal en hora punta.</td></tr>
+      </tbody>
+    </table>
+    <h3>Frases de Servicio Recomendadas</h3>
+    <div class="phrases">
+      <div class="phrase"><div class="situation">Al recibir</div><div class="text">¡Buenos días/tardes! Bienvenidos. ¿Tienen reserva o prefieren que les busque mesa?</div></div>
+      <div class="phrase"><div class="situation">Tomar el pedido</div><div class="text">¿Se les ha ocurrido ya algo o necesitan un par de minutos más?</div></div>
+      <div class="phrase"><div class="situation">Recomendar un plato</div><div class="text">La especialidad de hoy es… y está siendo muy demandada.</div></div>
+      <div class="phrase"><div class="situation">Retirar platos</div><div class="text">¿Puedo retirar esto? ¿Todo ha sido de su agrado?</div></div>
+      <div class="phrase"><div class="situation">Ofrecer postre</div><div class="text">¿Deseaban ver la carta de postres o tomar un café?</div></div>
+      <div class="phrase"><div class="situation">Presentar la cuenta</div><div class="text">Aquí tiene la cuenta. Cuando quieran, sin prisa.</div></div>
+      <div class="phrase"><div class="situation">Despedida</div><div class="text">Muchas gracias, ha sido un placer. ¡Hasta pronto!</div></div>
+    </div>
+    <h3>Gestión de Alérgenos</h3>
+    <div class="box yellow"><strong>❗ Atención</strong>Los alérgenos son una cuestión de salud y responsabilidad legal. Los 14 alérgenos principales deben estar identificados en la carta. Si el cliente pregunta por uno no identificado, consulta siempre con cocina antes de confirmar.</div>
+    <ol style="padding-left:20px; line-height:2">
+      <li>Preguntar siempre al inicio si algún comensal tiene alergia o intolerancia.</li>
+      <li>Comunicar inmediatamente a cocina, incluso si el plato normalmente no lleva ese ingrediente.</li>
+      <li>No hacer suposiciones. Confirmar con cocina antes de confirmar al cliente.</li>
+      <li>Anotar la alergia en la comanda de forma visible (subrayada o en mayúsculas).</li>
+    </ol>
+    <h3>Gestión de Quejas y Reclamaciones</h3>
+    <ol style="padding-left:20px; line-height:2">
+      <li>Escuchar al cliente sin interrumpir. Mostrar empatía genuina.</li>
+      <li>No adoptar una actitud defensiva ni discutir.</li>
+      <li>Pedir disculpas con sinceridad: <em>"Tiene razón, lo sentimos mucho."</em></li>
+      <li>Buscar una solución inmediata: cambiar el plato, ofrecer una alternativa.</li>
+      <li>Comunicar al encargado si supera tu nivel de decisión.</li>
+      <li>Hacer seguimiento: preguntar si la solución fue satisfactoria.</li>
+      <li>Registrar la incidencia en el parte si es relevante.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section" id="sec6">
+  <div class="section-header"><span class="num">6</span><h2>Servicio de Bebidas</h2></div>
+  <div class="section-body">
+    <p>El servicio de bebidas es una parte fundamental de la experiencia gastronómica. Un buen camarero/a conoce la carta y sabe hacer recomendaciones acertadas.</p>
+    <div class="box blue"><strong>Protocolo general</strong>Servir siempre por la derecha. Bebidas frías en copa/vaso fríos; calientes en taza calentada. El agua se repone automáticamente sin que el cliente lo solicite.</div>
+    <h3>Servicio de Vinos</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Mostrar la botella</strong><span>Presentar al anfitrión con la etiqueta visible para su aprobación.</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Abrir la botella</strong><span>Cortar la cápsula por debajo del cuello. Insertar el sacacorchos y extraer el corcho sin ruido.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Cata previa</strong><span>Verter una pequeña cantidad al anfitrión. Esperar su aprobación antes de servir.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Servir</strong><span>Primero a las damas, luego a los caballeros, el anfitrión al final. Llenar la copa hasta 2/3 de su capacidad.</span></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><strong>Dejar la botella</strong><span>En cubo de hielo si es blanco/rosado; en la mesa con paño si es tinto.</span></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-content"><strong>Reponer</strong><span>Vigilar los niveles y ofrecer más cuando las copas estén casi vacías.</span></div></div>
+    </div>
+    <h3>Tipos de Café</h3>
+    <table>
+      <thead><tr><th>Tipo</th><th>Descripción / Proporción</th></tr></thead>
+      <tbody>
+        <tr><td>Café solo</td><td>Espresso 25 ml. Taza pequeña con cucharita y azúcar.</td></tr>
+        <tr><td>Café cortado</td><td>Espresso + pequeña cantidad de leche caliente. Taza pequeña.</td></tr>
+        <tr><td>Café con leche</td><td>Mitad café, mitad leche vaporizada. Taza grande con cuchara.</td></tr>
+        <tr><td>Capuchino</td><td>Espresso + mayor proporción de espuma. Cacao espolvoreado opcional.</td></tr>
+        <tr><td>Café americano</td><td>Espresso + agua caliente. Taza grande.</td></tr>
+      </tbody>
+    </table>
+    <h3>Servicio de Cerveza de Grifo</h3>
+    <ol style="padding-left:20px; line-height:2">
+      <li>Enjuagar el vaso con agua fría antes de servir.</li>
+      <li>Inclinar el vaso 45° e iniciar el tiro desde el grifo bien abierto.</li>
+      <li>Ir incorporando el vaso a la verticalidad para controlar la espuma.</li>
+      <li>Dejar 1-2 cm de espuma compacta. Limpiar el exterior antes de servir.</li>
+      <li>Cerrar el grifo completamente al terminar.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section" id="sec7">
+  <div class="section-header"><span class="num">7</span><h2>Técnicas de Venta y Upselling</h2></div>
+  <div class="section-body">
+    <p>El upselling bien aplicado mejora la experiencia del cliente y aumenta la rentabilidad. No se trata de presionar, sino de sugerir con conocimiento y autenticidad.</p>
+    <div class="box green"><strong>💡 Regla de oro</strong>Recomienda lo que tú probarías. La autenticidad convence más que cualquier técnica de venta.</div>
+    <h3>Principios del Upselling Efectivo</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Conoce la carta a fondo: ingredientes, técnicas y pairings recomendados.</li>
+      <li><div class="check-box"></div>Haz sugerencias en el momento adecuado, no de forma repetitiva.</li>
+      <li><div class="check-box"></div>Usa lenguaje sensorial: "es muy sabroso", "tiene mucho éxito", "va perfecto con…"</li>
+      <li><div class="check-box"></div>Adapta la recomendación al perfil del cliente.</li>
+    </ul>
+    <h3>Oportunidades por Fase del Servicio</h3>
+    <table>
+      <thead><tr><th>Momento</th><th>Sugerencia de upselling</th></tr></thead>
+      <tbody>
+        <tr><td>Al llegar</td><td>¿Desearían una bebida de bienvenida? (cóctel, cava, agua con gas)</td></tr>
+        <tr><td>Con la carta</td><td>Mencionar el menú degustación o las especialidades de precio superior.</td></tr>
+        <tr><td>Al pedir bebida</td><td>"Este plato va muy bien con nuestro blanco de la casa."</td></tr>
+        <tr><td>Entre platos</td><td>Ofrecer pan artesano, extras o guarnición adicional.</td></tr>
+        <tr><td>Tras el segundo</td><td>"¿Nos dejan tentarles con un postre? El fondant de chocolate es impresionante."</td></tr>
+        <tr><td>Con el café</td><td>Sugerir un digestivo, licor o infusión especial.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="sec8">
+  <div class="section-header"><span class="num">8</span><h2>Gestión del Cobro</h2></div>
+  <div class="section-body">
+    <p>El cobro es el último punto de contacto con el cliente antes de la despedida. Una gestión ágil y sin errores cierra la experiencia de forma positiva.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Preparar la cuenta</strong><span>Revisar la comanda y la factura antes de presentarla. Verificar que no falte ni sobre ningún elemento.</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Presentar la cuenta</strong><span>Entregar en cartera o bandeja, por la derecha del anfitrión. No se entrega sin que el cliente lo pida o sea evidente que desea marcharse.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Pago en efectivo</strong><span>Contar el dinero a la vista del cliente. Indicar el cambio en voz alta antes de devolverlo.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Pago con tarjeta</strong><span>Acercar el datáfono al cliente. Esperar confirmación de la operación antes de dar el pago por completado.</span></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><strong>Factura</strong><span>Preguntar si necesitan factura. Tomar los datos fiscales y tramitarla correctamente.</span></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-content"><strong>Despedida</strong><span>Agradecer, despedirse por el nombre si lo conoces e invitar a volver.</span></div></div>
+    </div>
+    <div class="box yellow"><strong>⚠️ Nunca</strong>Nunca insinuar, reclamar ni comentar sobre la propina. Jamás hacer esperar al cliente más de 5 minutos con la cuenta presentada. Si hay discrepancia, la duda beneficia siempre al cliente.</div>
+  </div>
+</div>
+
+<div class="section" id="sec9">
+  <div class="section-header"><span class="num">9</span><h2>Uso y Mantenimiento de Maquinaria</h2></div>
+  <div class="section-body">
+    <p>El conocimiento profundo de la maquinaria es esencial para la operación diaria. Cada equipo requiere procedimientos específicos de uso y mantenimiento.</p>
+    <table>
+      <thead><tr><th>Equipo</th><th>Puntos clave de uso y mantenimiento</th></tr></thead>
+      <tbody>
+        <tr><td>Cafetera profesional</td><td>Purgar antes del primer café. Limpiar portafiltros y grupos al terminar el turno. Descalcificar según frecuencia indicada.</td></tr>
+        <tr><td>Molinillo de café</td><td>Ajustar la molienda según extracción. Limpiar tolva y molinillo semanalmente.</td></tr>
+        <tr><td>Grifo de cerveza</td><td>Limpiar líneas con agua al inicio. Purgado y limpieza de válvulas según protocolo.</td></tr>
+        <tr><td>Lavavasos industrial</td><td>Verificar niveles de detergente y abrillantador diariamente. Limpiar filtros al final del turno.</td></tr>
+        <tr><td>TPV / Datáfono</td><td>Verificar conexión y papel al inicio. Reportar errores de inmediato.</td></tr>
+        <tr><td>Frigorífico y cámaras</td><td>Controlar temperatura (2-8°C). Registrar incidencias. No sobrecargar.</td></tr>
+      </tbody>
+    </table>
+    <div class="cards">
+      <div class="card"><h4>1. Operación correcta</h4><p>Seguir instrucciones del fabricante y protocolos internos.</p></div>
+      <div class="card"><h4>2. Limpieza diaria</h4><p>Realizar limpieza exhaustiva al finalizar turno.</p></div>
+      <div class="card"><h4>3. Seguridad prioritaria</h4><p>Usar EPI cuando sea necesario. Respetar normas eléctricas y térmicas.</p></div>
+      <div class="card"><h4>4. Reporte oportuno</h4><p>Comunicar fallos o anomalías al responsable inmediatamente.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="sec10">
+  <div class="section-header"><span class="num">10</span><h2>Tareas Durante el Servicio</h2></div>
+  <div class="section-body">
+    <p>La atención a las mesas debe ser constante y proactiva. El cliente nunca debe tener que buscar al camarero/a con la mirada para necesidades básicas.</p>
+    <h3>Tiempos Orientativos de Referencia</h3>
+    <div class="timings">
+      <div class="timing"><div class="time">30"</div><div class="label">Bienvenida</div></div>
+      <div class="timing"><div class="time">3 min</div><div class="label">Primera bebida</div></div>
+      <div class="timing"><div class="time">15-20 min</div><div class="label">Primer plato</div></div>
+      <div class="timing"><div class="time">10-15 min</div><div class="label">Segundo plato</div></div>
+      <div class="timing"><div class="time">3 min</div><div class="label">Cuenta solicitada</div></div>
+    </div>
+    <h3>Monitoreo Continuo</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Realizar una pasada visual de todas las mesas cada 5-8 minutos.</li>
+      <li><div class="check-box"></div>Reponer agua, pan y cubiertos sin que el cliente lo solicite.</li>
+      <li><div class="check-box"></div>Retirar vajilla sucia cuando el cliente ha terminado (nunca antes de que todos hayan acabado).</li>
+      <li><div class="check-box"></div>Atender señales no verbales: cliente mirando alrededor, vaso vacío, platos apilados.</li>
+    </ul>
+    <h3>Coordinación con Cocina y Barra</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Pasar los pedidos con claridad: mesa, posición, alergias y observaciones.</li>
+      <li><div class="check-box"></div>Confirmar tiempos de platos al pasar la comanda, especialmente en mesas grandes.</li>
+      <li><div class="check-box"></div>Si hay retraso, informar al cliente proactivamente antes de que pregunte.</li>
+      <li><div class="check-box"></div>No llevar platos a la mesa si no están todos los del mismo pase listos.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section" id="sec11">
+  <div class="section-header"><span class="num">11</span><h2>Protocolo de Reservas</h2></div>
+  <div class="section-body">
+    <p>Las reservas son la primera interacción del cliente con el establecimiento. Gestionarlas correctamente sienta las bases de una buena experiencia.</p>
+    <h3>Canales de Reserva</h3>
+    <table>
+      <thead><tr><th>Canal</th><th>Gestión</th></tr></thead>
+      <tbody>
+        <tr><td>📸 Instagram</td><td>El cliente solicita reserva por mensaje directo en el perfil oficial.</td></tr>
+        <tr><td>🎵 TikTok</td><td>Reservas por mensaje directo o enlace en la bio del perfil.</td></tr>
+        <tr><td>🔍 Google Business</td><td>Solicitud directamente desde la ficha de Google.</td></tr>
+        <tr><td>📞 Telefónica / presencial</td><td>El cliente llama o se acerca al establecimiento directamente.</td></tr>
+      </tbody>
+    </table>
+    <h3>Proceso de Gestión en Tableo</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><strong>Recibir la solicitud</strong><span>El cliente indica fecha, hora, número de comensales y necesidades especiales (cumpleaños, alergia, silla para bebé…).</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Registrar en Tableo</strong><span>Introducir todos los datos: nombre, teléfono/email, fecha, hora, número de personas y observaciones.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><strong>Confirmación automática</strong><span>El cliente recibe confirmación con las condiciones de la reserva. Verificar que se haya enviado correctamente.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><strong>Día de la reserva</strong><span>Recibir al cliente con calidez, confirmar nombre y asignar mesa según disponibilidad en ese momento.</span></div></div>
+    </div>
+    <div class="box yellow"><strong>📌 Normas clave de reservas</strong>Máximo 6 personas por reserva. En ningún caso se puede garantizar ni asegurar una mesa específica al cliente. La asignación de mesa se realiza el día de la reserva según disponibilidad.</div>
+  </div>
+</div>
+
+<div class="section" id="sec12">
+  <div class="section-header"><span class="num">12</span><h2>Normas de Higiene y Seguridad Alimentaria</h2></div>
+  <div class="section-body">
+    <p>La higiene y seguridad son pilares fundamentales en la industria gastronómica. Su incumplimiento puede tener consecuencias legales y de salud pública.</p>
+    <h3>Manejo Seguro de Alimentos</h3>
+    <table>
+      <thead><tr><th>Principio</th><th>Aplicación práctica</th></tr></thead>
+      <tbody>
+        <tr><td>Temperatura de conservación</td><td>Frío: 0-5°C. Caliente: >65°C. Zona de peligro: 5-65°C (evitar siempre).</td></tr>
+        <tr><td>Contaminación cruzada</td><td>Utensilios separados para crudos y cocinados. Nunca mezclar.</td></tr>
+        <tr><td>Rotación FIFO</td><td>Primero en entrar, primero en salir. Etiquetar con fecha de apertura.</td></tr>
+        <tr><td>Vida útil</td><td>Respetar fechas de caducidad. Desechar productos dudosos.</td></tr>
+      </tbody>
+    </table>
+    <h3>Protocolos de Emergencia</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Conocer la ubicación exacta de los extintores, salidas de emergencia y botiquín.</li>
+      <li><div class="check-box"></div>En caso de accidente o lesión: atender al afectado, avisar al responsable, registrar el incidente.</li>
+      <li><div class="check-box"></div>En caso de incendio: avisar, evacuar, no usar ascensores.</li>
+      <li><div class="check-box"></div>Números de emergencia visibles y accesibles en la estación de trabajo.</li>
+      <li><div class="check-box"></div>Conocer el protocolo de actuación ante reacción alérgica grave (anafilaxia).</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section" id="sec13">
+  <div class="section-header"><span class="num">13</span><h2>Procedimientos de Cierre y Limpieza</h2></div>
+  <div class="section-body">
+    <p>Un cierre meticuloso garantiza que el siguiente turno comience en óptimas condiciones y mantiene los estándares de higiene del establecimiento.</p>
+    <h3>Limpieza de Barra y Estaciones</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Superficies de barra desinfectadas completamente.</li>
+      <li><div class="check-box"></div>Cafetera y molinillo limpios (grupos, portafiltros, vaporizador).</li>
+      <li><div class="check-box"></div>Grifo de cerveza purgado y limpiado.</li>
+      <li><div class="check-box"></div>Lavavasos: filtros limpios, niveles de detergente y abrillantador verificados.</li>
+      <li><div class="check-box"></div>Derrames y manchas eliminados de todas las superficies.</li>
+    </ul>
+    <h3>Sala y Mobiliario</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Todas las mesas limpias, sin migas ni manchas.</li>
+      <li><div class="check-box"></div>Sillas colocadas correctamente y revisadas.</li>
+      <li><div class="check-box"></div>Suelo barrido/fregado en el área de responsabilidad.</li>
+      <li><div class="check-box"></div>Decoración y elementos de mesa en buen estado.</li>
+    </ul>
+    <h3>Utensilios y Cristalería</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Toda la cristalería lavada, secada y almacenada en su lugar.</li>
+      <li><div class="check-box"></div>Cubertería clasificada y guardada por tipo.</li>
+      <li><div class="check-box"></div>Inventario visual de faltantes o roturas (registrar).</li>
+    </ul>
+    <h3>🔑 Preparación para el Siguiente Turno</h3>
+    <ul class="checklist green">
+      <li><div class="check-box"></div>Vasos rellenados con cucharitas de café.</li>
+      <li><div class="check-box"></div>Vasos rellenados con cucharas de café con leche.</li>
+      <li><div class="check-box"></div>Vasos rellenados con cuchillos de postre.</li>
+      <li><div class="check-box"></div>Vasos rellenados con tenedores de postre.</li>
+      <li><div class="check-box"></div>Servilletas, manteles y paños repuestos.</li>
+      <li><div class="check-box"></div>Condimentos y complementos verificados y rellenados.</li>
+      <li><div class="check-box"></div>Stock mínimo asegurado para el siguiente turno.</li>
+      <li><div class="check-box"></div>Cartas de menú limpias y en su lugar.</li>
+    </ul>
+    <h3>Reporte Final</h3>
+    <ul class="checklist">
+      <li><div class="check-box"></div>Incidencias documentadas por escrito en el parte.</li>
+      <li><div class="check-box"></div>Faltantes o averías comunicados al responsable.</li>
+      <li><div class="check-box"></div>Información relevante transmitida al turno siguiente.</li>
+      <li><div class="check-box"></div>Checklist firmado y entregado al encargado.</li>
+    </ul>
+    <div class="box green"><strong>🔑 Recordatorio de cierre clave</strong>La preparación de los vasos con cubiertos de postre (cucharitas, cucharas de café con leche, cuchillos y tenedores) es un paso crítico que agiliza enormemente el inicio del siguiente turno.</div>
+  </div>
+</div>
+
+<div class="section" id="sec14">
+  <div class="section-header"><span class="num">14</span><h2>Conclusión y Buenas Prácticas</h2></div>
+  <div class="section-body">
+    <p>El éxito del servicio depende del compromiso individual con la excelencia. Seguir los procedimientos de este manual es una herramienta para el crecimiento profesional y la satisfacción personal en el trabajo.</p>
+    <div class="cards">
+      <div class="card"><h4>😊 Actitud positiva</h4><p>Una sonrisa genuina y disposición servicial transforman la experiencia del cliente.</p></div>
+      <div class="card"><h4>📚 Formación continua</h4><p>El aprendizaje constante abre nuevas oportunidades y mantiene la motivación.</p></div>
+      <div class="card"><h4>🔍 Atención al detalle</h4><p>Los pequeños detalles marcan la diferencia entre un servicio correcto y uno excepcional.</p></div>
+      <div class="card"><h4>🤝 Trabajo en equipo</h4><p>El mejor servicio individual fracasa sin coordinación con el equipo.</p></div>
+      <div class="card"><h4>⚡ Proactividad</h4><p>Anticiparse a las necesidades del cliente antes de que las exprese.</p></div>
+      <div class="card"><h4>💬 Comunicación</h4><p>Informar siempre a compañeros y superiores de incidencias y novedades.</p></div>
+    </div>
+    <div class="quote">"La excelencia no es un acto, sino un hábito. Cada interacción con el cliente es una oportunidad para demostrar profesionalismo y crear experiencias memorables."</div>
+  </div>
+</div>
+
+<div class="section" id="glosario">
+  <div class="section-header"><span class="num" style="background:#555">G</span><h2>Glosario de Términos</h2></div>
+  <div class="section-body">
+    <dl class="glossary">
+      <dt>Mise en place</dt><dd>Preparación y disposición de todos los elementos necesarios antes del servicio.</dd>
+      <dt>Comanda</dt><dd>Documento (físico o digital) donde se anotan los pedidos de los clientes.</dd>
+      <dt>Upselling</dt><dd>Técnica de venta que consiste en sugerir productos de mayor valor o adicionales.</dd>
+      <dt>FIFO</dt><dd>First In, First Out: sistema de rotación de stock (primero en entrar, primero en salir).</dd>
+      <dt>Alérgeno</dt><dd>Sustancia que puede causar reacción alérgica. Existen 14 alérgenos de declaración obligatoria.</dd>
+      <dt>Pase</dt><dd>Salida simultánea de platos del mismo tiempo (1º o 2º) para una misma mesa.</dd>
+      <dt>Gueridón</dt><dd>Mesa auxiliar sobre ruedas usada para el servicio francés.</dd>
+      <dt>Tableo</dt><dd>Plataforma digital de gestión de reservas usada en este establecimiento.</dd>
+      <dt>Maridaje</dt><dd>Combinación armónica de vino (u otra bebida) con un plato determinado.</dd>
+      <dt>EPI</dt><dd>Equipo de Protección Individual (guantes, delantal, etc.).</dd>
+      <dt>Anfitrión</dt><dd>Persona que organiza o paga la mesa; a quien se presenta la cuenta y se sirve primero en la cata.</dd>
+      <dt>TPV</dt><dd>Terminal Punto de Venta. Sistema de cobro electrónico / caja registradora.</dd>
+    </dl>
+  </div>
+</div>
+
+<div style="text-align:center; padding: 30px; color:#888; font-size:13px;">
+  Manual de Procedimientos — Camarero/a · v2.0 · Abril 2026
+</div>
+
+</div><!-- /#main -->
+
+<script>
+// ══ CREDENCIALES ═══════════════════════════════════════════════════════
+// Emails autorizados (en minúsculas)
+const ALLOWED_EMAILS = new Set([
+  "adria@cardona.com",
+  "aina@rosallo.com",
+  "alejandravalencia0330@gmail.com",
+  "alejandros@gmail.com",
+  "bleiva841@gmail.com",
+  "ayalalarisa01@icloud.com",
+  "genesis@genesis.com",
+  "calerojonathan76@gmail.com",
+  "juan.rodenas@romahosteleria.com",
+  "lourdes.martinez@romahosteleria.com",
+  "marietu@gmail.com",
+  "mireia.marquez@romahosteleria.com",
+  "tejadaperezbelkisrubi@gmail.com",
+  "sv110292@gmail.com",
+  "info@romahosteleria.com",
+  "admintaperiadecaldes@yurest.com",
+  "mastertaperiadecaldes@yurest.com"
+]);
+
+// Hash SHA-256 de la contraseña "Taperia2026!"
+// Para cambiar la contraseña: calcular nuevo hash con btoa(sha256("nueva_clave"))
+const PASS_HASH = "b94f7f5a3e1c4d8f2a6b9e0c5d7f3a1b2e8c4d6f0a9b3e5c7d1f2a4b6c8d0e2"; // placeholder
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+async function doLogin() {
+  const email = document.getElementById("email-input").value.trim().toLowerCase();
+  const pass  = document.getElementById("pass-input").value;
+  const btn   = document.getElementById("login-btn");
+  const err   = document.getElementById("login-error");
+
+  btn.textContent = "Verificando…";
+  btn.disabled = true;
+
+  const hash = await sha256(pass);
+  const CORRECT_HASH = "75cfb41bb1cb34d51ba6b8e9f2e5084e5c39c6dc0b065c18755fcdbced884656";
+
+  if (ALLOWED_EMAILS.has(email) && hash === CORRECT_HASH) {
+    sessionStorage.setItem("taperia_auth", "1");
+    showApp();
+  } else {
+    err.style.display = "block";
+    btn.textContent = "Entrar";
+    btn.disabled = false;
+    document.getElementById("pass-input").value = "";
+    document.getElementById("pass-input").focus();
+  }
+}
+
+function showApp() {
+  document.getElementById("login-overlay").style.display = "none";
+  document.getElementById("sidebar").style.display = "block";
+  document.getElementById("main").style.display = "block";
+  document.getElementById("logout-btn").style.display = "block";
+}
+
+function doLogout() {
+  sessionStorage.removeItem("taperia_auth");
+  location.reload();
+}
+
+// Enter key en los inputs
+document.getElementById("email-input").addEventListener("keydown", e => { if(e.key==="Enter") document.getElementById("pass-input").focus(); });
+document.getElementById("pass-input").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+
+// Auto-login si ya hay sesión
+if (sessionStorage.getItem("taperia_auth") === "1") showApp();
+
+// ══ NAV ACTIVO ═══════════════════════════════════════════════════════
+const sections = document.querySelectorAll('[id^="sec"], #glosario');
+const navLinks  = document.querySelectorAll('#sidebar nav a');
+const observer  = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector('#sidebar nav a[href="#' + e.target.id + '"]');
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
