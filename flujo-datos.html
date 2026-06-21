@@ -53,7 +53,7 @@
 <header class="top">
   <h1>🏧 La Tapería de Caldes — Flujo y arquitectura de datos</h1>
   <div class="sub">Cómo entran, se procesan, interactúan y salen los datos del sistema operativo (arqueo, caja, KPIs y manual del personal).</div>
-  <div class="meta">Documento técnico · generado a partir del sistema real (web <code>taperia-caldes-kpi.netlify.app</code>, Excel maestro y repositorios)</div>
+  <div class="meta">Documento técnico · generado a partir del sistema real (web <code>taperia-caldes-kpi.netlify.app</code>, Gmail, Excel maestro y repositorios) · actualizado 21/06/2026 con la <strong>automatización diaria (06:00)</strong></div>
 </header>
 
 <p class="lead">El sistema tiene <strong>dos subsistemas</strong>. El primero, <strong>datos y arqueo</strong>, combina un flujo <span class="tag t-blue">automático</span> (ventas del TPV + Excel) y otro <span class="tag t-pur">manual</span> (caja física vía WhatsApp y entrada a mano); la app <span class="tag t-grn">calcula</span> y produce <span class="tag t-amb">salidas</span> (arqueo, Pendent Banc, resumen, dashboards). El segundo, <strong>manual y operativa del personal</strong>, gestiona instrucciones, el manual de procedimientos y el checklist de cierre.</p>
@@ -79,13 +79,13 @@
 <rect x="40" y="46" width="120" height="48" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="100" y="68" text-anchor="middle" class="t">TPV · Cierre</text><text x="100" y="83" text-anchor="middle" class="s">llega por email</text>
 <rect x="172" y="46" width="120" height="48" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="232" y="68" text-anchor="middle" class="t">Excel maestro</text><text x="232" y="83" text-anchor="middle" class="s">OneDrive · Retiros</text>
 <rect x="488" y="46" width="252" height="48" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/><text x="614" y="68" text-anchor="middle" class="t">WhatsApp</text><text x="614" y="83" text-anchor="middle" class="s">Fondo caja · Excedente</text>
-<rect x="40" y="132" width="252" height="50" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="166" y="154" text-anchor="middle" class="t">Sincronización</text><text x="166" y="169" text-anchor="middle" class="s">GitHub Action 30 min + Deploy diario</text>
+<rect x="40" y="132" width="252" height="50" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="166" y="152" text-anchor="middle" class="t">Robot diari · 06:00</text><text x="166" y="167" text-anchor="middle" class="s">GitHub Action: Gmail → JSON + KPI → deploy</text>
 <rect x="488" y="132" width="252" height="50" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/><text x="614" y="154" text-anchor="middle" class="t">Entrada manual (app)</text><text x="614" y="169" text-anchor="middle" class="s">Caixa 1: Contado, Visa, Retiros…</text>
-<rect x="40" y="220" width="252" height="50" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="166" y="242" text-anchor="middle" class="t">Datos de la web (JSON)</text><text x="166" y="257" text-anchor="middle" class="s">cierres · histórico · previsión</text>
+<rect x="40" y="220" width="252" height="50" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="166" y="242" text-anchor="middle" class="t">Datos de la web (JSON)</text><text x="166" y="257" text-anchor="middle" class="s">cierres · histórico · previsió · ref 2025</text>
 <rect x="226" y="312" width="328" height="54" rx="12" fill="#E1F5EE" stroke="#5DCAA5"/><text x="390" y="335" text-anchor="middle" class="t">APP WEB — Arqueo Diari</text><text x="390" y="351" text-anchor="middle" class="s">carga cierre (auto) + entrada Caixa 1</text>
 <rect x="226" y="392" width="328" height="54" rx="12" fill="#E1F5EE" stroke="#5DCAA5"/><text x="390" y="415" text-anchor="middle" class="t">Cálculos automáticos</text><text x="390" y="431" text-anchor="middle" class="s">Total Net · Brut · Caixa Dia · Efectiu · %</text>
 <rect x="226" y="472" width="328" height="48" rx="12" fill="#E1F5EE" stroke="#5DCAA5"/><text x="390" y="494" text-anchor="middle" class="t">Guardar arqueo</text><text x="390" y="509" text-anchor="middle" class="s">→ localStorage del navegador</text>
-<rect x="40" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="145" y="582" text-anchor="middle" class="t">Dashboard / KPIs</text><text x="145" y="598" text-anchor="middle" class="s">previsión vs real</text>
+<rect x="40" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="145" y="582" text-anchor="middle" class="t">Panel Incentius · KPI</text><text x="145" y="598" text-anchor="middle" class="s">v2026 vs objectiu</text>
 <rect x="285" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="390" y="582" text-anchor="middle" class="t">Pendent Banc</text><text x="390" y="598" text-anchor="middle" class="s">depósitos pendientes</text>
 <rect x="530" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="635" y="582" text-anchor="middle" class="t">Resum Mensual</text><text x="635" y="598" text-anchor="middle" class="s">totales por mes</text>
 <path class="ln" marker-end="url(#ar)" d="M100,94 L132,130"/><path class="ln" marker-end="url(#ar)" d="M232,94 L200,130"/>
@@ -139,27 +139,27 @@
 
 <!-- ============ 2 ============ -->
 <h2><span class="n">2</span>Procesamiento y sincronización</h2>
+<p>Todo lo hace un único <strong>GitHub Action que se ejecuta solo cada día a las 06:00</strong> (hora de Madrid). No interviene nadie ni hace falta que el Mac esté encendido.</p>
 <div class="grid2">
   <div class="card">
-    <h3 style="margin-top:0">Robot de GitHub (cada 30 min)</h3>
-    <p class="pill">Workflow «Sincronización Dashboard»</p>
+    <h3 style="margin-top:0">Robot diario de GitHub (06:00)</h3>
+    <p class="pill">Workflow <code>.github/workflows/update.yml</code> · cron <code>0 4 * * *</code> (= 06:00 Madrid)</p>
     <ul>
-      <li>Ejecuta <code>fetch_data.py</code></li>
-      <li>Lee el Excel/OneDrive vía <strong>Microsoft Graph</strong> (con credenciales seguras)</li>
-      <li>Actualiza <code>index.html</code> + <code>sync_log.json</code></li>
-      <li>Hace <code>git push</code> al repositorio</li>
+      <li><code>generar_arqueo.py</code> lee los correos «Cierre de caja» de <strong>Gmail</strong> (OAuth) y descarga el PDF de cada cierre.</li>
+      <li>Genera <code>historico_caja.json</code>, <code>cierres_diarios.json</code>, <code>ultimo_cierre.json</code> y <code>ref_meses.json</code> (importes netos = bruto ÷ 1,10; previsión = ventas 2025 × 1,03).</li>
+      <li><code>update_kpi.py</code> recalcula el <strong>Panel de Seguiment Incentius</strong> (<code>kpi_taperia.html</code>) para el mes en curso.</li>
+      <li><code>git commit</code> + <code>push</code>: los datos y el panel <strong>sí</strong> se versionan en GitHub.</li>
     </ul>
-    <p class="pill">Regla: solo modifica datos, nunca el diseño.</p>
   </div>
   <div class="card">
-    <h3 style="margin-top:0">Deploy diario (CLI)</h3>
-    <p class="pill">Proceso automático desde el Mac</p>
+    <h3 style="margin-top:0">Publicación en Netlify (el mismo Action)</h3>
+    <p class="pill">Deploy con token · sin integración nativa</p>
     <ul>
-      <li>Regenera los archivos de datos de la web</li>
-      <li>Publica en Netlify con <code>netlify deploy</code></li>
-      <li>Visible como despliegues «Auto-update DD/MM/YYYY»</li>
+      <li>El propio workflow ejecuta <code>netlify deploy --prod</code> con <code>NETLIFY_AUTH_TOKEN</code> + <code>NETLIFY_SITE_ID</code>.</li>
+      <li>Publica el sitio <code>taperia-caldes-kpi</code> con datos y panel frescos.</li>
+      <li>Visible como despliegues «Auto-update DD/MM/YYYY».</li>
     </ul>
-    <p class="pill">Mantiene frescos cierres, histórico y previsión.</p>
+    <p class="pill">⚠️ Netlify <strong>no</strong> está conectado nativamente a GitHub: el deploy lo lanza el Action con token.</p>
   </div>
 </div>
 
@@ -172,8 +172,10 @@
   <tr><td><code>cierres_diarios.json</code></td><td>Mapa <code>fecha → {num_cierre, contado, visa, passo, tickets_rest, total}</code></td><td>Feed de cierres del TPV. La app carga de aquí los datos del día.</td></tr>
   <tr><td><code>historico_caja.json</code></td><td>Lista <code>[{fecha, total, previsto, evento}]</code></td><td>Histórico para gráficas: real vs. previsión.</td></tr>
   <tr><td><code>ultimo_cierre.json</code></td><td>Último cierre disponible</td><td>Carga automática del día más reciente.</td></tr>
+  <tr><td><code>ref_meses.json</code></td><td>Mapa <code>mes → {v2025, dias}</code></td><td>Totales netos de 2025 por mes. <strong>Respaldo</strong> para la previsión de meses futuros del panel KPI.</td></tr>
+  <tr><td><code>objetivos_2026.json</code></td><td>Mapa <code>mes → {v2025, prevision, diferencia, invDia}</code></td><td><strong>Objetivos oficiales de incentivos (BD del TPV).</strong> Mandan siempre sobre <code>ref_meses</code>.</td></tr>
 </table>
-<div class="note">⚠️ Importante: los importes <code>contado / visa / passo</code> de estos archivos ya están en <strong>neto (sin IVA)</strong> — es decir, el bruto del TPV ya se ha dividido entre 1,10.</div>
+<div class="note">⚠️ Importante: los importes <code>contado / visa / passo</code> ya están en <strong>neto (sin IVA)</strong> (bruto del TPV ÷ 1,10). A diferencia de antes, estos JSON <strong>sí</strong> se versionan en GitHub: los regenera y commitea el robot diario.</div>
 
 <h3>B · Almacenamiento del navegador (localStorage)</h3>
 <p>Aquí guarda la app lo que el usuario introduce y calcula. Vive en el navegador del usuario.</p>
@@ -215,7 +217,8 @@
   <li><span class="tag t-amb">Salida</span> <strong>Arqueo guardado</strong> — el registro diario completo en <code>taperia_arqueos_v2</code>.</li>
   <li><span class="tag t-amb">Salida</span> <strong>Pendent Banc</strong> — lista de efectivo (Contado c/IVA) pendiente de ingresar en el banco; se marca como pagado al depositarlo.</li>
   <li><span class="tag t-amb">Salida</span> <strong>Resum Mensual</strong> — totales agregados por mes a partir de los arqueos guardados.</li>
-  <li><span class="tag t-amb">Salida</span> <strong>Dashboard / KPIs</strong> (<code>index.html</code>) — alimentado por la sincronización del Excel; compara previsión vs. real, ticket medio, comensales, márgenes, etc.</li>
+  <li><span class="tag t-amb">Salida</span> <strong>Panel de Seguiment Incentius · 2026</strong> (<code>kpi_taperia.html</code>) — generado por <code>update_kpi.py</code> desde los cierres. Por mes: vendes 2026 (suma de cierres del mes) vs. <strong>objetivo</strong> (<code>objetivos_2026.json</code>), <em>Fins Obj</em>, <strong>incentiu = 10%</strong> de lo que supera el objetivo, y ticket medio por tramos. Enero–mayo son fijos (BD TPV); junio en adelante se alimentan del arqueo.</li>
+  <li><span class="tag t-amb">Salida</span> <strong>Dashboard / KPIs</strong> (<code>index.html</code>) — panel de accesos; compara previsión vs. real, ticket medio, comensales, márgenes, etc.</li>
 </ul>
 
 <!-- ============ 7 ============ -->
@@ -223,12 +226,13 @@
 <table>
   <tr><th>Pieza</th><th>Detalle</th></tr>
   <tr><td>Web</td><td><code>taperia-caldes-kpi.netlify.app</code> (Netlify). Páginas: <code>arqueo.html</code>, <code>index.html</code>, <code>dashboard.html</code>, <code>kpi_taperia.html</code>, <code>manual/index.html</code>, <code>manual/checklist_cierre_app.html</code>, <code>subir_instrucciones.html</code>…</td></tr>
-  <tr><td>Repositorio</td><td>GitHub <code>jrodenas67/taperia-caldes-kpi</code> (HTML estático). Otros: <code>tracker-operativo</code>, <code>taperia-dashboard</code>.</td></tr>
-  <tr><td>Publicación</td><td><strong>Despliegue automático diario por CLI</strong> desde el Mac (genera los datos frescos). <em>No</em> se publica conectando Netlify a GitHub: eso interrumpiría la actualización de datos.</td></tr>
-  <tr><td>Proyecto local</td><td>Carpeta de OneDrive sincronizada en el Mac (<code>…/Aplicaciones/Tracker-operativo/BDD/kpi-site</code>).</td></tr>
+  <tr><td>Repositorio</td><td>GitHub <code>jrodenas67/taperia-caldes-kpi</code>. Contiene el HTML, los scripts (<code>generar_arqueo.py</code>, <code>gmail_cierres.py</code>, <code>update_kpi.py</code>) y los datos (JSON), que ahora <strong>sí</strong> se versionan.</td></tr>
+  <tr><td>Publicación</td><td><strong>Despliegue automático diario desde el GitHub Action</strong> (06:00 Madrid) con <code>netlify deploy --prod</code> + token. <em>No</em> se usa la integración nativa Netlify↔GitHub.</td></tr>
+  <tr><td>Secrets (GitHub)</td><td><code>GMAIL_CLIENT_ID</code>, <code>GMAIL_CLIENT_SECRET</code>, <code>GMAIL_REFRESH_TOKEN</code> (lectura de Gmail) · <code>NETLIFY_AUTH_TOKEN</code>, <code>NETLIFY_SITE_ID</code> (deploy).</td></tr>
+  <tr><td>Proyecto local</td><td>Copia del repo en el Mac (<code>~/taperia-caldes-kpi</code>). Útil para editar el código a mano.</td></tr>
   <tr><td>Otros sitios</td><td><code>menu-semanal-taperia</code>, <code>tracker-operativo</code>, <code>manual.lataperiadecaldes.com</code>.</td></tr>
 </table>
-<div class="note">⚠️ <strong>Nota de mantenimiento:</strong> los archivos de datos (<code>cierres_diarios.json</code>, <code>historico_caja.json</code>…) <strong>no</strong> viven en GitHub; los genera el proceso de despliegue diario. Por eso, los cambios de <em>código</em> de la web (o páginas nuevas) deben aplicarse en ese mismo proceso/carpeta local y publicarse con el deploy de siempre.</div>
+<div class="note">⚠️ <strong>Nota de mantenimiento:</strong> los datos (<code>cierres_diarios.json</code>, <code>historico_caja.json</code>, <code>ref_meses.json</code>…) los regenera y commitea el robot diario. Si editas el código a mano en local, haz <code>git pull</code> <strong>antes</strong> de cualquier <code>netlify deploy</code> manual, para no pisar los datos que el Action ya haya publicado. El workflow también puede lanzarse a mano desde <em>Actions → «Run workflow»</em>.</div>
 
 <!-- ============ 8 ============ -->
 <h2><span class="n">8</span>Glosario rápido</h2>
@@ -257,7 +261,7 @@
 
 <footer>
   Documento de arquitectura de datos · La Tapería de Caldes · 2026.<br>
-  Elaborado a partir del sistema real (web, Excel maestro y repositorios). Los importes de ejemplo corresponden al cierre del 20/06/2026. Diagrama actualizado con el subsistema de manual y operativa del personal.
+  Elaborado a partir del sistema real (web, Gmail, Excel maestro y repositorios). Los importes de ejemplo corresponden al cierre del 20/06/2026. Incluye la automatización diaria (GitHub Action 06:00: Gmail → JSON + Panel Incentius → Netlify) y el subsistema de manual y operativa del personal.
 </footer>
 
 </div>
