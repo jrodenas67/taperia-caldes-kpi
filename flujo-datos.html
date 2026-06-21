@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Tapería de Caldes · Flujo y arquitectura de datos</title>
+<style>
+  :root{
+    --bg:#F7F6F2; --card:#fff; --ink:#26251f; --mut:#6b6a62; --line:#e3e1d8;
+    --blue:#E6F1FB; --blueB:#85B7EB; --blueT:#1f5c93;
+    --pur:#EEEDFE; --purB:#AFA9EC; --purT:#4a3fae;
+    --grn:#E1F5EE; --grnB:#5DCAA5; --grnT:#0f6e56;
+    --amb:#FAECE7; --ambB:#F0997B; --ambT:#993c1d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 22px 80px}
+  header.top{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:8px}
+  header.top h1{margin:0 0 4px;font-size:27px;letter-spacing:-.3px}
+  header.top .sub{color:var(--mut);font-size:14px}
+  .meta{font-size:12px;color:var(--mut);margin-top:6px}
+  h2{font-size:20px;margin:38px 0 6px;padding-top:14px;border-top:1px solid var(--line)}
+  h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;background:var(--ink);color:#fff;border-radius:7px;font-size:14px;margin-right:8px;vertical-align:1px}
+  h3{font-size:15.5px;margin:22px 0 4px}
+  p{margin:8px 0}
+  .lead{font-size:16px;color:#3a3933}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+  .diagram{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:16px 0;overflow-x:auto}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f0efe9;font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.3px;color:#55544c}
+  tr:last-child td{border-bottom:none}
+  code{background:#efeee8;padding:1px 6px;border-radius:5px;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:12.5px;color:#3a3933}
+  .formula{background:#f3f2ec;border-left:3px solid var(--grnB);border-radius:0 8px 8px 0;padding:10px 14px;margin:8px 0;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;margin-right:4px}
+  .t-blue{background:var(--blue);color:var(--blueT);border:1px solid var(--blueB)}
+  .t-pur{background:var(--pur);color:var(--purT);border:1px solid var(--purB)}
+  .t-grn{background:var(--grn);color:var(--grnT);border:1px solid var(--grnB)}
+  .t-amb{background:var(--amb);color:var(--ambT);border:1px solid var(--ambB)}
+  .note{background:#fff8e8;border:1px solid #f0dca0;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:13.5px}
+  .key{background:var(--grn);border:1px solid var(--grnB);border-radius:10px;padding:12px 16px;margin:14px 0;font-size:13.5px}
+  ul{margin:8px 0 8px 2px;padding-left:20px}
+  li{margin:4px 0}
+  .pill{font-size:11.5px;color:var(--mut)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>🏧 La Tapería de Caldes — Flujo y arquitectura de datos</h1>
+  <div class="sub">Cómo entran, se procesan, interactúan y salen los datos del sistema operativo (arqueo, caja, KPIs y manual del personal).</div>
+  <div class="meta">Documento técnico · generado a partir del sistema real (web <code>taperia-caldes-kpi.netlify.app</code>, Excel maestro y repositorios)</div>
+</header>
+
+<p class="lead">El sistema tiene <strong>dos subsistemas</strong>. El primero, <strong>datos y arqueo</strong>, combina un flujo <span class="tag t-blue">automático</span> (ventas del TPV + Excel) y otro <span class="tag t-pur">manual</span> (caja física vía WhatsApp y entrada a mano); la app <span class="tag t-grn">calcula</span> y produce <span class="tag t-amb">salidas</span> (arqueo, Pendent Banc, resumen, dashboards). El segundo, <strong>manual y operativa del personal</strong>, gestiona instrucciones, el manual de procedimientos y el checklist de cierre.</p>
+
+<!-- ============ DIAGRAMA ============ -->
+<div class="diagram">
+<svg viewBox="0 0 780 900" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto" font-family="'Inter',system-ui,sans-serif">
+<title>Flujo de datos de La Tapería de Caldes (con manual y operativa del personal)</title>
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c7b75"/></marker>
+<style>
+.t{font-size:13px;font-weight:600;fill:#2C2C2A}.s{font-size:10.5px;fill:#5F5E5A}
+.lg{font-size:10.5px;font-weight:600;fill:#444441}.al{font-size:9.5px;font-style:italic;fill:#7c7b75}
+.zone{font-size:12.5px;font-weight:700;fill:#2C2C2A;letter-spacing:.3px}
+.ln{stroke:#7c7b75;stroke-width:1.6;fill:none}
+</style>
+</defs>
+<rect x="40" y="10" width="12" height="12" rx="3" fill="#E6F1FB" stroke="#85B7EB"/><text x="57" y="20" class="lg">Automático</text>
+<rect x="178" y="10" width="12" height="12" rx="3" fill="#EEEDFE" stroke="#AFA9EC"/><text x="195" y="20" class="lg">Manual</text>
+<rect x="288" y="10" width="12" height="12" rx="3" fill="#E1F5EE" stroke="#5DCAA5"/><text x="305" y="20" class="lg">App / web</text>
+<rect x="412" y="10" width="12" height="12" rx="3" fill="#FAECE7" stroke="#F0997B"/><text x="429" y="20" class="lg">Salidas</text>
+<text x="640" y="20" class="zone">💶 DATOS Y ARQUEO</text>
+<rect x="40" y="46" width="120" height="48" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="100" y="68" text-anchor="middle" class="t">TPV · Cierre</text><text x="100" y="83" text-anchor="middle" class="s">llega por email</text>
+<rect x="172" y="46" width="120" height="48" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="232" y="68" text-anchor="middle" class="t">Excel maestro</text><text x="232" y="83" text-anchor="middle" class="s">OneDrive · Retiros</text>
+<rect x="488" y="46" width="252" height="48" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/><text x="614" y="68" text-anchor="middle" class="t">WhatsApp</text><text x="614" y="83" text-anchor="middle" class="s">Fondo caja · Excedente</text>
+<rect x="40" y="132" width="252" height="50" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="166" y="154" text-anchor="middle" class="t">Sincronización</text><text x="166" y="169" text-anchor="middle" class="s">GitHub Action 30 min + Deploy diario</text>
+<rect x="488" y="132" width="252" height="50" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/><text x="614" y="154" text-anchor="middle" class="t">Entrada manual (app)</text><text x="614" y="169" text-anchor="middle" class="s">Caixa 1: Contado, Visa, Retiros…</text>
+<rect x="40" y="220" width="252" height="50" rx="10" fill="#E6F1FB" stroke="#85B7EB"/><text x="166" y="242" text-anchor="middle" class="t">Datos de la web (JSON)</text><text x="166" y="257" text-anchor="middle" class="s">cierres · histórico · previsión</text>
+<rect x="226" y="312" width="328" height="54" rx="12" fill="#E1F5EE" stroke="#5DCAA5"/><text x="390" y="335" text-anchor="middle" class="t">APP WEB — Arqueo Diari</text><text x="390" y="351" text-anchor="middle" class="s">carga cierre (auto) + entrada Caixa 1</text>
+<rect x="226" y="392" width="328" height="54" rx="12" fill="#E1F5EE" stroke="#5DCAA5"/><text x="390" y="415" text-anchor="middle" class="t">Cálculos automáticos</text><text x="390" y="431" text-anchor="middle" class="s">Total Net · Brut · Caixa Dia · Efectiu · %</text>
+<rect x="226" y="472" width="328" height="48" rx="12" fill="#E1F5EE" stroke="#5DCAA5"/><text x="390" y="494" text-anchor="middle" class="t">Guardar arqueo</text><text x="390" y="509" text-anchor="middle" class="s">→ localStorage del navegador</text>
+<rect x="40" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="145" y="582" text-anchor="middle" class="t">Dashboard / KPIs</text><text x="145" y="598" text-anchor="middle" class="s">previsión vs real</text>
+<rect x="285" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="390" y="582" text-anchor="middle" class="t">Pendent Banc</text><text x="390" y="598" text-anchor="middle" class="s">depósitos pendientes</text>
+<rect x="530" y="560" width="210" height="52" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="635" y="582" text-anchor="middle" class="t">Resum Mensual</text><text x="635" y="598" text-anchor="middle" class="s">totales por mes</text>
+<path class="ln" marker-end="url(#ar)" d="M100,94 L132,130"/><path class="ln" marker-end="url(#ar)" d="M232,94 L200,130"/>
+<path class="ln" marker-end="url(#ar)" d="M166,182 L166,218"/><path class="ln" marker-end="url(#ar)" d="M614,94 L614,130"/>
+<path class="ln" marker-end="url(#ar)" d="M166,270 C166,300 270,300 300,314"/><text x="205" y="300" class="al">carga cierre</text>
+<path class="ln" marker-end="url(#ar)" d="M614,182 C614,250 500,270 470,314"/><text x="556" y="262" class="al">teclea Excedente</text>
+<path class="ln" marker-end="url(#ar)" d="M390,366 L390,390"/><path class="ln" marker-end="url(#ar)" d="M390,446 L390,470"/>
+<path class="ln" marker-end="url(#ar)" d="M70,270 L70,540 C70,553 110,555 130,558"/>
+<path class="ln" marker-end="url(#ar)" d="M360,520 C360,545 390,548 390,558"/>
+<path class="ln" marker-end="url(#ar)" d="M470,512 C560,538 600,545 620,558"/>
+<line x1="40" y1="648" x2="740" y2="648" stroke="#D3D1C7" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="40" y="676" class="zone">📋 MANUAL Y OPERATIVA DEL PERSONAL <tspan fill="#888780" font-weight="400">· nuevo</tspan></text>
+<rect x="40" y="700" width="150" height="50" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/><text x="115" y="722" text-anchor="middle" class="t">Gerencia</text><text x="115" y="738" text-anchor="middle" class="s">sube instrucción</text>
+<rect x="222" y="700" width="190" height="50" rx="10" fill="#EEEDFE" stroke="#AFA9EC"/><text x="317" y="722" text-anchor="middle" class="t">Subir instrucción</text><text x="317" y="738" text-anchor="middle" class="s">subir_instrucciones.html</text>
+<rect x="450" y="678" width="290" height="46" rx="10" fill="#E1F5EE" stroke="#5DCAA5"/><text x="595" y="699" text-anchor="middle" class="t">Manual de procedimientos</text><text x="595" y="714" text-anchor="middle" class="s">manual/index.html</text>
+<rect x="450" y="734" width="290" height="46" rx="10" fill="#E1F5EE" stroke="#5DCAA5"/><text x="595" y="755" text-anchor="middle" class="t">Checklist de cierre</text><text x="595" y="770" text-anchor="middle" class="s">manual/checklist_cierre_app.html</text>
+<rect x="300" y="822" width="300" height="48" rx="10" fill="#FAECE7" stroke="#F0997B"/><text x="450" y="844" text-anchor="middle" class="t">Personal (camareros)</text><text x="450" y="860" text-anchor="middle" class="s">consulta el manual · usa el checklist</text>
+<path class="ln" marker-end="url(#ar)" d="M190,725 L218,725"/>
+<path class="ln" marker-end="url(#ar)" d="M412,718 C432,710 432,704 446,701"/><text x="405" y="694" class="al">actualiza</text>
+<path class="ln" marker-end="url(#ar)" d="M560,724 C520,760 500,790 480,818"/>
+<path class="ln" marker-end="url(#ar)" d="M560,780 C520,800 510,805 500,818"/>
+</svg>
+</div>
+
+<!-- ============ 1 ============ -->
+<h2><span class="n">1</span>Fuentes de datos (entradas)</h2>
+<p>Hay cuatro orígenes. Dos alimentan el sistema de forma automática y dos requieren intervención humana.</p>
+
+<h3><span class="tag t-blue">Automático</span> TPV — Cierre diario</h3>
+<p>Al cerrar la caja, el <strong>terminal de venta (TPV)</strong> genera el cierre del día y lo envía por <strong>correo electrónico</strong>. Un proceso lo lee y lo convierte en el dato base de ventas. Cada cierre tiene su <strong>nº de tancament</strong> (p. ej. 1480).</p>
+
+<h3><span class="tag t-blue">Automático</span> Excel maestro (OneDrive / SharePoint)</h3>
+<p>Archivo <code>Taperia_Caldes_Operaciones_2026_Trabajando.xlsx</code>. Es la base analítica del negocio. Hojas relevantes:</p>
+<table>
+  <tr><th>Hoja</th><th>Contenido</th></tr>
+  <tr><td><strong>Arqueo e incentivos</strong></td><td>Una fila por día: <code>Fecha</code>, <code>Contado</code>, <code>Visa</code>, <code>Passo</code>, <code>Reciclajes</code>, <code>Invitaciones</code>, <code>Personal</code>, <strong><code>Retiros</code></strong>, <code>Ingreso</code>, <code>Total Caja</code>, <code>%Tickets</code>, <code>Facturació A/A</code>, <code>Diferencia</code>, <code>Previsión</code>, <code>Resultado</code>, etc.</td></tr>
+  <tr><td>Caja 1 / Caja 2</td><td>Registro diario de ventas y comensales por turno (facturación, ticket medio, coste de personal, margen).</td></tr>
+  <tr><td>Ventas Caja 1 / Ventas Caja 2</td><td>Detalle de ventas por caja.</td></tr>
+  <tr><td>BD_Datos · Product Mix</td><td>Base de datos de productos y mezcla de ventas (menu engineering).</td></tr>
+  <tr><td>Dashboard Gerencia · P&amp;L EBITDA · Facturación 2025/2026</td><td>Cuadros de mando y resultados financieros.</td></tr>
+  <tr><td>Horarios Personal · Resumen Empleado · Detalle Turnos</td><td>Gestión de personal y turnos.</td></tr>
+</table>
+
+<h3><span class="tag t-pur">Manual</span> WhatsApp — Fondo de caja</h3>
+<p>Cada noche el equipo manda un mensaje con el cuadre físico de caja:</p>
+<div class="formula">Fondo Caja: 276,30 €<br>Fecha: 20/06/26<br>Excedente: 375,00 €<br>Descuadre efectivo: 22,85 €</div>
+<div class="key">🔑 <strong>Dato clave:</strong> el <strong>«Excedente»</strong> del WhatsApp es exactamente el valor de <strong>«Retiros»</strong> de la caja. Es lo que se introduce como <code>Contado Caixa 1</code> en la app.</div>
+
+<h3><span class="tag t-pur">Manual</span> Entrada en la app (Caixa 1)</h3>
+<p>El usuario abre el <em>Arqueo Diari</em> y teclea a mano los datos de la caja física: Reciclajes, Invitaciones, Personal, <strong>Retiros</strong>, Contado Caixa 1, Visa Caixa 1 e Ingreso.</p>
+
+<!-- ============ 2 ============ -->
+<h2><span class="n">2</span>Procesamiento y sincronización</h2>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">Robot de GitHub (cada 30 min)</h3>
+    <p class="pill">Workflow «Sincronización Dashboard»</p>
+    <ul>
+      <li>Ejecuta <code>fetch_data.py</code></li>
+      <li>Lee el Excel/OneDrive vía <strong>Microsoft Graph</strong> (con credenciales seguras)</li>
+      <li>Actualiza <code>index.html</code> + <code>sync_log.json</code></li>
+      <li>Hace <code>git push</code> al repositorio</li>
+    </ul>
+    <p class="pill">Regla: solo modifica datos, nunca el diseño.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Deploy diario (CLI)</h3>
+    <p class="pill">Proceso automático desde el Mac</p>
+    <ul>
+      <li>Regenera los archivos de datos de la web</li>
+      <li>Publica en Netlify con <code>netlify deploy</code></li>
+      <li>Visible como despliegues «Auto-update DD/MM/YYYY»</li>
+    </ul>
+    <p class="pill">Mantiene frescos cierres, histórico y previsión.</p>
+  </div>
+</div>
+
+<!-- ============ 3 ============ -->
+<h2><span class="n">3</span>Almacenamiento de datos</h2>
+
+<h3>A · Archivos publicados en la web (solo lectura)</h3>
+<table>
+  <tr><th>Archivo</th><th>Estructura</th><th>Para qué</th></tr>
+  <tr><td><code>cierres_diarios.json</code></td><td>Mapa <code>fecha → {num_cierre, contado, visa, passo, tickets_rest, total}</code></td><td>Feed de cierres del TPV. La app carga de aquí los datos del día.</td></tr>
+  <tr><td><code>historico_caja.json</code></td><td>Lista <code>[{fecha, total, previsto, evento}]</code></td><td>Histórico para gráficas: real vs. previsión.</td></tr>
+  <tr><td><code>ultimo_cierre.json</code></td><td>Último cierre disponible</td><td>Carga automática del día más reciente.</td></tr>
+</table>
+<div class="note">⚠️ Importante: los importes <code>contado / visa / passo</code> de estos archivos ya están en <strong>neto (sin IVA)</strong> — es decir, el bruto del TPV ya se ha dividido entre 1,10.</div>
+
+<h3>B · Almacenamiento del navegador (localStorage)</h3>
+<p>Aquí guarda la app lo que el usuario introduce y calcula. Vive en el navegador del usuario.</p>
+<table>
+  <tr><th>Clave</th><th>Estructura</th><th>Para qué</th></tr>
+  <tr><td><code>taperia_arqueos_v2</code></td><td>Lista de arqueos: <code>{fecha, num_cierre, contado, visa, passo, c1_contado, c1_visa, ingreso, reciclajes, invitaciones, personal, retiros, total, obs, ts}</code></td><td>El arqueo de caja guardado de cada día.</td></tr>
+  <tr><td><code>taperia_banc_v1</code></td><td>Lista de partidas: <code>{id, fecha, importe, desc, pagat}</code></td><td>Pendent Banc — efectivo pendiente de ingresar en el banco.</td></tr>
+</table>
+
+<!-- ============ 4 ============ -->
+<h2><span class="n">4</span>La app — «Arqueo Diari»</h2>
+<p>La pantalla principal (<code>arqueo.html</code>). Tiene tres pestañas: <strong>Arqueo Diari</strong>, <strong>Resum Mensual</strong> y <strong>Pendent Banc</strong>. El formulario diario se organiza así:</p>
+<table>
+  <tr><th>Sección</th><th>Campos</th><th>Origen</th></tr>
+  <tr><td>Identificació</td><td>Data, Nº Tancament, Observacions</td><td>Auto + manual</td></tr>
+  <tr><td>Altres Pagaments <span class="pill">(auto des de correu)</span></td><td>Contado (neto s/IVA), Visa/Tarjeta (neto), Passo de Cuinar (neto), Total Brut, Total Net</td><td><span class="tag t-blue">Automático</span> del cierre</td></tr>
+  <tr><td>Caixa 1 <span class="pill">(entrada manual)</span></td><td>Reciclajes, Invitaciones, Personal, Retiros</td><td><span class="tag t-pur">Manual</span></td></tr>
+  <tr><td>Ingressos Caixa 1</td><td>Contado Caixa 1, Visa Caixa 1, Ingreso</td><td><span class="tag t-pur">Manual</span></td></tr>
+  <tr><td>Resultat del Dia</td><td>Total Caixa Dia, Efectiu, % Targetes</td><td><span class="tag t-grn">Calculado</span></td></tr>
+</table>
+
+<!-- ============ 5 ============ -->
+<h2><span class="n">5</span>Cálculos y fórmulas</h2>
+<p>Todo se recalcula automáticamente al teclear. El IVA aplicado es del <strong>10 %</strong> (hostelería), por eso se multiplica/divide por <strong>1,10</strong>.</p>
+<table>
+  <tr><th>Resultado</th><th>Fórmula</th></tr>
+  <tr><td>Total net (sense IVA)</td><td><code>Contado + Visa + Passo</code> &nbsp;<span class="pill">solo ventas</span></td></tr>
+  <tr><td>Total brut (amb IVA)</td><td><code>Total net × 1,10</code> &nbsp;<span class="pill">IVA solo sobre ventas</span></td></tr>
+  <tr><td>Total Caixa Dia</td><td><code>Contado + Visa + Passo + Contado Caixa 1 + Visa Caixa 1 + Ingreso</code></td></tr>
+  <tr><td>Efectiu</td><td><code>Contado + Contado Caixa 1 − Reciclajes − Retiros − Personal</code></td></tr>
+  <tr><td>% Targetes</td><td><code>(Visa + Passo + Visa Caixa 1) ÷ Total Caixa Dia × 100</code></td></tr>
+  <tr><td>Partida Pendent Banc</td><td><code>Contado × 1,10</code> &nbsp;<span class="pill">«Contado c/IVA», efectivo a depositar</span></td></tr>
+</table>
+<div class="note"><strong>Ejemplo (20/06/2026):</strong> Contado 20,77 € + Visa 1.306,73 € + Passo 0 → Total net = <strong>1.327,50 €</strong> · Total brut = 1.327,50 × 1,10 = <strong>1.460,25 €</strong> · con Contado Caixa 1 = 375 € → Total Caixa Dia = <strong>1.702,50 €</strong>.</div>
+
+<!-- ============ 6 ============ -->
+<h2><span class="n">6</span>Salidas (datos y arqueo)</h2>
+<ul>
+  <li><span class="tag t-amb">Salida</span> <strong>Arqueo guardado</strong> — el registro diario completo en <code>taperia_arqueos_v2</code>.</li>
+  <li><span class="tag t-amb">Salida</span> <strong>Pendent Banc</strong> — lista de efectivo (Contado c/IVA) pendiente de ingresar en el banco; se marca como pagado al depositarlo.</li>
+  <li><span class="tag t-amb">Salida</span> <strong>Resum Mensual</strong> — totales agregados por mes a partir de los arqueos guardados.</li>
+  <li><span class="tag t-amb">Salida</span> <strong>Dashboard / KPIs</strong> (<code>index.html</code>) — alimentado por la sincronización del Excel; compara previsión vs. real, ticket medio, comensales, márgenes, etc.</li>
+</ul>
+
+<!-- ============ 7 ============ -->
+<h2><span class="n">7</span>Infraestructura y despliegue</h2>
+<table>
+  <tr><th>Pieza</th><th>Detalle</th></tr>
+  <tr><td>Web</td><td><code>taperia-caldes-kpi.netlify.app</code> (Netlify). Páginas: <code>arqueo.html</code>, <code>index.html</code>, <code>dashboard.html</code>, <code>kpi_taperia.html</code>, <code>manual/index.html</code>, <code>manual/checklist_cierre_app.html</code>, <code>subir_instrucciones.html</code>…</td></tr>
+  <tr><td>Repositorio</td><td>GitHub <code>jrodenas67/taperia-caldes-kpi</code> (HTML estático). Otros: <code>tracker-operativo</code>, <code>taperia-dashboard</code>.</td></tr>
+  <tr><td>Publicación</td><td><strong>Despliegue automático diario por CLI</strong> desde el Mac (genera los datos frescos). <em>No</em> se publica conectando Netlify a GitHub: eso interrumpiría la actualización de datos.</td></tr>
+  <tr><td>Proyecto local</td><td>Carpeta de OneDrive sincronizada en el Mac (<code>…/Aplicaciones/Tracker-operativo/BDD/kpi-site</code>).</td></tr>
+  <tr><td>Otros sitios</td><td><code>menu-semanal-taperia</code>, <code>tracker-operativo</code>, <code>manual.lataperiadecaldes.com</code>.</td></tr>
+</table>
+<div class="note">⚠️ <strong>Nota de mantenimiento:</strong> los archivos de datos (<code>cierres_diarios.json</code>, <code>historico_caja.json</code>…) <strong>no</strong> viven en GitHub; los genera el proceso de despliegue diario. Por eso, los cambios de <em>código</em> de la web (o páginas nuevas) deben aplicarse en ese mismo proceso/carpeta local y publicarse con el deploy de siempre.</div>
+
+<!-- ============ 8 ============ -->
+<h2><span class="n">8</span>Glosario rápido</h2>
+<table>
+  <tr><th>Término</th><th>Significado</th></tr>
+  <tr><td>Contado</td><td>Ventas en efectivo (neto, sin IVA).</td></tr>
+  <tr><td>Visa / Passo</td><td>Ventas con tarjeta / Ticket Restaurant (neto).</td></tr>
+  <tr><td>Retiros = Excedente</td><td>Dinero que se saca de la caja física; viene del WhatsApp («Excedente»).</td></tr>
+  <tr><td>Caixa 1</td><td>Caja física principal (entrada manual).</td></tr>
+  <tr><td>Pendent Banc</td><td>Efectivo pendiente de depositar en el banco.</td></tr>
+  <tr><td>Neto / Brut</td><td>Sin IVA / con IVA (×1,10).</td></tr>
+  <tr><td>Nº Tancament</td><td>Número de cierre del TPV.</td></tr>
+</table>
+
+<!-- ============ 9 ============ -->
+<h2><span class="n">9</span>Manual y operativa del personal <span class="pill">(subsistema nuevo)</span></h2>
+<p>Un segundo subsistema, separado del flujo financiero, gestiona las instrucciones y la formación del personal de sala. Vive en las mismas páginas de la web.</p>
+<table>
+  <tr><th>Página</th><th>Rol</th><th>Qué hace</th></tr>
+  <tr><td><code>subir_instrucciones.html</code></td><td><span class="tag t-pur">Entrada</span></td><td><strong>Cargar Instrucciones.</strong> La gerencia/encargado sube una nueva instrucción («Cargar Nueva Instrucción» → «¡Instrucción enviada!»), que se incorpora al manual.</td></tr>
+  <tr><td><code>manual/index.html</code></td><td><span class="tag t-grn">Referencia</span></td><td><strong>Manual de Procedimientos — Camarero/a.</strong> Introducción y objetivos, responsabilidades del puesto, higiene personal, uniforme, higiene de manos, mise en place, checklist de apertura, montaje de mesa, protocolo de servicio…</td></tr>
+  <tr><td><code>manual/checklist_cierre_app.html</code></td><td><span class="tag t-grn">Herramienta</span></td><td><strong>Checklist de cierre.</strong> El personal lo va marcando al cerrar el local cada noche.</td></tr>
+</table>
+<div class="key">🔗 <strong>Punto de unión con el arqueo:</strong> el <strong>checklist de cierre</strong> se usa en el mismo momento del <strong>cierre nocturno</strong> en que se hace el arqueo del día y se manda el «Fondo caja · Excedente» por WhatsApp. Es la pieza que conecta los dos subsistemas.</div>
+<p><strong>Flujo:</strong> Gerencia → sube instrucción (<code>subir_instrucciones.html</code>) → actualiza el <strong>Manual de procedimientos</strong> → el <strong>Personal (camareros)</strong> lo consulta y usa el <strong>Checklist de cierre</strong>.</p>
+
+<footer>
+  Documento de arquitectura de datos · La Tapería de Caldes · 2026.<br>
+  Elaborado a partir del sistema real (web, Excel maestro y repositorios). Los importes de ejemplo corresponden al cierre del 20/06/2026. Diagrama actualizado con el subsistema de manual y operativa del personal.
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cargar Instrucciones — La Taperia de Caldes</title>
+<style>
+  :root {
+    --navy:   #1A2E40;
+    --blue:   #2E6DA4;
+    --light:  #D6E8F7;
+    --green:  #2E8A4A;
+    --yellow: #FFF3CD;
+    --red:    #B03020;
+    --gray:   #f4f6f9;
+    --border: #BBBBBB;
+    --text:   #222;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 15px; color: var(--text); background: var(--gray); }
+
+  /* ── LOGIN ── */
+  #login-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, #1A2E40 0%, #1a4a70 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #login-box {
+    background: #fff; border-radius: 16px; padding: 48px 40px 40px;
+    width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  .login-title { text-align: center; margin-bottom: 28px; }
+  .login-title h2 { font-size: 22px; color: var(--navy); }
+  .login-title p  { font-size: 13px; color: #888; margin-top: 6px; }
+  #login-box label { display: block; font-size: 12px; font-weight: 700; color: #555;
+    text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 6px; }
+  #login-box input {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #dde2ea; border-radius: 8px;
+    font-size: 15px; outline: none; transition: border .2s;
+  }
+  #login-box input:focus { border-color: var(--blue); }
+  #login-btn {
+    margin-top: 24px; width: 100%; padding: 14px; border: none; border-radius: 8px;
+    background: var(--blue); color: #fff; font-size: 16px; font-weight: 700;
+    cursor: pointer;
+  }
+  #login-btn:hover { background: #1a5a8f; }
+  #login-error {
+    display: none; margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    background: #fff0f0; border: 1px solid #f5c6c6; color: #c0392b;
+    font-size: 14px; text-align: center;
+  }
+  .login-footer { margin-top: 20px; text-align: center; font-size: 12px; color: #aaa; }
+
+  /* ── APP ── */
+  #app { display: none; min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .topbar {
+    background: var(--navy); color: #fff;
+    padding: 18px 32px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar-brand { display: flex; align-items: center; gap: 14px; }
+  .topbar-logo {
+    width: 40px; height: 40px; background: var(--blue); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: #fff;
+  }
+  .topbar-brand h1 { font-size: 18px; font-weight: 700; }
+  .topbar-brand p  { font-size: 12px; opacity: .7; margin-top: 2px; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  #user-badge {
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+    padding: 6px 14px; border-radius: 20px; font-size: 13px;
+  }
+  #logout-btn {
+    background: transparent; border: 1px solid rgba(255,255,255,.4);
+    color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer;
+  }
+  #logout-btn:hover { background: rgba(255,255,255,.1); }
+
+  /* ── MAIN CONTENT ── */
+  .container { max-width: 760px; margin: 40px auto; padding: 0 20px 60px; }
+
+  .page-title { margin-bottom: 28px; }
+  .page-title h2 { font-size: 26px; color: var(--navy); font-weight: 800; }
+  .page-title p  { color: #666; margin-top: 6px; }
+
+  /* ── FORM CARD ── */
+  .card {
+    background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    padding: 32px 36px; margin-bottom: 24px;
+  }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--navy);
+    margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--light); }
+
+  .form-row { margin-bottom: 20px; }
+  .form-row label { display: block; font-size: 12px; font-weight: 700; color: #555;
+    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #dde2ea; border-radius: 8px;
+    font-size: 14px; font-family: Arial, sans-serif; outline: none;
+    transition: border .2s; color: var(--text);
+  }
+  .form-row input:focus,
+  .form-row select:focus,
+  .form-row textarea:focus { border-color: var(--blue); }
+  .form-row textarea { resize: vertical; min-height: 180px; line-height: 1.6; }
+  .form-row select { cursor: pointer; }
+  .form-hint { font-size: 12px; color: #888; margin-top: 5px; }
+
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* urgency radios */
+  .radio-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+  .radio-opt { display: none; }
+  .radio-label {
+    padding: 8px 16px; border-radius: 20px; border: 1.5px solid #dde2ea;
+    font-size: 13px; cursor: pointer; transition: all .2s;
+  }
+  .radio-opt:checked + .radio-label { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .radio-opt.urgente:checked + .radio-label { background: #c0392b; border-color: #c0392b; }
+  .radio-opt.media:checked   + .radio-label { background: #d4a017; border-color: #d4a017; }
+  .radio-opt.baja:checked    + .radio-label { background: var(--green); border-color: var(--green); }
+
+  /* attachment notice */
+  .attach-notice {
+    border: 2px dashed #dde2ea; border-radius: 10px; padding: 20px;
+    text-align: center; color: #888; font-size: 13px; margin-top: 6px;
+  }
+  .attach-notice span { font-size: 26px; display: block; margin-bottom: 6px; }
+
+  /* submit */
+  #submit-btn {
+    width: 100%; padding: 16px; border: none; border-radius: 10px;
+    background: var(--blue); color: #fff; font-size: 17px; font-weight: 700;
+    cursor: pointer; transition: background .2s;
+  }
+  #submit-btn:hover { background: #1a5a8f; }
+  #submit-btn:disabled { background: #999; cursor: not-allowed; }
+
+  /* ── SUCCESS ── */
+  #success-panel {
+    display: none; background: #fff; border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08); padding: 48px 36px;
+    text-align: center; margin-bottom: 24px;
+  }
+  .success-icon { font-size: 56px; margin-bottom: 20px; }
+  #success-panel h3 { font-size: 24px; color: var(--navy); margin-bottom: 10px; }
+  #success-panel p  { color: #555; margin-bottom: 24px; }
+  #new-btn {
+    padding: 12px 28px; border: none; border-radius: 8px;
+    background: var(--blue); color: #fff; font-size: 15px; font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ── HISTORY ── */
+  .history-list { display: flex; flex-direction: column; gap: 10px; }
+  .history-item {
+    background: var(--gray); border-radius: 8px; padding: 14px 16px;
+    border-left: 4px solid var(--blue); font-size: 13px;
+  }
+  .history-item .hi-title { font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .history-item .hi-meta  { color: #888; font-size: 12px; }
+  .history-empty { color: #aaa; font-size: 13px; text-align: center; padding: 20px 0; }
+
+  /* ── INFO BOX ── */
+  .infobox {
+    background: var(--light); border-left: 4px solid var(--blue);
+    border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px;
+  }
+  .infobox strong { color: var(--blue); display: block; margin-bottom: 4px; }
+
+  @media (max-width: 600px) {
+    .card { padding: 22px 18px; }
+    .form-row-2 { grid-template-columns: 1fr; }
+    .topbar { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ═══════════════════════════════════════════════════════════ -->
+<div id="login-overlay">
+  <div id="login-box">
+    <div class="login-title">
+      <h2>La Taperia de Caldes</h2>
+      <p>Carga de instrucciones del manual · Acceso personal</p>
+    </div>
+    <label for="u-input">Usuario</label>
+    <input type="text" id="u-input" placeholder="tu usuario" autocomplete="username" />
+    <label for="p-input">Contraseña</label>
+    <input type="password" id="p-input" placeholder="••••••••" autocomplete="current-password" />
+    <button id="login-btn" onclick="doLogin()">Entrar</button>
+    <div id="login-error">Usuario o contraseña incorrectos.</div>
+    <div class="login-footer">Uso exclusivo del personal de La Taperia</div>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════════════════════════════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">LT</div>
+      <div>
+        <h1>La Taperia de Caldes</h1>
+        <p>Panel de instrucciones del manual</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div id="user-badge">👤 <span id="current-user">—</span></div>
+      <button id="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-title">
+      <h2>📋 Cargar Nueva Instrucción</h2>
+      <p>Envía una propuesta de instrucción o procedimiento para el manual. El responsable la revisará y publicará.</p>
+    </div>
+
+    <div class="infobox">
+      <strong>ℹ️ ¿Cómo funciona?</strong>
+      Rellena el formulario con la nueva instrucción o procedimiento. Al enviarlo, el responsable recibirá una notificación y la revisará antes de añadirla al manual oficial.
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card" id="form-card">
+      <div class="card-title">📝 Datos de la instrucción</div>
+
+      <!-- Netlify Forms: form con atributo netlify -->
+      <form id="instr-form" name="instrucciones-manual" method="POST" netlify netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="instrucciones-manual" />
+        <input type="hidden" name="autor" id="field-autor" />
+        <p style="display:none"><input name="bot-field" /></p>
+
+        <div class="form-row-2">
+          <div class="form-row">
+            <label for="field-seccion">Sección del manual *</label>
+            <select id="field-seccion" name="seccion" required>
+              <option value="">— Selecciona una sección —</option>
+              <option value="1-introduccion">1. Introducción y Objetivos</option>
+              <option value="2-responsabilidades">2. Responsabilidades</option>
+              <option value="3-presentacion">3. Presentación e Higiene</option>
+              <option value="4-mise-en-place">4. Mise en Place</option>
+              <option value="5-servicio-cliente">5. Protocolo de Servicio</option>
+              <option value="6-bebidas">6. Servicio de Bebidas</option>
+              <option value="7-upselling">7. Upselling y Cross-selling</option>
+              <option value="8-cobro">8. Gestión del Cobro</option>
+              <option value="9-maquinaria">9. Maquinaria y Equipos</option>
+              <option value="10-durante-servicio">10. Durante el Servicio</option>
+              <option value="11-reservas">11. Reservas</option>
+              <option value="12-higiene">12. Higiene y Seguridad</option>
+              <option value="13-cierre">13. Cierre y Limpieza</option>
+              <option value="14-conclusion">14. Conclusión</option>
+              <option value="nueva-seccion">➕ Nueva sección (especificar)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="field-tipo">Tipo de contenido *</label>
+            <select id="field-tipo" name="tipo" required>
+              <option value="">— Tipo —</option>
+              <option value="nuevo-procedimiento">Nuevo procedimiento</option>
+              <option value="modificacion">Modificación de procedimiento existente</option>
+              <option value="checklist">Checklist / lista de verificación</option>
+              <option value="protocolo">Protocolo de actuación</option>
+              <option value="informacion">Información / actualización de carta</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="field-titulo">Título de la instrucción *</label>
+          <input type="text" id="field-titulo" name="titulo"
+            placeholder="Ej: Protocolo de atención en hora punta de vermut" required />
+        </div>
+
+        <div class="form-row">
+          <label for="field-contenido">Contenido de la instrucción *</label>
+          <textarea id="field-contenido" name="contenido" required
+            placeholder="Describe el procedimiento, los pasos o la información que quieres añadir al manual. Sé todo lo detallado que puedas.&#10;&#10;Ejemplo:&#10;1. Al llegar el cliente en hora de vermut (12h-14h), saludar y preguntar si quiere carta de tapas.&#10;2. Ofrecer vermut de la casa como primera sugerencia.&#10;..."></textarea>
+          <div class="form-hint">Cuantos más detalles incluyas, mejor podrá redactarse la instrucción final.</div>
+        </div>
+
+        <div class="form-row">
+          <label>Prioridad</label>
+          <div class="radio-group">
+            <input class="radio-opt urgente" type="radio" name="prioridad" id="p-urgente" value="Urgente" />
+            <label class="radio-label" for="p-urgente">🔴 Urgente</label>
+            <input class="radio-opt media" type="radio" name="prioridad" id="p-media" value="Media" checked />
+            <label class="radio-label" for="p-media">🟡 Media</label>
+            <input class="radio-opt baja" type="radio" name="prioridad" id="p-baja" value="Baja" />
+            <label class="radio-label" for="p-baja">🟢 Sin prisa</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Notas adicionales para el responsable</label>
+          <textarea id="field-notas" name="notas" style="min-height:80px"
+            placeholder="Opcional: contexto, referencias, por qué es necesaria esta instrucción..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <label>Adjuntar imagen o documento</label>
+          <div class="attach-notice">
+            <span>📎</span>
+            Para adjuntar archivos, envíalos directamente a<br>
+            <strong>info@romahosteleria.com</strong><br>
+            indicando el título de la instrucción en el asunto.
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn">✅ Enviar instrucción al responsable</button>
+      </form>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="success-panel">
+      <div class="success-icon">✅</div>
+      <h3>¡Instrucción enviada!</h3>
+      <p>El responsable la recibirá y la revisará antes de publicarla en el manual oficial. Gracias por tu aportación.</p>
+      <button id="new-btn" onclick="resetForm()">Enviar otra instrucción</button>
+    </div>
+
+    <!-- HISTORIAL LOCAL -->
+    <div class="card">
+      <div class="card-title">🕐 Mis envíos de esta sesión</div>
+      <div class="history-list" id="history-list">
+        <div class="history-empty">Todavía no has enviado ninguna instrucción en esta sesión.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ CREDENCIALES ══════════════════════════════════════════════════════
+// {usuario: hash SHA-256 de la contraseña}
+const USERS = {
+  "admin":   "88269fc36d5784f5c0ae51bf9a853bc53e3d5c2cd4019c2b37ed64b566a9dd3c",
+  "mireia":  "2be5006d80d42c5d2ad4f78e3b1b29388dee98f7762af252a32f91f88f8e5959",
+  "lourdes": "df9448e6202b91bbf66358f1b282a81115a0e1a876ec99dc7f015aa255a57154",
+  "juan":    "9b47bdae53f6a736b62f4d60aa008207f2498401fec098648829e1be8bbe1f2a",
+  "info":    "6d7ed57ee89a254df6d456855582a4c23635651afafb84cf309b881a877cbc7b",
+  "jonathan":"bff1c1c49309a67e731ec46fae0443ee31b1d4a4777cf904d6d30d64aed3d382",
+};
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+async function doLogin() {
+  const u   = document.getElementById("u-input").value.trim().toLowerCase();
+  const p   = document.getElementById("p-input").value;
+  const btn = document.getElementById("login-btn");
+  const err = document.getElementById("login-error");
+
+  btn.textContent = "Verificando…";
+  btn.disabled = true;
+
+  const hash = await sha256(p);
+
+  if (USERS[u] && hash === USERS[u]) {
+    sessionStorage.setItem("taperia_instr_auth", u);
+    showApp(u);
+  } else {
+    err.style.display = "block";
+    btn.textContent = "Entrar";
+    btn.disabled = false;
+    document.getElementById("p-input").value = "";
+    document.getElementById("p-input").focus();
+  }
+}
+
+function showApp(user) {
+  document.getElementById("login-overlay").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  document.getElementById("current-user").textContent = user;
+  document.getElementById("field-autor").value = user;
+}
+
+function doLogout() {
+  sessionStorage.removeItem("taperia_instr_auth");
+  location.reload();
+}
+
+// Enter key en login
+document.getElementById("u-input").addEventListener("keydown", e => {
+  if(e.key === "Enter") document.getElementById("p-input").focus();
+});
+document.getElementById("p-input").addEventListener("keydown", e => {
+  if(e.key === "Enter") doLogin();
+});
+
+// Auto-login si ya hay sesión
+const saved = sessionStorage.getItem("taperia_instr_auth");
+if (saved) showApp(saved);
+
+// ══ FORMULARIO ════════════════════════════════════════════════════════
+const history = [];
+
+document.getElementById("instr-form").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "Enviando…";
+
+  const form = e.target;
+  const data = new FormData(form);
+
+  try {
+    const resp = await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(data).toString(),
+    });
+
+    if (resp.ok) {
+      // Guardar en historial local
+      const titulo = data.get("titulo");
+      const seccion = document.getElementById("field-seccion")
+        .options[document.getElementById("field-seccion").selectedIndex].text;
+      history.push({
+        titulo, seccion, ts: new Date().toLocaleTimeString("es-ES")
+      });
+      renderHistory();
+
+      // Mostrar éxito
+      document.getElementById("form-card").style.display = "none";
+      document.getElementById("success-panel").style.display = "block";
+    } else {
+      alert("Error al enviar. Inténtalo de nuevo o contacta con el responsable.");
+      btn.disabled = false;
+      btn.textContent = "✅ Enviar instrucción al responsable";
+    }
+  } catch(err) {
+    alert("Error de conexión. Comprueba tu internet e inténtalo de nuevo.");
+    btn.disabled = false;
+    btn.textContent = "✅ Enviar instrucción al responsable";
+  }
+});
+
+function resetForm() {
+  document.getElementById("instr-form").reset();
+  document.getElementById("field-autor").value =
+    sessionStorage.getItem("taperia_instr_auth") || "";
+  document.getElementById("success-panel").style.display = "none";
+  document.getElementById("form-card").style.display = "block";
+  document.getElementById("submit-btn").disabled = false;
+  document.getElementById("submit-btn").textContent = "✅ Enviar instrucción al responsable";
+}
+
+function renderHistory() {
+  const list = document.getElementById("history-list");
+  if (!history.length) {
+    list.innerHTML = '<div class="history-empty">Todavía no has enviado ninguna instrucción en esta sesión.</div>';
+    return;
+  }
+  list.innerHTML = history.map(h => `
+    <div class="history-item">
+      <div class="hi-title">📄 ${h.titulo}</div>
+      <div class="hi-meta">${h.seccion} · Enviado a las ${h.ts}</div>
+    </div>
+  `).join("");
+}
+</script>
+</body>
+</html>

@@ -163,6 +163,20 @@ def main() -> int:
     print(f"✅ historico_caja.json: {len(historico)} entradas "
           f"({cambiados} totales actualizados, {previstos_actualizados} previstos = ventas_2025×1.03)")
 
+    # ── ref_meses.json ────────────────────────────────────────────────────
+    # Totales NETOS de 2025 por mes (full-month) → referencia para update_kpi.py
+    # (v2025/previsión/invDia de los meses alimentados por el arqueo).
+    ref: dict[str, dict] = {}
+    for c in cierres_ord:
+        if c["fecha"].year != año_actual - 1:
+            continue
+        mm = str(c["fecha"].month)
+        g = ref.setdefault(mm, {"v2025": 0.0, "dias": 0})
+        g["v2025"] = round(g["v2025"] + neto(c["total"]), 2)
+        g["dias"] += 1
+    Path("ref_meses.json").write_text(json.dumps(ref, indent=2, ensure_ascii=False))
+    print(f"✅ ref_meses.json: {len(ref)} meses de {año_actual - 1}")
+
     return 0
 
 

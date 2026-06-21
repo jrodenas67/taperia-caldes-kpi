@@ -1,9 +1,15 @@
-name: Actualizar Arqueo Taperia
+name: Actualizar Arqueo + Panel KPI Taperia
 
 on:
   schedule:
-    - cron: '0 2 * * *'
-  workflow_dispatch:
+    # 04:00 UTC = 06:00 hora de Madrid (verano/CEST).
+    # En invierno (CET) equivale a las 05:00 locales: los datos quedan listos
+    # antes de las 6:00 igualmente.
+    - cron: '0 4 * * *'
+  workflow_dispatch:   # permite lanzarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: write
 
 jobs:
   update:
@@ -20,22 +26,25 @@ jobs:
       - name: Instalar dependencias
         run: pip install requests pypdf --quiet
 
-      - name: Regenerar JSONs desde Gmail
+      - name: Regenerar JSONs desde Gmail (cierres + referencia 2025)
         env:
           GMAIL_CLIENT_ID:     ${{ secrets.GMAIL_CLIENT_ID }}
           GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
           GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
         run: python generar_arqueo.py
 
-      - name: Commit JSONs actualizados
+      - name: Actualizar panel KPI (mes en curso) desde el histórico
+        run: python update_kpi.py
+
+      - name: Commit cambios
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ultimo_cierre.json historico_caja.json
-          git diff --cached --quiet || git commit -m "auto: actualizar arqueo $(date +'%d/%m/%Y %H:%M')"
+          git add ultimo_cierre.json historico_caja.json cierres_diarios.json ref_meses.json kpi_taperia.html
+          git diff --cached --quiet || git commit -m "auto: actualizar arqueo + KPI $(date +'%d/%m/%Y %H:%M')"
           git push || true
 
-      - name: Deploy a Netlify
+      - name: Deploy a Netlify (token; sin integración nativa con GitHub)
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
