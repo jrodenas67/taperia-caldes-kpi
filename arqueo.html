@@ -398,25 +398,36 @@ fetch('historico_caja.json?_=' + Date.now())
   .then(data => { historicoDB = data || []; })
   .catch(() => {});
 
-// Afegeix partides de Pendent Banc a partir dels arqueos desats (Contado c/IVA
-// = contado × 1,10) quan encara no existeixen — així el Resum Mensual i el
-// Pendent Banc reflecteixen el contado del dia encara que no s'hagi premut "Guardar".
+// Afegeix partides de Pendent Banc (Contado c/IVA = contado × 1,10) a partir del
+// CIERRE DE CAJA de la base de dades (cierres_diarios.json, regenerat cada dia des
+// de Gmail). Així el Resum Mensual i el Pendent Banc surten de la BD i no depenen
+// del navegador ni d'haver premut "Guardar". L'arqueo local és només respaldo per
+// a dies que no estiguin al cierre. No toca les partides marcades com a ingressades.
 function reconcileBancFromArqueos() {
-  const arqueos = loadStore();
+  const contadoByFecha = {};
+  // Font principal: cierre de caja a la BD
+  Object.values(cierresDiarios || {}).forEach(c => {
+    if (c && c.fecha) contadoByFecha[c.fecha] = Number(c.contado) || 0;
+  });
+  // Respaldo: arqueos locals per a dies sense cierre a la BD
+  loadStore().forEach(r => {
+    if (r && r.fecha && contadoByFecha[r.fecha] === undefined)
+      contadoByFecha[r.fecha] = Number(r.contado) || 0;
+  });
   const current = loadBancStore();
   const fechas = new Set(current.map(i => i.fecha));
   let changed = 0;
-  arqueos.forEach(r => {
-    const contado = Number(r.contado) || 0;
-    if (contado <= 0 || fechas.has(r.fecha)) return;
+  Object.keys(contadoByFecha).forEach(fecha => {
+    const contado = contadoByFecha[fecha];
+    if (contado <= 0 || fechas.has(fecha)) return;
     current.push({
-      id: 'arq-' + r.fecha,
-      fecha: r.fecha,
+      id: 'arq-' + fecha,
+      fecha,
       importe: parseFloat((contado * 1.10).toFixed(2)),
-      desc: `Contado c/IVA ${fmtDate(r.fecha)}`,
+      desc: `Contado c/IVA ${fmtDate(fecha)}`,
       pagat: false
     });
-    fechas.add(r.fecha);
+    fechas.add(fecha);
     changed++;
   });
   if (changed > 0) {
@@ -459,7 +470,13 @@ let cierresDiarios = {};
 
 fetch('cierres_diarios.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : {})
-  .then(data => { cierresDiarios = data || {}; })
+  .then(data => {
+    cierresDiarios = data || {};
+    // Deriva Pendent Banc / Contado del cierre de caja (BD) en quant arriba
+    reconcileBancFromArqueos();
+    if (document.getElementById('page-resum').classList.contains('active')) renderResum();
+    if (document.getElementById('page-banc').classList.contains('active'))  renderBanc();
+  })
   .catch(() => {});
 
 fetch('ultimo_cierre.json?_=' + Date.now())
