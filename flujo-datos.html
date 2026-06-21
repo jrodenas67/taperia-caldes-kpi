@@ -217,7 +217,8 @@
   <li><span class="tag t-amb">Salida</span> <strong>Arqueo guardado</strong> — el registro diario completo en <code>taperia_arqueos_v2</code>.</li>
   <li><span class="tag t-amb">Salida</span> <strong>Pendent Banc</strong> — lista de efectivo (Contado c/IVA) pendiente de ingresar en el banco; se marca como pagado al depositarlo.</li>
   <li><span class="tag t-amb">Salida</span> <strong>Resum Mensual</strong> — totales agregados por mes a partir de los arqueos guardados.</li>
-  <li><span class="tag t-amb">Salida</span> <strong>Panel de Seguiment Incentius · 2026</strong> (<code>kpi_taperia.html</code>) — generado por <code>update_kpi.py</code> desde los cierres. Por mes: vendes 2026 (suma de cierres del mes) vs. <strong>objetivo</strong> (<code>objetivos_2026.json</code>), <em>Fins Obj</em>, <strong>incentiu = 10%</strong> de lo que supera el objetivo, y ticket medio por tramos. Enero–mayo son fijos (BD TPV); junio en adelante se alimentan del arqueo.</li>
+  <li><span class="tag t-amb">Salida</span> <strong>Panel de Seguiment Incentius · 2026</strong> (<code>kpi_taperia.html</code>) — generado por <code>update_kpi.py</code>. Por mes: vendes 2026 vs. <strong>objetivo</strong> (<code>objetivos_2026.json</code>), <em>Fins Obj</em>, <strong>incentiu = 10%</strong> de lo que supera el objetivo, y ticket medio por tramos. Enero–mayo son fijos (BD TPV); junio en adelante se alimentan del arqueo.
+    <br><span class="pill">⚠️ Los cierres de Gmail son solo <strong>Caixa 2</strong>. Para que «Vendes 2026» refleje el <strong>total (Caixa 2 + Caixa 1)</strong>, el total del mes se fija manualmente en <code>ventas_2026.json</code> (override que respeta <code>update_kpi.py</code>) hasta automatizar la captura de Caixa 1.</span></li>
   <li><span class="tag t-amb">Salida</span> <strong>Dashboard / KPIs</strong> (<code>index.html</code>) — panel de accesos; compara previsión vs. real, ticket medio, comensales, márgenes, etc.</li>
 </ul>
 

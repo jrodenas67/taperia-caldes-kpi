@@ -1,0 +1,4 @@
+{
+  "_comentario": "Override manual de 'Vendes 2026' (total NETO = Caixa 2 + Caixa 1) por mes, mientras no se automatice la captura de Caixa 1 (los cierres de Gmail solo traen Caixa 2). update_kpi.py usa este valor en vez de la suma de cierres. Actualizar desde el Arqueo (Resum Mensual) hasta diseñar el sistema definitivo. Clave = nº de mes.",
+  "6": {"total": 19663.33, "desde": "2026-06-20", "nota": "C2 15323.33 + C1 4340.00 (arqueo, hasta 20/06)"}
+}

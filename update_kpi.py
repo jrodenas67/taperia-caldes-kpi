@@ -31,6 +31,7 @@ KPI        = Path("kpi_taperia.html")
 HISTORICO  = Path("historico_caja.json")
 REF_MESES  = Path("ref_meses.json")        # respaldo: {"6": {"v2025": x, "dias": n}, ...}
 OBJETIVOS  = Path("objetivos_2026.json")   # oficial (BD TPV): manda siempre
+VENTAS     = Path("ventas_2026.json")      # override manual de v2026 (total Caixa 2+1) por mes
 
 ARQUEO_FROM = (2026, 6)  # primer mes alimentado por el arqueo (junio 2026)
 
@@ -70,6 +71,13 @@ def main() -> int:
         except json.JSONDecodeError:
             objetivos = {}
 
+    ventas = {}
+    if VENTAS.exists():
+        try:
+            ventas = json.loads(VENTAS.read_text())
+        except json.JSONDecodeError:
+            ventas = {}
+
     # Agrupar totales 2026 por mes
     por_mes: dict[int, dict] = {}
     for e in historico:
@@ -96,8 +104,16 @@ def main() -> int:
             continue  # enero–mayo: fijos, no se tocan
         nombre = MESES_ES[mm]
         g = por_mes[mm]
-        v2026 = _r2(g["total"])
+        v2026 = _r2(g["total"])  # base automática: Caixa 2 (cierres de Gmail)
         dias = g["dias"]
+
+        # Override manual del total (Caixa 2 + Caixa 1) mientras no se automatice
+        # la captura de Caixa 1. Si existe ventas_2026.json para este mes, manda.
+        ov = ventas.get(str(mm)) or ventas.get(mm)
+        if isinstance(ov, dict):
+            ov = ov.get("total")
+        if ov is not None:
+            v2026 = _r2(ov)
 
         oficial = objetivos.get(str(mm)) or objetivos.get(mm)
         ref = ref_meses.get(str(mm)) or ref_meses.get(mm)
