@@ -1,673 +1,673 @@
 [
   {
     "fecha": "2026-01-02",
-    "total": 909.66,
+    "total": 1432.41,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-01-03",
-    "total": 1622.48,
+    "total": 1511.27,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-01-04",
-    "total": 939.65,
+    "total": 863.55,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-01-07",
-    "total": 600.9,
+    "total": 388.05,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-01-08",
-    "total": 673.33,
+    "total": 459.18,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-01-09",
-    "total": 986.1,
+    "total": 758.95,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-01-10",
-    "total": 2430.29,
+    "total": 2302.64,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-01-11",
-    "total": 854.64,
+    "total": 787.64,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-01-14",
-    "total": 533.89,
+    "total": 335.64,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-01-15",
-    "total": 805.7,
+    "total": 721.45,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-01-16",
-    "total": 1250.94,
+    "total": 1140.14,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-01-17",
-    "total": 1001.49,
+    "total": 954.68,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-01-18",
-    "total": 1123.57,
+    "total": 1005.82,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-01-21",
-    "total": 754.85,
+    "total": 521.09,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-01-22",
-    "total": 868.58,
+    "total": 677.23,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-01-23",
-    "total": 1200.86,
+    "total": 977.95,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-01-24",
-    "total": 1587.9,
+    "total": 1467.0,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-01-25",
-    "total": 1807.98,
+    "total": 1686.73,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-01-28",
-    "total": 520.09,
+    "total": 317.68,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-01-29",
-    "total": 1345.33,
+    "total": 1050.27,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-01-30",
-    "total": 1988.33,
+    "total": 1722.73,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-01-31",
-    "total": 1934.91,
+    "total": 1857.82,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-02-01",
-    "total": 1093.9,
+    "total": 1021.68,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-02-04",
-    "total": 547.33,
+    "total": 322.18,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-02-05",
-    "total": 1217.42,
+    "total": 932.82,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-02-06",
-    "total": 1957.22,
+    "total": 1808.82,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-02-07",
-    "total": 3907.58,
+    "total": 3849.18,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-02-08",
-    "total": 2120.7,
+    "total": 2020.95,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-02-11",
-    "total": 1128.4,
+    "total": 986.55,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-02-12",
-    "total": 618.51,
+    "total": 460.95,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-02-13",
-    "total": 1105.49,
+    "total": 947.27,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-02-14",
-    "total": 3542.72,
+    "total": 2997.32,
     "previsto": 2049.82,
     "evento": "San Valentín"
   },
   {
     "fecha": "2026-02-15",
-    "total": 1559.35,
+    "total": 1235.0,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-02-18",
-    "total": 770.42,
+    "total": 483.23,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-02-19",
-    "total": 792.69,
+    "total": 535.18,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-02-20",
-    "total": 1260.02,
+    "total": 966.86,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-02-21",
-    "total": 3184.45,
+    "total": 2437.25,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-02-22",
-    "total": 2185.31,
+    "total": 1464.95,
     "previsto": 1690.06,
     "evento": "Carnaval"
   },
   {
     "fecha": "2026-03-11",
-    "total": 575.28,
+    "total": 305.68,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-03-12",
-    "total": 590.56,
+    "total": 477.5,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-03-13",
-    "total": 1373.27,
+    "total": 1197.86,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-03-14",
-    "total": 2211.93,
+    "total": 1831.18,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-03-15",
-    "total": 2683.33,
+    "total": 2531.27,
     "previsto": 1690.06,
     "evento": "Mercado Olla"
   },
   {
     "fecha": "2026-03-18",
-    "total": 990.93,
+    "total": 709.82,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-03-19",
-    "total": 633.39,
+    "total": 470.05,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-03-20",
-    "total": 1619.74,
+    "total": 1172.5,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-03-21",
-    "total": 1999.58,
+    "total": 1598.86,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-03-22",
-    "total": 708.96,
+    "total": 547.91,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-03-25",
-    "total": 771.45,
+    "total": 579.95,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-03-26",
-    "total": 788.5,
+    "total": 460.05,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-03-27",
-    "total": 1963.13,
+    "total": 1743.77,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-03-28",
-    "total": 1812.63,
+    "total": 1382.14,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-03-29",
-    "total": 1517.63,
+    "total": 1364.23,
     "previsto": 1690.06,
     "evento": "Semana Santa"
   },
   {
     "fecha": "2026-04-01",
-    "total": 1476.05,
+    "total": 1069.82,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-04-02",
-    "total": 1499.1,
+    "total": 1388.55,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-04-03",
-    "total": 2373.43,
+    "total": 2220.77,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-04-04",
-    "total": 1906.71,
+    "total": 1434.45,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-04-05",
-    "total": 3089.14,
+    "total": 2034.09,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-04-08",
-    "total": 392.66,
+    "total": 339.41,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-04-09",
-    "total": 987.86,
+    "total": 500.91,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-04-10",
-    "total": 919.2,
+    "total": 703.95,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-04-11",
-    "total": 2493.3,
+    "total": 1805.55,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-04-12",
-    "total": 916.66,
+    "total": 665.91,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-04-15",
-    "total": 817.18,
+    "total": 489.73,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-04-16",
-    "total": 934.3,
+    "total": 825.0,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-04-17",
-    "total": 1505.98,
+    "total": 1195.23,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-04-18",
-    "total": 1835.64,
+    "total": 1394.14,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-04-19",
-    "total": 1606.02,
+    "total": 987.32,
     "previsto": 1690.06,
     "evento": ""
   },
   {
     "fecha": "2026-04-22",
-    "total": 693.48,
+    "total": 542.73,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-04-23",
-    "total": 2405.46,
+    "total": 2123.05,
     "previsto": 2400.0,
     "evento": "Sant Jordi"
   },
   {
     "fecha": "2026-04-24",
-    "total": 1037.0,
+    "total": 917.41,
     "previsto": 1865.41,
     "evento": ""
   },
   {
     "fecha": "2026-04-25",
-    "total": 1643.9,
+    "total": 1763.5,
     "previsto": 2200.0,
     "evento": ""
   },
   {
     "fecha": "2026-04-26",
-    "total": 1056.11,
+    "total": 968.41,
     "previsto": 1690.06,
     "evento": "Joan Pera — Casino"
   },
   {
     "fecha": "2026-04-29",
-    "total": 707.88,
+    "total": 507.23,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-04-30",
-    "total": 1152.73,
+    "total": 876.68,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-05-01",
-    "total": 3362.15,
+    "total": 2988.05,
     "previsto": 2500.0,
     "evento": ""
   },
   {
     "fecha": "2026-05-02",
-    "total": 2288.45,
+    "total": 1972.05,
     "previsto": 2049.82,
     "evento": ""
   },
   {
     "fecha": "2026-05-03",
-    "total": 2948.2,
+    "total": 2544.09,
     "previsto": 2800.0,
     "evento": ""
   },
   {
     "fecha": "2026-05-06",
-    "total": 888.4,
+    "total": 628.64,
     "previsto": 1039.95,
     "evento": ""
   },
   {
     "fecha": "2026-05-07",
-    "total": 722.6,
+    "total": 573.91,
     "previsto": 1100.22,
     "evento": ""
   },
   {
     "fecha": "2026-05-08",
-    "total": 1397.9,
-    "previsto": 1865.41,
+    "total": 1230.68,
+    "previsto": 1419.91,
     "evento": ""
   },
   {
     "fecha": "2026-05-09",
-    "total": 1434.8,
-    "previsto": 2049.82,
+    "total": 964.27,
+    "previsto": 1258.61,
     "evento": ""
   },
   {
     "fecha": "2026-05-10",
-    "total": 1635.1,
-    "previsto": 1690.06,
+    "total": 1269.82,
+    "previsto": 1001.11,
     "evento": ""
   },
   {
     "fecha": "2026-05-13",
-    "total": 1445.85,
-    "previsto": 1039.95,
+    "total": 448.86,
+    "previsto": 815.25,
     "evento": ""
   },
   {
     "fecha": "2026-05-14",
-    "total": 1665.2,
-    "previsto": 1100.22,
+    "total": 635.0,
+    "previsto": 692.16,
     "evento": ""
   },
   {
     "fecha": "2026-05-15",
-    "total": 2276.15,
-    "previsto": 1865.41,
+    "total": 1737.32,
+    "previsto": 794.13,
     "evento": ""
   },
   {
     "fecha": "2026-05-16",
-    "total": 782.15,
-    "previsto": 2049.82,
+    "total": 1393.82,
+    "previsto": 1898.1,
     "evento": ""
   },
   {
     "fecha": "2026-05-17",
-    "total": 1826.1,
-    "previsto": 1690.06,
+    "total": 1624.5,
+    "previsto": 1120.59,
     "evento": ""
   },
   {
     "fecha": "2026-05-20",
-    "total": 416.95,
-    "previsto": 1039.95,
+    "total": 578.95,
+    "previsto": 503.82,
     "evento": ""
   },
   {
     "fecha": "2026-05-21",
-    "total": 3178.9,
-    "previsto": 1100.22,
+    "total": 304.68,
+    "previsto": 628.16,
     "evento": ""
   },
   {
     "fecha": "2026-05-22",
-    "total": 1447.7,
-    "previsto": 1865.41,
+    "total": 1007.0,
+    "previsto": 1101.4,
     "evento": ""
   },
   {
     "fecha": "2026-05-23",
-    "total": 1172.65,
-    "previsto": 2049.82,
+    "total": 2833.77,
+    "previsto": 2938.68,
     "evento": ""
   },
   {
     "fecha": "2026-05-24",
-    "total": 2486.65,
-    "previsto": 1690.06,
+    "total": 2102.5,
+    "previsto": 1176.63,
     "evento": ""
   },
   {
     "fecha": "2026-05-27",
-    "total": 732.65,
-    "previsto": 1039.95,
+    "total": 434.14,
+    "previsto": 602.13,
     "evento": ""
   },
   {
     "fecha": "2026-05-28",
-    "total": 620.95,
-    "previsto": 1100.22,
+    "total": 382.68,
+    "previsto": 578.67,
     "evento": ""
   },
   {
     "fecha": "2026-05-29",
-    "total": 1232.45,
-    "previsto": 1865.41,
+    "total": 971.09,
+    "previsto": 1439.24,
     "evento": ""
   },
   {
     "fecha": "2026-05-30",
     "total": 1950.32,
-    "previsto": 2049.82,
+    "previsto": 1685.74,
     "evento": ""
   },
   {
     "fecha": "2026-05-31",
     "total": 1485.36,
-    "previsto": 1690.06,
+    "previsto": 1154.26,
     "evento": ""
   },
   {
     "fecha": "2026-06-03",
     "total": 900.91,
-    "previsto": 1329.5,
+    "previsto": 1044.14,
     "evento": ""
   },
   {
     "fecha": "2026-06-04",
     "total": 553.09,
-    "previsto": 766.43,
+    "previsto": 655.54,
     "evento": ""
   },
   {
     "fecha": "2026-06-05",
-    "total": 1398.51,
-    "previsto": 1886.67,
+    "total": 1398.5,
+    "previsto": 1805.68,
     "evento": ""
   },
   {
     "fecha": "2026-06-06",
-    "total": 1708.54,
-    "previsto": 2458.02,
+    "total": 1708.55,
+    "previsto": 2395.78,
     "evento": ""
   },
   {
     "fecha": "2026-06-07",
     "total": 1970.32,
-    "previsto": 1983.79,
+    "previsto": 1867.58,
     "evento": ""
   },
   {
     "fecha": "2026-06-10",
-    "previsto": 1039.95,
+    "previsto": 839.59,
     "evento": "",
     "total": 490.95
   },
   {
     "fecha": "2026-06-11",
-    "previsto": 1100.22,
+    "previsto": 607.84,
     "evento": "",
     "total": 1024.55
   },
   {
     "fecha": "2026-06-12",
-    "previsto": 1865.41,
+    "previsto": 1603.01,
     "evento": "",
     "total": 1163.55
   },
   {
     "fecha": "2026-06-13",
-    "previsto": 2049.82,
+    "previsto": 1629.79,
     "evento": "",
-    "total": 1302.4
+    "total": 1302.41
   },
   {
     "fecha": "2026-06-14",
-    "previsto": 1690.06,
+    "previsto": 1767.76,
     "evento": "",
-    "total": 1378.87
+    "total": 1378.86
   },
   {
     "fecha": "2026-06-17",
-    "previsto": 1039.95,
+    "previsto": 559.66,
     "evento": "",
     "total": 474.73
   },
   {
     "fecha": "2026-06-18",
-    "previsto": 1100.22,
+    "previsto": 517.67,
     "evento": "",
     "total": 945.09
   },
   {
     "fecha": "2026-06-19",
-    "previsto": 1865.41,
+    "previsto": 1899.65,
     "evento": "",
     "total": 684.32
   },
   {
     "fecha": "2026-06-20",
-    "previsto": 2049.82,
+    "previsto": 2365.3,
     "evento": "",
     "total": 1327.5
   }

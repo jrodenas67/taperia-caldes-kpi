@@ -1,4 +1,886 @@
 {
+  "2026-01-02": {
+    "fecha": "2026-01-02",
+    "num_cierre": "1369",
+    "contado": 121.36,
+    "visa": 1311.05,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1432.41
+  },
+  "2026-01-03": {
+    "fecha": "2026-01-03",
+    "num_cierre": "1370",
+    "contado": 264.86,
+    "visa": 1156.32,
+    "passo": 90.09,
+    "tickets_rest": 90.09,
+    "total": 1511.27
+  },
+  "2026-01-04": {
+    "fecha": "2026-01-04",
+    "num_cierre": "1371",
+    "contado": 8.86,
+    "visa": 854.68,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 863.55
+  },
+  "2026-01-07": {
+    "fecha": "2026-01-07",
+    "num_cierre": "1372",
+    "contado": 23.64,
+    "visa": 328.64,
+    "passo": 35.77,
+    "tickets_rest": 35.77,
+    "total": 388.05
+  },
+  "2026-01-08": {
+    "fecha": "2026-01-08",
+    "num_cierre": "1373",
+    "contado": 0.0,
+    "visa": 459.18,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 459.18
+  },
+  "2026-01-09": {
+    "fecha": "2026-01-09",
+    "num_cierre": "1374",
+    "contado": 139.23,
+    "visa": 619.73,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 758.95
+  },
+  "2026-01-10": {
+    "fecha": "2026-01-10",
+    "num_cierre": "1375",
+    "contado": 541.55,
+    "visa": 1715.14,
+    "passo": 45.95,
+    "tickets_rest": 45.95,
+    "total": 2302.64
+  },
+  "2026-01-11": {
+    "fecha": "2026-01-11",
+    "num_cierre": "1376",
+    "contado": 197.41,
+    "visa": 541.82,
+    "passo": 48.41,
+    "tickets_rest": 48.41,
+    "total": 787.64
+  },
+  "2026-01-14": {
+    "fecha": "2026-01-14",
+    "num_cierre": "1377",
+    "contado": 0.0,
+    "visa": 213.5,
+    "passo": 122.14,
+    "tickets_rest": 122.14,
+    "total": 335.64
+  },
+  "2026-01-15": {
+    "fecha": "2026-01-15",
+    "num_cierre": "1378",
+    "contado": 27.27,
+    "visa": 675.55,
+    "passo": 18.64,
+    "tickets_rest": 18.64,
+    "total": 721.45
+  },
+  "2026-01-16": {
+    "fecha": "2026-01-16",
+    "num_cierre": "1379",
+    "contado": 544.64,
+    "visa": 502.23,
+    "passo": 93.27,
+    "tickets_rest": 93.27,
+    "total": 1140.14
+  },
+  "2026-01-17": {
+    "fecha": "2026-01-17",
+    "num_cierre": "1380",
+    "contado": 262.68,
+    "visa": 651.55,
+    "passo": 40.45,
+    "tickets_rest": 40.45,
+    "total": 954.68
+  },
+  "2026-01-18": {
+    "fecha": "2026-01-18",
+    "num_cierre": "1381",
+    "contado": 225.14,
+    "visa": 780.68,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1005.82
+  },
+  "2026-01-21": {
+    "fecha": "2026-01-21",
+    "num_cierre": "1382",
+    "contado": 43.36,
+    "visa": 467.41,
+    "passo": 14.68,
+    "tickets_rest": 14.68,
+    "total": 521.09
+  },
+  "2026-01-22": {
+    "fecha": "2026-01-22",
+    "num_cierre": "1383",
+    "contado": 46.95,
+    "visa": 616.73,
+    "passo": 13.55,
+    "tickets_rest": 13.55,
+    "total": 677.23
+  },
+  "2026-01-23": {
+    "fecha": "2026-01-23",
+    "num_cierre": "1384",
+    "contado": 17.18,
+    "visa": 960.77,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 977.95
+  },
+  "2026-01-24": {
+    "fecha": "2026-01-24",
+    "num_cierre": "1385",
+    "contado": 357.41,
+    "visa": 1093.68,
+    "passo": 15.91,
+    "tickets_rest": 15.91,
+    "total": 1467.0
+  },
+  "2026-01-25": {
+    "fecha": "2026-01-25",
+    "num_cierre": "1386",
+    "contado": 690.09,
+    "visa": 975.0,
+    "passo": 21.64,
+    "tickets_rest": 21.64,
+    "total": 1686.73
+  },
+  "2026-01-28": {
+    "fecha": "2026-01-28",
+    "num_cierre": "1387",
+    "contado": 0.0,
+    "visa": 267.95,
+    "passo": 49.73,
+    "tickets_rest": 49.73,
+    "total": 317.68
+  },
+  "2026-01-29": {
+    "fecha": "2026-01-29",
+    "num_cierre": "1388",
+    "contado": 7.09,
+    "visa": 962.64,
+    "passo": 80.55,
+    "tickets_rest": 80.55,
+    "total": 1050.27
+  },
+  "2026-01-30": {
+    "fecha": "2026-01-30",
+    "num_cierre": "1389",
+    "contado": 268.36,
+    "visa": 1386.36,
+    "passo": 68.0,
+    "tickets_rest": 68.0,
+    "total": 1722.73
+  },
+  "2026-01-31": {
+    "fecha": "2026-01-31",
+    "num_cierre": "1390",
+    "contado": 499.27,
+    "visa": 1342.05,
+    "passo": 16.5,
+    "tickets_rest": 16.5,
+    "total": 1857.82
+  },
+  "2026-02-01": {
+    "fecha": "2026-02-01",
+    "num_cierre": "1391",
+    "contado": 269.32,
+    "visa": 738.73,
+    "passo": 13.64,
+    "tickets_rest": 13.64,
+    "total": 1021.68
+  },
+  "2026-02-04": {
+    "fecha": "2026-02-04",
+    "num_cierre": "1392",
+    "contado": 0.0,
+    "visa": 199.59,
+    "passo": 122.59,
+    "tickets_rest": 122.59,
+    "total": 322.18
+  },
+  "2026-02-05": {
+    "fecha": "2026-02-05",
+    "num_cierre": "1393",
+    "contado": 75.45,
+    "visa": 840.45,
+    "passo": 16.91,
+    "tickets_rest": 16.91,
+    "total": 932.82
+  },
+  "2026-02-06": {
+    "fecha": "2026-02-06",
+    "num_cierre": "1394",
+    "contado": 195.09,
+    "visa": 1497.0,
+    "passo": 116.73,
+    "tickets_rest": 116.73,
+    "total": 1808.82
+  },
+  "2026-02-07": {
+    "fecha": "2026-02-07",
+    "num_cierre": "1395",
+    "contado": 1378.18,
+    "visa": 2471.0,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 3849.18
+  },
+  "2026-02-08": {
+    "fecha": "2026-02-08",
+    "num_cierre": "1396",
+    "contado": 335.5,
+    "visa": 1595.23,
+    "passo": 90.23,
+    "tickets_rest": 90.23,
+    "total": 2020.95
+  },
+  "2026-02-11": {
+    "fecha": "2026-02-11",
+    "num_cierre": "1397",
+    "contado": 6.91,
+    "visa": 958.23,
+    "passo": 21.41,
+    "tickets_rest": 21.41,
+    "total": 986.55
+  },
+  "2026-02-12": {
+    "fecha": "2026-02-12",
+    "num_cierre": "1398",
+    "contado": 0.0,
+    "visa": 395.68,
+    "passo": 65.27,
+    "tickets_rest": 65.27,
+    "total": 460.95
+  },
+  "2026-02-13": {
+    "fecha": "2026-02-13",
+    "num_cierre": "1399",
+    "contado": 42.05,
+    "visa": 836.59,
+    "passo": 68.64,
+    "tickets_rest": 68.64,
+    "total": 947.27
+  },
+  "2026-02-14": {
+    "fecha": "2026-02-14",
+    "num_cierre": "1400",
+    "contado": 567.36,
+    "visa": 2350.36,
+    "passo": 79.59,
+    "tickets_rest": 79.59,
+    "total": 2997.32
+  },
+  "2026-02-15": {
+    "fecha": "2026-02-15",
+    "num_cierre": "1401",
+    "contado": 46.86,
+    "visa": 1156.45,
+    "passo": 31.68,
+    "tickets_rest": 31.68,
+    "total": 1235.0
+  },
+  "2026-02-18": {
+    "fecha": "2026-02-18",
+    "num_cierre": "1402",
+    "contado": 98.32,
+    "visa": 384.91,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 483.23
+  },
+  "2026-02-19": {
+    "fecha": "2026-02-19",
+    "num_cierre": "1403",
+    "contado": 0.0,
+    "visa": 513.0,
+    "passo": 22.18,
+    "tickets_rest": 22.18,
+    "total": 535.18
+  },
+  "2026-02-20": {
+    "fecha": "2026-02-20",
+    "num_cierre": "1404",
+    "contado": 22.03,
+    "visa": 927.93,
+    "passo": 16.91,
+    "tickets_rest": 16.91,
+    "total": 966.86
+  },
+  "2026-02-21": {
+    "fecha": "2026-02-21",
+    "num_cierre": "1405",
+    "contado": 0.0,
+    "visa": 2367.88,
+    "passo": 69.36,
+    "tickets_rest": 69.36,
+    "total": 2437.25
+  },
+  "2026-02-22": {
+    "fecha": "2026-02-22",
+    "num_cierre": "1406",
+    "contado": 93.68,
+    "visa": 1343.27,
+    "passo": 28.0,
+    "tickets_rest": 28.0,
+    "total": 1464.95
+  },
+  "2026-03-11": {
+    "fecha": "2026-03-11",
+    "num_cierre": "1407",
+    "contado": 1.36,
+    "visa": 304.32,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 305.68
+  },
+  "2026-03-12": {
+    "fecha": "2026-03-12",
+    "num_cierre": "1408",
+    "contado": 0.0,
+    "visa": 472.41,
+    "passo": 5.09,
+    "tickets_rest": 5.09,
+    "total": 477.5
+  },
+  "2026-03-13": {
+    "fecha": "2026-03-13",
+    "num_cierre": "1409",
+    "contado": 207.09,
+    "visa": 972.23,
+    "passo": 18.55,
+    "tickets_rest": 18.55,
+    "total": 1197.86
+  },
+  "2026-03-14": {
+    "fecha": "2026-03-14",
+    "num_cierre": "1410",
+    "contado": 0.0,
+    "visa": 1809.36,
+    "passo": 21.82,
+    "tickets_rest": 21.82,
+    "total": 1831.18
+  },
+  "2026-03-15": {
+    "fecha": "2026-03-15",
+    "num_cierre": "1411",
+    "contado": 515.14,
+    "visa": 1945.77,
+    "passo": 70.36,
+    "tickets_rest": 70.36,
+    "total": 2531.27
+  },
+  "2026-03-18": {
+    "fecha": "2026-03-18",
+    "num_cierre": "1412",
+    "contado": 3.64,
+    "visa": 706.18,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 709.82
+  },
+  "2026-03-19": {
+    "fecha": "2026-03-19",
+    "num_cierre": "1413",
+    "contado": 0.0,
+    "visa": 395.05,
+    "passo": 75.0,
+    "tickets_rest": 75.0,
+    "total": 470.05
+  },
+  "2026-03-20": {
+    "fecha": "2026-03-20",
+    "num_cierre": "1414",
+    "contado": 33.86,
+    "visa": 1138.64,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1172.5
+  },
+  "2026-03-21": {
+    "fecha": "2026-03-21",
+    "num_cierre": "1415",
+    "contado": 399.14,
+    "visa": 1199.73,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1598.86
+  },
+  "2026-03-22": {
+    "fecha": "2026-03-22",
+    "num_cierre": "1416",
+    "contado": 0.0,
+    "visa": 528.82,
+    "passo": 19.09,
+    "tickets_rest": 19.09,
+    "total": 547.91
+  },
+  "2026-03-25": {
+    "fecha": "2026-03-25",
+    "num_cierre": "1417",
+    "contado": 19.23,
+    "visa": 560.73,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 579.95
+  },
+  "2026-03-26": {
+    "fecha": "2026-03-26",
+    "num_cierre": "1418",
+    "contado": 2.45,
+    "visa": 352.41,
+    "passo": 105.18,
+    "tickets_rest": 105.18,
+    "total": 460.05
+  },
+  "2026-03-27": {
+    "fecha": "2026-03-27",
+    "num_cierre": "1419",
+    "contado": 237.18,
+    "visa": 1501.82,
+    "passo": 4.77,
+    "tickets_rest": 4.77,
+    "total": 1743.77
+  },
+  "2026-03-28": {
+    "fecha": "2026-03-28",
+    "num_cierre": "1420",
+    "contado": 27.77,
+    "visa": 1293.73,
+    "passo": 60.64,
+    "tickets_rest": 60.64,
+    "total": 1382.14
+  },
+  "2026-03-29": {
+    "fecha": "2026-03-29",
+    "num_cierre": "1421",
+    "contado": 382.36,
+    "visa": 981.86,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1364.23
+  },
+  "2026-04-01": {
+    "fecha": "2026-04-01",
+    "num_cierre": "1422",
+    "contado": 0.0,
+    "visa": 1042.55,
+    "passo": 27.27,
+    "tickets_rest": 27.27,
+    "total": 1069.82
+  },
+  "2026-04-02": {
+    "fecha": "2026-04-02",
+    "num_cierre": "1423",
+    "contado": 251.77,
+    "visa": 1115.5,
+    "passo": 21.27,
+    "tickets_rest": 21.27,
+    "total": 1388.55
+  },
+  "2026-04-03": {
+    "fecha": "2026-04-03",
+    "num_cierre": "1424",
+    "contado": 220.73,
+    "visa": 1969.09,
+    "passo": 30.95,
+    "tickets_rest": 30.95,
+    "total": 2220.77
+  },
+  "2026-04-04": {
+    "fecha": "2026-04-04",
+    "num_cierre": "1425",
+    "contado": 88.59,
+    "visa": 1345.86,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1434.45
+  },
+  "2026-04-05": {
+    "fecha": "2026-04-05",
+    "num_cierre": "1426",
+    "contado": 316.32,
+    "visa": 1717.77,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 2034.09
+  },
+  "2026-04-08": {
+    "fecha": "2026-04-08",
+    "num_cierre": "1427",
+    "contado": 20.32,
+    "visa": 319.09,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 339.41
+  },
+  "2026-04-09": {
+    "fecha": "2026-04-09",
+    "num_cierre": "1428",
+    "contado": 0.0,
+    "visa": 500.91,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 500.91
+  },
+  "2026-04-10": {
+    "fecha": "2026-04-10",
+    "num_cierre": "1429",
+    "contado": 149.32,
+    "visa": 554.64,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 703.95
+  },
+  "2026-04-11": {
+    "fecha": "2026-04-11",
+    "num_cierre": "1430",
+    "contado": 38.95,
+    "visa": 1728.5,
+    "passo": 38.09,
+    "tickets_rest": 38.09,
+    "total": 1805.55
+  },
+  "2026-04-12": {
+    "fecha": "2026-04-12",
+    "num_cierre": "1431",
+    "contado": 0.0,
+    "visa": 580.77,
+    "passo": 85.14,
+    "tickets_rest": 85.14,
+    "total": 665.91
+  },
+  "2026-04-15": {
+    "fecha": "2026-04-15",
+    "num_cierre": "1432",
+    "contado": 0.0,
+    "visa": 431.0,
+    "passo": 58.73,
+    "tickets_rest": 58.73,
+    "total": 489.73
+  },
+  "2026-04-16": {
+    "fecha": "2026-04-16",
+    "num_cierre": "1433",
+    "contado": 0.0,
+    "visa": 811.45,
+    "passo": 13.55,
+    "tickets_rest": 13.55,
+    "total": 825.0
+  },
+  "2026-04-17": {
+    "fecha": "2026-04-17",
+    "num_cierre": "1434",
+    "contado": 0.0,
+    "visa": 1147.45,
+    "passo": 47.77,
+    "tickets_rest": 47.77,
+    "total": 1195.23
+  },
+  "2026-04-18": {
+    "fecha": "2026-04-18",
+    "num_cierre": "1435",
+    "contado": 51.0,
+    "visa": 1258.82,
+    "passo": 84.32,
+    "tickets_rest": 84.32,
+    "total": 1394.14
+  },
+  "2026-04-19": {
+    "fecha": "2026-04-19",
+    "num_cierre": "1436",
+    "contado": 0.0,
+    "visa": 913.77,
+    "passo": 73.55,
+    "tickets_rest": 73.55,
+    "total": 987.32
+  },
+  "2026-04-22": {
+    "fecha": "2026-04-22",
+    "num_cierre": "1437",
+    "contado": 0.0,
+    "visa": 488.45,
+    "passo": 54.27,
+    "tickets_rest": 54.27,
+    "total": 542.73
+  },
+  "2026-04-23": {
+    "fecha": "2026-04-23",
+    "num_cierre": "1438",
+    "contado": 300.68,
+    "visa": 1727.73,
+    "passo": 94.64,
+    "tickets_rest": 94.64,
+    "total": 2123.05
+  },
+  "2026-04-24": {
+    "fecha": "2026-04-24",
+    "num_cierre": "1439",
+    "contado": 41.55,
+    "visa": 875.86,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 917.41
+  },
+  "2026-04-25": {
+    "fecha": "2026-04-25",
+    "num_cierre": "1440",
+    "contado": 508.0,
+    "visa": 1199.32,
+    "passo": 56.18,
+    "tickets_rest": 56.18,
+    "total": 1763.5
+  },
+  "2026-04-26": {
+    "fecha": "2026-04-26",
+    "num_cierre": "1441",
+    "contado": 265.45,
+    "visa": 664.36,
+    "passo": 38.59,
+    "tickets_rest": 38.59,
+    "total": 968.41
+  },
+  "2026-04-29": {
+    "fecha": "2026-04-29",
+    "num_cierre": "1442",
+    "contado": 42.45,
+    "visa": 407.45,
+    "passo": 57.32,
+    "tickets_rest": 57.32,
+    "total": 507.23
+  },
+  "2026-04-30": {
+    "fecha": "2026-04-30",
+    "num_cierre": "1443",
+    "contado": 0.0,
+    "visa": 855.86,
+    "passo": 20.82,
+    "tickets_rest": 20.82,
+    "total": 876.68
+  },
+  "2026-05-01": {
+    "fecha": "2026-05-01",
+    "num_cierre": "1444",
+    "contado": 338.45,
+    "visa": 2542.59,
+    "passo": 107.0,
+    "tickets_rest": 107.0,
+    "total": 2988.05
+  },
+  "2026-05-02": {
+    "fecha": "2026-05-02",
+    "num_cierre": "1445",
+    "contado": 676.18,
+    "visa": 1221.0,
+    "passo": 74.86,
+    "tickets_rest": 74.86,
+    "total": 1972.05
+  },
+  "2026-05-03": {
+    "fecha": "2026-05-03",
+    "num_cierre": "1446",
+    "contado": 487.27,
+    "visa": 1965.05,
+    "passo": 91.77,
+    "tickets_rest": 91.77,
+    "total": 2544.09
+  },
+  "2026-05-06": {
+    "fecha": "2026-05-06",
+    "num_cierre": "1447",
+    "contado": 0.0,
+    "visa": 598.59,
+    "passo": 30.05,
+    "tickets_rest": 30.05,
+    "total": 628.64
+  },
+  "2026-05-07": {
+    "fecha": "2026-05-07",
+    "num_cierre": "1448",
+    "contado": 21.73,
+    "visa": 508.95,
+    "passo": 43.23,
+    "tickets_rest": 43.23,
+    "total": 573.91
+  },
+  "2026-05-08": {
+    "fecha": "2026-05-08",
+    "num_cierre": "1449",
+    "contado": 216.55,
+    "visa": 999.23,
+    "passo": 14.91,
+    "tickets_rest": 14.91,
+    "total": 1230.68
+  },
+  "2026-05-09": {
+    "fecha": "2026-05-09",
+    "num_cierre": "1450",
+    "contado": 0.0,
+    "visa": 859.41,
+    "passo": 104.86,
+    "tickets_rest": 104.86,
+    "total": 964.27
+  },
+  "2026-05-10": {
+    "fecha": "2026-05-10",
+    "num_cierre": "1451",
+    "contado": 181.86,
+    "visa": 1000.77,
+    "passo": 87.18,
+    "tickets_rest": 87.18,
+    "total": 1269.82
+  },
+  "2026-05-13": {
+    "fecha": "2026-05-13",
+    "num_cierre": "1452",
+    "contado": 0.0,
+    "visa": 448.86,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 448.86
+  },
+  "2026-05-14": {
+    "fecha": "2026-05-14",
+    "num_cierre": "1453",
+    "contado": 0.0,
+    "visa": 583.5,
+    "passo": 51.5,
+    "tickets_rest": 51.5,
+    "total": 635.0
+  },
+  "2026-05-15": {
+    "fecha": "2026-05-15",
+    "num_cierre": "1454",
+    "contado": 105.18,
+    "visa": 1538.91,
+    "passo": 93.23,
+    "tickets_rest": 93.23,
+    "total": 1737.32
+  },
+  "2026-05-16": {
+    "fecha": "2026-05-16",
+    "num_cierre": "1455",
+    "contado": 148.95,
+    "visa": 1244.86,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1393.82
+  },
+  "2026-05-17": {
+    "fecha": "2026-05-17",
+    "num_cierre": "1456",
+    "contado": 503.36,
+    "visa": 1073.0,
+    "passo": 48.14,
+    "tickets_rest": 48.14,
+    "total": 1624.5
+  },
+  "2026-05-20": {
+    "fecha": "2026-05-20",
+    "num_cierre": "1457",
+    "contado": 0.0,
+    "visa": 560.18,
+    "passo": 18.77,
+    "tickets_rest": 18.77,
+    "total": 578.95
+  },
+  "2026-05-21": {
+    "fecha": "2026-05-21",
+    "num_cierre": "1458",
+    "contado": 0.0,
+    "visa": 304.68,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 304.68
+  },
+  "2026-05-22": {
+    "fecha": "2026-05-22",
+    "num_cierre": "1459",
+    "contado": 0.0,
+    "visa": 962.23,
+    "passo": 44.77,
+    "tickets_rest": 44.77,
+    "total": 1007.0
+  },
+  "2026-05-23": {
+    "fecha": "2026-05-23",
+    "num_cierre": "1460",
+    "contado": 572.73,
+    "visa": 2113.5,
+    "passo": 147.55,
+    "tickets_rest": 147.55,
+    "total": 2833.77
+  },
+  "2026-05-24": {
+    "fecha": "2026-05-24",
+    "num_cierre": "1461",
+    "contado": 441.91,
+    "visa": 1553.82,
+    "passo": 106.77,
+    "tickets_rest": 106.77,
+    "total": 2102.5
+  },
+  "2026-05-27": {
+    "fecha": "2026-05-27",
+    "num_cierre": "1462",
+    "contado": 13.55,
+    "visa": 374.86,
+    "passo": 45.73,
+    "tickets_rest": 45.73,
+    "total": 434.14
+  },
+  "2026-05-28": {
+    "fecha": "2026-05-28",
+    "num_cierre": "1463",
+    "contado": 0.0,
+    "visa": 368.5,
+    "passo": 14.18,
+    "tickets_rest": 14.18,
+    "total": 382.68
+  },
+  "2026-05-29": {
+    "fecha": "2026-05-29",
+    "num_cierre": "1464",
+    "contado": 46.14,
+    "visa": 871.0,
+    "passo": 53.95,
+    "tickets_rest": 53.95,
+    "total": 971.09
+  },
+  "2026-05-30": {
+    "fecha": "2026-05-30",
+    "num_cierre": "1465",
+    "contado": 349.36,
+    "visa": 1571.5,
+    "passo": 29.45,
+    "tickets_rest": 29.45,
+    "total": 1950.32
+  },
+  "2026-05-31": {
+    "fecha": "2026-05-31",
+    "num_cierre": "1466",
+    "contado": 165.09,
+    "visa": 1249.18,
+    "passo": 71.09,
+    "tickets_rest": 71.09,
+    "total": 1485.36
+  },
   "2026-06-03": {
     "fecha": "2026-06-03",
     "num_cierre": "1467",
@@ -24,7 +906,7 @@
     "visa": 1135.05,
     "passo": 72.41,
     "tickets_rest": 72.41,
-    "total": 1398.51
+    "total": 1398.5
   },
   "2026-06-06": {
     "fecha": "2026-06-06",
@@ -33,7 +915,7 @@
     "visa": 1507.18,
     "passo": 23.18,
     "tickets_rest": 23.18,
-    "total": 1708.54
+    "total": 1708.55
   },
   "2026-06-07": {
     "fecha": "2026-06-07",
@@ -78,7 +960,7 @@
     "visa": 1194.86,
     "passo": 49.36,
     "tickets_rest": 49.36,
-    "total": 1302.4
+    "total": 1302.41
   },
   "2026-06-14": {
     "fecha": "2026-06-14",
@@ -87,7 +969,7 @@
     "visa": 1179.64,
     "passo": 82.82,
     "tickets_rest": 82.82,
-    "total": 1378.87
+    "total": 1378.86
   },
   "2026-06-17": {
     "fecha": "2026-06-17",
