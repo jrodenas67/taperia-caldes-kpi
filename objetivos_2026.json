@@ -1,0 +1,9 @@
+{
+  "_comentario": "Objetivos oficiales 2026 (BD TPV). Mandan SIEMPRE sobre la referencia derivada de Gmail (ref_meses.json). Para meses futuros sin objetivo aquí, update_kpi.py usa ref_meses como respaldo. v2025=ventas netas 2025, prevision=v2025*1.03, diferencia=v2025*0.03, invDia=diferencia/dias_laborables.",
+  "1": {"v2025": 22382.26, "prevision": 23053.73, "diferencia": 671.47, "invDia": 29.19},
+  "2": {"v2025": 22499.24, "prevision": 23174.22, "diferencia": 674.98, "invDia": 42.19},
+  "3": {"v2025": 21443.45, "prevision": 22086.75, "diferencia": 643.30, "invDia": 42.89},
+  "4": {"v2025": 31530.01, "prevision": 32475.91, "diferencia": 945.90, "invDia": 43.00},
+  "5": {"v2025": 29362.16, "prevision": 30243.02, "diferencia": 880.86, "invDia": 38.30},
+  "6": {"v2025": 33832.98, "prevision": 34847.97, "diferencia": 1014.99, "invDia": 46.13}
+}

@@ -27,9 +27,10 @@ import json
 import re
 from pathlib import Path
 
-KPI       = Path("kpi_taperia.html")
-HISTORICO = Path("historico_caja.json")
-REF_MESES = Path("ref_meses.json")  # opcional: {"6": {"v2025": x, "dias": n}, ...}
+KPI        = Path("kpi_taperia.html")
+HISTORICO  = Path("historico_caja.json")
+REF_MESES  = Path("ref_meses.json")        # respaldo: {"6": {"v2025": x, "dias": n}, ...}
+OBJETIVOS  = Path("objetivos_2026.json")   # oficial (BD TPV): manda siempre
 
 ARQUEO_FROM = (2026, 6)  # primer mes alimentado por el arqueo (junio 2026)
 
@@ -62,6 +63,13 @@ def main() -> int:
         except json.JSONDecodeError:
             ref_meses = {}
 
+    objetivos = {}
+    if OBJETIVOS.exists():
+        try:
+            objetivos = json.loads(OBJETIVOS.read_text())
+        except json.JSONDecodeError:
+            objetivos = {}
+
     # Agrupar totales 2026 por mes
     por_mes: dict[int, dict] = {}
     for e in historico:
@@ -91,28 +99,28 @@ def main() -> int:
         v2026 = _r2(g["total"])
         dias = g["dias"]
 
-        prev = by_mes.get(nombre, {})
+        oficial = objetivos.get(str(mm)) or objetivos.get(mm)
         ref = ref_meses.get(str(mm)) or ref_meses.get(mm)
 
-        if ref:
+        if oficial:
+            # Objetivo oficial (BD TPV): manda SIEMPRE sobre Gmail.
+            v2025 = _r2(oficial["v2025"])
+            prevision = _r2(oficial["prevision"])
+            diferencia = _r2(oficial.get("diferencia", v2025 * 0.03))
+            invDia = _r2(oficial.get("invDia", 0.0))
+        elif ref:
+            # Mes sin objetivo oficial: referencia 2025 derivada de Gmail.
             v2025 = _r2(ref["v2025"])
-            dias2025 = ref.get("dias") or prev.get("dias") or dias or 1
-        elif prev.get("v2025"):
-            v2025 = _r2(prev["v2025"])
-            dias2025 = None  # conservar invDia/prevision existentes
-        else:
-            # Sin referencia: aproximar desde la previsión diaria acumulada
-            v2025 = _r2(g["previsto"] / 1.03) if g["previsto"] else 0.0
-            dias2025 = dias or 1
-
-        if ref or not prev.get("prevision"):
+            dias2025 = ref.get("dias") or dias or 1
             prevision = _r2(v2025 * 1.03)
             diferencia = _r2(v2025 * 0.03)
-            invDia = _r2(diferencia / dias2025) if dias2025 else prev.get("invDia", 0.0)
+            invDia = _r2(diferencia / dias2025)
         else:
-            prevision = _r2(prev["prevision"])
-            diferencia = _r2(prev.get("diferencia", v2025 * 0.03))
-            invDia = _r2(prev.get("invDia", 0.0))
+            # Sin nada: aproximar desde la previsión diaria acumulada.
+            v2025 = _r2(g["previsto"] / 1.03) if g["previsto"] else 0.0
+            prevision = _r2(v2025 * 1.03)
+            diferencia = _r2(v2025 * 0.03)
+            invDia = _r2(diferencia / (dias or 1))
 
         hastaObj = _r2(v2026 - prevision)
         incentivo = _r2(hastaObj * 0.10) if hastaObj > 0 else 0.0
