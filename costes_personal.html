@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Costos de Personal · La Taperia de Caldes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #F4F5F7;
+  --surface:   #FFFFFF;
+  --border:    #E4E7EC;
+  --ink:       #111827;
+  --ink-soft:  #4B5563;
+  --ink-faint: #9CA3AF;
+  --purple:    #7C3AED;
+  --purple-lt: #A855F7;
+  --purple-bg: #EDE9FE;
+  --green:     #16A34A;
+  --green-bg:  #DCFCE7;
+  --red:       #DC2626;
+  --red-bg:    #FEE2E2;
+  --amber:     #B45309;
+  --amber-bg:  #FEF3C7;
+  --radius:    14px;
+  --shadow:    0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.page { max-width: 1100px; margin: 0 auto; padding: 36px 24px 80px; }
+
+/* ── Back link ── */
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; color: var(--ink-faint);
+  text-decoration: none; margin-bottom: 28px;
+  transition: color .15s;
+}
+.back:hover { color: var(--purple); }
+
+/* ── Header ── */
+.page-header { margin-bottom: 32px; }
+.page-header h1 {
+  font-size: 26px; font-weight: 800; letter-spacing: -.5px;
+  color: var(--ink); margin-bottom: 4px;
+}
+.page-header p { font-size: 14px; color: var(--ink-soft); }
+
+/* ── Selector de mes ── */
+.month-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 28px; flex-wrap: wrap;
+}
+.month-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 14px;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--ink-soft); cursor: pointer; transition: all .15s;
+}
+.month-btn:hover { border-color: var(--purple); color: var(--purple); }
+.month-btn.active {
+  background: var(--purple); border-color: var(--purple);
+  color: #fff;
+}
+
+/* ── KPI Cards ── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+}
+.kpi-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 26px; font-weight: 800; letter-spacing: -.5px; color: var(--ink);
+}
+.kpi-sub {
+  font-size: 12px; color: var(--ink-faint); margin-top: 4px; font-weight: 500;
+}
+.kpi-card.highlight { border-color: var(--purple); }
+.kpi-card.highlight .kpi-value { color: var(--purple); }
+
+/* ── Tabla ── */
+.table-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  margin-bottom: 20px; box-shadow: var(--shadow);
+}
+.table-card-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.table-card-header h2 {
+  font-size: 15px; font-weight: 700; color: var(--ink);
+}
+.table-card-header .pill {
+  font-size: 11px; font-weight: 700; padding: 2px 9px;
+  border-radius: 999px; background: var(--purple-bg); color: var(--purple);
+  letter-spacing: .05em; text-transform: uppercase;
+}
+
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13.5px;
+}
+thead th {
+  background: var(--bg); padding: 10px 16px;
+  text-align: right; font-size: 11px; font-weight: 700;
+  color: var(--ink-faint); letter-spacing: .06em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+thead th:first-child { text-align: left; }
+thead th:nth-child(2) { text-align: left; }
+
+tbody td {
+  padding: 13px 16px; border-bottom: 1px solid #F3F4F6;
+  text-align: right; color: var(--ink); font-weight: 500;
+}
+tbody td:first-child { text-align: left; font-weight: 700; }
+tbody td:nth-child(2) { text-align: left; color: var(--ink-soft); font-weight: 400; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #F9FAFB; }
+
+tfoot td {
+  padding: 13px 16px; text-align: right;
+  font-weight: 700; font-size: 14px; color: var(--ink);
+  background: var(--purple-bg); border-top: 2px solid var(--purple);
+}
+tfoot td:first-child { text-align: left; color: var(--purple); }
+tfoot td:nth-child(2) { text-align: left; }
+
+.badge-rol {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 999px;
+  background: #F3F4F6; color: var(--ink-soft);
+  border: 1px solid var(--border);
+}
+.badge-rol.sala   { background: #DBEAFE; color: #1E40AF; border-color: #BFDBFE; }
+.badge-rol.cuina  { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+.badge-rol.gestio { background: var(--purple-bg); color: var(--purple); border-color: #C4B5FD; }
+
+/* ── Nota de SS ── */
+.note {
+  font-size: 12px; color: var(--ink-faint); padding: 12px 20px;
+  border-top: 1px solid var(--border); background: var(--bg);
+}
+
+/* ── Comparativa mensual ── */
+.comp-table thead th, .comp-table tbody td {
+  font-size: 12.5px;
+}
+.pct { font-weight: 700; }
+.pct.ok  { color: var(--green); }
+.pct.warn { color: var(--amber); }
+.pct.bad  { color: var(--red); }
+
+@media (max-width: 640px) {
+  .page { padding: 20px 14px 60px; }
+  .kpi-value { font-size: 20px; }
+  table { font-size: 12px; }
+  thead th, tbody td, tfoot td { padding: 9px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back" href="/">← Tornar al portal</a>
+
+  <div class="page-header">
+    <h1>💶 Costos de Personal</h1>
+    <p>Nòmines, Seguretat Social empresa i cost total mensual per treballador</p>
+  </div>
+
+  <!-- Selector de mes -->
+  <div class="month-bar" id="month-bar"></div>
+
+  <!-- KPI cards -->
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi-card highlight">
+      <div class="kpi-label">Cost total mes</div>
+      <div class="kpi-value" id="kpi-total">—</div>
+      <div class="kpi-sub">Nòmina + SS empresa</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Nòmina bruta</div>
+      <div class="kpi-value" id="kpi-nomina">—</div>
+      <div class="kpi-sub">Suma salaris bruts</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">SS empresa (est.)</div>
+      <div class="kpi-value" id="kpi-ss">—</div>
+      <div class="kpi-sub">~33% sobre brut</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">% sobre facturació</div>
+      <div class="kpi-value" id="kpi-pct">—</div>
+      <div class="kpi-sub" id="kpi-pct-sub">vs. objectiu ≤ 35%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Treballadors</div>
+      <div class="kpi-value" id="kpi-workers">—</div>
+      <div class="kpi-sub">en nòmina el mes</div>
+    </div>
+  </div>
+
+  <!-- Taula detall empleats -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <h2>Detall per treballador</h2>
+      <span class="pill" id="mes-pill">—</span>
+    </div>
+    <table id="emp-table">
+      <thead>
+        <tr>
+          <th>Treballador</th>
+          <th>Rol</th>
+          <th>Brut mensual</th>
+          <th>SS empresa</th>
+          <th>Cost total</th>
+        </tr>
+      </thead>
+      <tbody id="emp-body"></tbody>
+      <tfoot id="emp-foot"></tfoot>
+    </table>
+    <div class="note">* SS empresa estimada al 33% del salari brut (contingències comunes + desocupació + formació + FOGASA).</div>
+  </div>
+
+  <!-- Comparativa mensual -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <h2>Comparativa mensual 2026</h2>
+    </div>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Cost personal</th>
+          <th>Facturació</th>
+          <th>% personal</th>
+        </tr>
+      </thead>
+      <tbody id="comp-body"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DADES — edita aquesta secció per actualitzar
+═══════════════════════════════════════════════ */
+const EMPLEATS = [
+  { nom: "—",  rol: "sala",   brut: 0 },
+];
+
+// Cost personal per mes (brut total, sense SS).
+// Afegeix/modifica els mesos que tinguis dades.
+const COSTOS_MENSUALS = {
+  1:  { nomina: 0, nota: "" },
+  2:  { nomina: 0, nota: "" },
+  3:  { nomina: 0, nota: "" },
+  4:  { nomina: 0, nota: "" },
+  5:  { nomina: 0, nota: "" },
+  6:  { nomina: 0, nota: "" },
+};
+
+// Facturació mensual per calcular el % (s'omple des de KPI)
+const FACTURACIO = {
+  1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0,
+};
+
+/* ═══════════════════════════════════════════════ */
+
+const MESOS = ["","Gener","Febrer","Març","Abril","Maig","Juny",
+               "Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
+const SS_PCT = 0.33;
+const fmt = n => n.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+const pct = (a,b) => b ? ((a/b)*100).toFixed(1) + '%' : '—';
+
+let mesActiu = new Date().getMonth() + 1;
+
+function buildMonthBar() {
+  const bar = document.getElementById('month-bar');
+  const mesos = Object.keys(COSTOS_MENSUALS).map(Number);
+  mesos.forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'month-btn' + (m === mesActiu ? ' active' : '');
+    btn.textContent = MESOS[m];
+    btn.onclick = () => { mesActiu = m; render(); };
+    bar.appendChild(btn);
+  });
+}
+
+function render() {
+  // Update month bar active
+  document.querySelectorAll('.month-btn').forEach((b,i) => {
+    const mesos = Object.keys(COSTOS_MENSUALS).map(Number);
+    b.classList.toggle('active', mesos[i] === mesActiu);
+  });
+
+  const d = COSTOS_MENSUALS[mesActiu] || { nomina: 0 };
+  const nomina = EMPLEATS.reduce((s,e) => s + e.brut, 0) || d.nomina;
+  const ss = nomina * SS_PCT;
+  const total = nomina + ss;
+  const fact = FACTURACIO[mesActiu] || 0;
+  const pctVal = fact ? (total / fact * 100) : null;
+
+  document.getElementById('kpi-total').textContent   = fmt(total);
+  document.getElementById('kpi-nomina').textContent  = fmt(nomina);
+  document.getElementById('kpi-ss').textContent      = fmt(ss);
+  document.getElementById('kpi-pct').textContent     = pctVal ? pctVal.toFixed(1) + '%' : '—';
+  document.getElementById('kpi-workers').textContent = EMPLEATS.filter(e => e.brut > 0).length || '—';
+  document.getElementById('mes-pill').textContent    = MESOS[mesActiu];
+
+  // Color %
+  const kpiPct = document.getElementById('kpi-pct');
+  if (pctVal) {
+    kpiPct.style.color = pctVal <= 30 ? 'var(--green)' : pctVal <= 35 ? 'var(--amber)' : 'var(--red)';
+  }
+
+  // Taula empleats
+  const tbody = document.getElementById('emp-body');
+  tbody.innerHTML = '';
+  let totalNomina = 0, totalSS = 0, totalCost = 0;
+  EMPLEATS.forEach(e => {
+    const ss_e = e.brut * SS_PCT;
+    const cost = e.brut + ss_e;
+    totalNomina += e.brut; totalSS += ss_e; totalCost += cost;
+    const rolClass = { sala:'sala', cuina:'cuina', gestio:'gestio' }[e.rol] || '';
+    tbody.innerHTML += `<tr>
+      <td>${e.nom}</td>
+      <td><span class="badge-rol ${rolClass}">${e.rol}</span></td>
+      <td>${fmt(e.brut)}</td>
+      <td>${fmt(ss_e)}</td>
+      <td><strong>${fmt(cost)}</strong></td>
+    </tr>`;
+  });
+
+  document.getElementById('emp-foot').innerHTML = `<tr>
+    <td>TOTAL</td><td></td>
+    <td>${fmt(totalNomina)}</td>
+    <td>${fmt(totalSS)}</td>
+    <td>${fmt(totalCost)}</td>
+  </tr>`;
+
+  // Comparativa
+  const comp = document.getElementById('comp-body');
+  comp.innerHTML = '';
+  Object.keys(COSTOS_MENSUALS).map(Number).forEach(m => {
+    const cm = COSTOS_MENSUALS[m];
+    const nom_m = EMPLEATS.reduce((s,e) => s + e.brut, 0) || cm.nomina;
+    const tot_m = nom_m * (1 + SS_PCT);
+    const f_m   = FACTURACIO[m] || 0;
+    const p     = f_m ? (tot_m / f_m * 100) : null;
+    const cls   = p ? (p <= 30 ? 'ok' : p <= 35 ? 'warn' : 'bad') : '';
+    const isCur = m === mesActiu;
+    comp.innerHTML += `<tr style="${isCur ? 'background:#F5F3FF;font-weight:600' : ''}">
+      <td>${MESOS[m]}</td>
+      <td>${tot_m > 0 ? fmt(tot_m) : '—'}</td>
+      <td>${f_m > 0 ? fmt(f_m) : '—'}</td>
+      <td class="pct ${cls}">${p ? p.toFixed(1) + '%' : '—'}</td>
+    </tr>`;
+  });
+}
+
+buildMonthBar();
+render();
+</script>
+</body>
+</html>

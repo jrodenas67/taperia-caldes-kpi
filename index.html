@@ -331,20 +331,22 @@ body {
   height: 4px;
   transition: height .2s;
 }
-.card.c-public::before  { background: linear-gradient(90deg, var(--public-col), #52a85c); }
-.card.c-intern::before  { background: linear-gradient(90deg, var(--intern-col), #4070c0); }
-.card.c-local::before   { background: linear-gradient(90deg, var(--terra), var(--or)); }
-.card.c-gold::before    { background: linear-gradient(90deg, var(--or), var(--or-lt)); }
+.card.c-public::before    { background: linear-gradient(90deg, var(--public-col), #52a85c); }
+.card.c-intern::before    { background: linear-gradient(90deg, var(--intern-col), #4070c0); }
+.card.c-local::before     { background: linear-gradient(90deg, var(--terra), var(--or)); }
+.card.c-gold::before      { background: linear-gradient(90deg, var(--or), var(--or-lt)); }
+.card.c-personal::before  { background: linear-gradient(90deg, #7C3AED, #A855F7); }
 
 .card:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-3px);
   border-color: transparent;
 }
-.card.c-public:hover  { border-color: var(--public-col); }
-.card.c-intern:hover  { border-color: var(--intern-col); }
-.card.c-local:hover   { border-color: var(--terra); }
-.card.c-gold:hover    { border-color: var(--or); }
+.card.c-public:hover    { border-color: var(--public-col); }
+.card.c-intern:hover    { border-color: var(--intern-col); }
+.card.c-local:hover     { border-color: var(--terra); }
+.card.c-gold:hover      { border-color: var(--or); }
+.card.c-personal:hover  { border-color: #7C3AED; }
 
 /* Card header */
 .card-top {
@@ -360,10 +362,11 @@ body {
   font-size: 24px;
   flex-shrink: 0;
 }
-.card.c-public  .card-icon-wrap { background: var(--public-bg); }
-.card.c-intern  .card-icon-wrap { background: var(--intern-bg); }
-.card.c-local   .card-icon-wrap { background: #FEF0E8; }
-.card.c-gold    .card-icon-wrap { background: #FBF5E6; }
+.card.c-public    .card-icon-wrap { background: var(--public-bg); }
+.card.c-intern    .card-icon-wrap { background: var(--intern-bg); }
+.card.c-local     .card-icon-wrap { background: #FEF0E8; }
+.card.c-gold      .card-icon-wrap { background: #FBF5E6; }
+.card.c-personal  .card-icon-wrap { background: #EDE9FE; }
 
 .card-badges { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
 .badge {
@@ -420,10 +423,11 @@ body {
   border-color: currentColor;
   transform: translateX(2px);
 }
-.card.c-public:hover .card-arrow { color: var(--public-col); }
-.card.c-intern:hover .card-arrow { color: var(--intern-col); }
-.card.c-local:hover  .card-arrow { color: var(--terra); }
-.card.c-gold:hover   .card-arrow { color: var(--or); }
+.card.c-public:hover    .card-arrow { color: var(--public-col); }
+.card.c-intern:hover    .card-arrow { color: var(--intern-col); }
+.card.c-local:hover     .card-arrow { color: var(--terra); }
+.card.c-gold:hover      .card-arrow { color: var(--or); }
+.card.c-personal:hover  .card-arrow { color: #7C3AED; }
 
 /* Card – fecha actualización */
 .card-updated {
@@ -584,6 +588,25 @@ body {
     </a>
     <a class="sb-link" href="https://taperia-fotos-caja1.netlify.app" target="_blank">
       <span class="sb-icon">📷</span> Fotos Caixa
+      <span class="sb-lock">🔒</span>
+    </a>
+  </nav>
+
+  <div class="sb-divider"></div>
+
+  <!-- Personal -->
+  <div class="sb-section-label">Personal 👥</div>
+  <nav class="sb-nav">
+    <a class="sb-link" href="/costes_personal">
+      <span class="sb-icon">💶</span> Costos de Personal
+      <span class="sb-lock">🔒</span>
+    </a>
+    <a class="sb-link" href="https://taperia-horarios-personal.netlify.app" target="_blank">
+      <span class="sb-icon">🗓️</span> Horaris Personal
+      <span class="sb-lock">🔒</span>
+    </a>
+    <a class="sb-link" href="https://plan-incentivos.netlify.app" target="_blank">
+      <span class="sb-icon">🎯</span> Pla d'Incentius
       <span class="sb-lock">🔒</span>
     </a>
   </nav>
@@ -861,6 +884,71 @@ body {
       </a>
 
     </div><!-- /cards-grid interna -->
+
+    <!-- ─── PERSONAL ─── -->
+    <div class="zone-header">
+      <div class="zone-icon" style="background:#EDE9FE">👥</div>
+      <div>
+        <div class="zone-title">Personal</div>
+        <div class="zone-desc">Costos, horaris i incentius de l'equip</div>
+      </div>
+      <div class="zone-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <a class="card c-personal" href="/costes_personal">
+        <div class="card-top">
+          <div class="card-icon-wrap">💶</div>
+          <div class="card-badges">
+            <span class="badge badge-intern">🔒 Intern</span>
+          </div>
+        </div>
+        <div class="card-title">Costos de Personal</div>
+        <div class="card-desc">
+          Resum mensual dels costos salarials per treballador: nòmina, SS empresa i cost total vs facturació.
+        </div>
+        <div class="card-footer">
+          <div class="card-url">taperia-caldes-kpi.netlify.app/costes_personal.html</div>
+          <div class="card-arrow">→</div>
+        </div>
+      </a>
+
+      <a class="card c-personal" href="https://taperia-horarios-personal.netlify.app" target="_blank">
+        <div class="card-top">
+          <div class="card-icon-wrap">🗓️</div>
+          <div class="card-badges">
+            <span class="badge badge-intern">🔒 Intern</span>
+          </div>
+        </div>
+        <div class="card-title">Horaris Personal</div>
+        <div class="card-desc">
+          Gestió i visualització dels horaris setmanals de sala i cuina. Consulta ràpida per empleat i torn.
+        </div>
+        <div class="card-footer">
+          <div class="card-url">taperia-horarios-personal.netlify.app</div>
+          <div class="card-arrow">→</div>
+        </div>
+      </a>
+
+      <a class="card c-personal" href="https://plan-incentivos.netlify.app" target="_blank">
+        <div class="card-top">
+          <div class="card-icon-wrap">🎯</div>
+          <div class="card-badges">
+            <span class="badge badge-intern">🔒 Intern</span>
+          </div>
+        </div>
+        <div class="card-title">Pla d'Incentius</div>
+        <div class="card-desc">
+          Detall del pla d'incentius per objectius de facturació i ticket mitjà mensual per a l'equip.
+        </div>
+        <div class="card-footer">
+          <div class="card-url">plan-incentivos.netlify.app</div>
+          <div class="card-arrow">→</div>
+        </div>
+      </a>
+
+    </div><!-- /cards-grid personal -->
 
     <!-- ─── ESTRUCTURA DE DADES ─── -->
     <div class="zone-header">
