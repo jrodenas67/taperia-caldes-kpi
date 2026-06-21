@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Arqueo · La Taperia de Caldes</title>
-<link href="https://fonts. googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F5F3EF;--surface:#fff;--border:#E0D5C5;
@@ -544,7 +544,7 @@ function calcArqueo() {
   document.getElementById('r-pct').value     = pct.toFixed(1) + '%';
 
   // Total Net/Brut Altres Pagaments incluye Contado Caixa 1 cuando hay saldo
-  const netoCaixa = contado + visa + passo + c1contado;
+  const netoCaixa = contado + visa + passo;
   if (netoCaixa > 0) {
     document.getElementById('a-total-net').value  = netoCaixa.toFixed(2);
     document.getElementById('a-total-brut').value = (netoCaixa * 1.10).toFixed(2);
