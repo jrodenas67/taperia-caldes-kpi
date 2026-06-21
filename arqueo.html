@@ -398,8 +398,37 @@ fetch('historico_caja.json?_=' + Date.now())
   .then(data => { historicoDB = data || []; })
   .catch(() => {});
 
+// Afegeix partides de Pendent Banc a partir dels arqueos desats (Contado c/IVA
+// = contado × 1,10) quan encara no existeixen — així el Resum Mensual i el
+// Pendent Banc reflecteixen el contado del dia encara que no s'hagi premut "Guardar".
+function reconcileBancFromArqueos() {
+  const arqueos = loadStore();
+  const current = loadBancStore();
+  const fechas = new Set(current.map(i => i.fecha));
+  let changed = 0;
+  arqueos.forEach(r => {
+    const contado = Number(r.contado) || 0;
+    if (contado <= 0 || fechas.has(r.fecha)) return;
+    current.push({
+      id: 'arq-' + r.fecha,
+      fecha: r.fecha,
+      importe: parseFloat((contado * 1.10).toFixed(2)),
+      desc: `Contado c/IVA ${fmtDate(r.fecha)}`,
+      pagat: false
+    });
+    fechas.add(r.fecha);
+    changed++;
+  });
+  if (changed > 0) {
+    current.sort((a, b) => a.fecha.localeCompare(b.fecha));
+    saveBancStore(current);
+  }
+  return changed;
+}
+
 // Sync silenciós en càrrega (afegeix dies nous sense tocar els marcats)
 syncBancDefault();
+reconcileBancFromArqueos();
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 function nav(el, page) {
@@ -407,8 +436,8 @@ function nav(el, page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('page-' + page).classList.add('active');
-  if (page === 'resum') renderResum();
-  if (page === 'banc')  { syncBancDefault(); renderBanc(); }
+  if (page === 'resum') { reconcileBancFromArqueos(); renderResum(); }
+  if (page === 'banc')  { syncBancDefault(); reconcileBancFromArqueos(); renderBanc(); }
 }
 
 // ── Live date ──────────────────────────────────────────────────────────────
