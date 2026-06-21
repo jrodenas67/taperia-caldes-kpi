@@ -393,6 +393,8 @@ function syncBancDefault() {
 
 // ── DB ─────────────────────────────────────────────────────────────────────
 let historicoDB = [];
+let cierresDiarios = {};   // cierre de caja (BD) — declarat aquí per evitar TDZ al reconcile
+let ultimoCierre = null;
 fetch('historico_caja.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : [])
   .then(data => { historicoDB = data || []; })
@@ -465,9 +467,6 @@ document.getElementById('a-fecha').value = today;
 document.getElementById('b-fecha').value = today;
 
 // ── Últim cierre ───────────────────────────────────────────────────────────
-let ultimoCierre = null;
-let cierresDiarios = {};
-
 fetch('cierres_diarios.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : {})
   .then(data => {
