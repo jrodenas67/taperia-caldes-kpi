@@ -364,6 +364,24 @@ function loadBancStore() {
 }
 function saveBancStore(data) { localStorage.setItem(BANC_KEY, JSON.stringify(data)); }
 
+// Fechas que l'usuari ha esborrat manualment i que el reconcile NO ha de tornar
+// a crear des del cierre de caja.
+const BANC_DELETED_KEY = 'taperia_banc_deleted_v1';
+function loadBancDeleted() {
+  try { return JSON.parse(localStorage.getItem(BANC_DELETED_KEY) || '[]'); } catch { return []; }
+}
+function saveBancDeleted(arr) {
+  localStorage.setItem(BANC_DELETED_KEY, JSON.stringify([...new Set(arr)]));
+}
+function markBancDeleted(fecha) {
+  if (!fecha) return;
+  const d = loadBancDeleted();
+  if (!d.includes(fecha)) { d.push(fecha); saveBancDeleted(d); }
+}
+function unmarkBancDeleted(fecha) {
+  saveBancDeleted(loadBancDeleted().filter(f => f !== fecha));
+}
+
 // Afegeix entrades noves i actualitza imports no pagats quan el BANC_DEFAULT difereix
 function syncBancDefault() {
   const current = loadBancStore();
@@ -418,10 +436,11 @@ function reconcileBancFromArqueos() {
   });
   const current = loadBancStore();
   const fechas = new Set(current.map(i => i.fecha));
+  const deleted = new Set(loadBancDeleted());
   let changed = 0;
   Object.keys(contadoByFecha).forEach(fecha => {
     const contado = contadoByFecha[fecha];
-    if (contado <= 0 || fechas.has(fecha)) return;
+    if (contado <= 0 || fechas.has(fecha) || deleted.has(fecha)) return;
     current.push({
       id: 'arq-' + fecha,
       fecha,
@@ -626,6 +645,7 @@ function saveArqueo() {
   // ── Sync Pendent Banc: Contado (neto c/IVA) = contado × 1,10 ──
   const contadoBrut = parseFloat((v('a-contado') * 1.10).toFixed(2));
   if (contadoBrut > 0) {
+    unmarkBancDeleted(fecha);  // guardar és alta explícita: torna a permetre aquesta data
     const bancItems = loadBancStore();
     const existIdx = bancItems.findIndex(i => i.fecha === fecha && !i.pagat);
     if (existIdx >= 0) {
@@ -803,6 +823,7 @@ function addBanc() {
   const items = loadBancStore();
   items.push({ id: Date.now().toString(), fecha, importe, desc, pagat: false });
   saveBancStore(items);
+  unmarkBancDeleted(fecha);  // alta explícita: torna a permetre el reconcile per a aquesta data
   document.getElementById('b-importe').value = '';
   document.getElementById('b-desc').value    = '';
   renderBanc();
@@ -819,7 +840,11 @@ function toggleBanc(id, pagat) {
 
 function deleteBanc(id) {
   if (!confirm('Eliminar aquesta partida?')) return;
-  saveBancStore(loadBancStore().filter(i => i.id !== id));
+  const items = loadBancStore();
+  const item = items.find(i => i.id === id);
+  // Recorda la data perquè el reconcile no la torni a crear des del cierre
+  if (item) markBancDeleted(item.fecha);
+  saveBancStore(items.filter(i => i.id !== id));
   renderBanc();
   toast('Partida eliminada', 'ok');
 }
