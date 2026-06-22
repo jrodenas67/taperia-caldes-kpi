@@ -200,22 +200,86 @@ tbody td:first-child { text-align:left; }
    DATOS REALES (de la captura)
 ═══════════════════════════════════════ */
 const MESES = [
-  { mes:"Enero",   coste:9878,  fact:25741,  sem:"S1–S4"   },
-  { mes:"Febrero", coste:10687, fact:26992,  sem:"S5–S8"   },
-  { mes:"Marzo",   coste:4801,  fact:20240,  sem:"S9–S12"  },
-  { mes:"Abril",   coste:9113,  fact:31450,  sem:"S13–S16" },
-  { mes:"Mayo",    coste:8768,  fact:33962,  sem:"S17–S20" },
-  { mes:"Junio",   coste:10188, fact:null,   sem:"S21–S25" },
+  { mes:"Enero",   coste:10350, fact:25741,  sem:"S1–S4"   },
+  { mes:"Febrero", coste:10413, fact:26992,  sem:"S5–S8"   },
+  { mes:"Marzo",   coste:6796,  fact:20240,  sem:"S9–S12"  },
+  { mes:"Abril",   coste:9365,  fact:31450,  sem:"S13–S16" },
+  { mes:"Mayo",    coste:10928, fact:33962,  sem:"S17–S20" },
+  { mes:"Junio",   coste:5672,  fact:null,   sem:"S21–S25" },
 ];
 
-// Detalle empleados por mes (edita con datos reales de Yurest)
+// Detalle empleados por mes — Yurest "Coste empresa" real
 const EMPLEATS = {
-  "Enero":   [ {nom:"—", rol:"—", coste:9878} ],
-  "Febrero": [ {nom:"—", rol:"—", coste:10687} ],
-  "Marzo":   [ {nom:"—", rol:"—", coste:4801} ],
-  "Abril":   [ {nom:"—", rol:"—", coste:9113} ],
-  "Mayo":    [ {nom:"—", rol:"—", coste:8768} ],
-  "Junio":   [ {nom:"—", rol:"—", coste:10188} ],
+  "Enero": [
+    {nom:"Mireia Marquez",       rol:"Administración", coste:612.05},
+    {nom:"Juan Ródenas",         rol:"Administración", coste:227.73},
+    {nom:"Sonia Vera",           rol:"Cocina",         coste:2694.19},
+    {nom:"Alejandra Velencia",   rol:"Cocina",         coste:1250.00},
+    {nom:"Alejandra Valencia",   rol:"Cocina",         coste:220.00},
+    {nom:"Lourdes Martinez",     rol:"Sala",           coste:2605.38},
+    {nom:"Jonathan Calero",      rol:"Sala",           coste:1325.00},
+    {nom:"Gabriela Ayala",       rol:"Sala",           coste:1320.00},
+    {nom:"Brigitte Leiba",       rol:"Sala",           coste:96.00},
+  ],
+  "Febrero": [
+    {nom:"Mireia Marquez",       rol:"Administración", coste:612.05},
+    {nom:"Juan Ródenas",         rol:"Administración", coste:476.55},
+    {nom:"Sonia Vera",           rol:"Cocina",         coste:2751.19},
+    {nom:"Alejandra Velencia",   rol:"Cocina",         coste:1377.00},
+    {nom:"Rubi Tejada Perez",    rol:"Cocina",         coste:750.00},
+    {nom:"Lourdes Martinez",     rol:"Sala",           coste:2625.35},
+    {nom:"Jonathan Calero",      rol:"Sala",           coste:1377.00},
+    {nom:"Brigitte Leiba",       rol:"Sala",           coste:368.00},
+    {nom:"Empleados Extras",     rol:"Sala",           coste:76.00},
+  ],
+  "Marzo": [
+    {nom:"Mireia Marquez",       rol:"Administración", coste:612.05},
+    {nom:"Juan Ródenas",         rol:"Administración", coste:195.25},
+    {nom:"Rubi Tejada Perez",    rol:"Cocina",         coste:1085.00},
+    {nom:"Sonia Vera",           rol:"Cocina",         coste:360.00},
+    {nom:"Genesis Lam",          rol:"Cocina",         coste:88.00},
+    {nom:"Empleados Extras",     rol:"Cocina",         coste:136.00},
+    {nom:"Lourdes Martinez",     rol:"Sala",           coste:2489.67},
+    {nom:"Jonathan Calero",      rol:"Sala",           coste:1282.00},
+    {nom:"Aina Rosallo",         rol:"Sala",           coste:144.00},
+    {nom:"Brigitte Leiba",       rol:"Sala",           coste:278.00},
+    {nom:"Adria Cardona",        rol:"Sala",           coste:88.00},
+    {nom:"Empleados Extras",     rol:"Sala",           coste:38.00},
+  ],
+  "Abril": [
+    {nom:"Mireia Marquez",       rol:"Administración", coste:612.05},
+    {nom:"Juan Ródenas",         rol:"Administración", coste:343.58},
+    {nom:"Sonia Vera",           rol:"Cocina",         coste:2624.19},
+    {nom:"Rubi Tejada Perez",    rol:"Cocina",         coste:1100.00},
+    {nom:"Genesis Lam",          rol:"Cocina",         coste:154.00},
+    {nom:"Lourdes Martinez",     rol:"Sala",           coste:2568.84},
+    {nom:"Jonathan Calero",      rol:"Sala",           coste:1400.00},
+    {nom:"Brigitte Leiba",       rol:"Sala",           coste:514.00},
+    {nom:"Adria Cardona",        rol:"Sala",           coste:48.00},
+  ],
+  "Mayo": [
+    {nom:"Mireia Marquez",       rol:"Administración", coste:612.05},
+    {nom:"Juan Ródenas",         rol:"Administración", coste:912.41},
+    {nom:"Sonia Vera",           rol:"Cocina",         coste:2416.19},
+    {nom:"Rubi Tejada Perez",    rol:"Cocina",         coste:1287.00},
+    {nom:"Genesis Lam",          rol:"Cocina",         coste:138.00},
+    {nom:"Lourdes Martinez",     rol:"Sala",           coste:2664.64},
+    {nom:"Jonathan Calero",      rol:"Sala",           coste:1518.62},
+    {nom:"Brigitte Leiba",       rol:"Sala",           coste:1136.00},
+    {nom:"Aina Rosallo",         rol:"Sala",           coste:175.50},
+    {nom:"Gabriela Ayala",       rol:"Sala",           coste:40.00},
+    {nom:"Adria Cardona",        rol:"Sala",           coste:28.00},
+  ],
+  "Junio": [
+    {nom:"Mireia Marquez",       rol:"Administración", coste:612.05},
+    {nom:"Juan Ródenas",         rol:"Administración", coste:165.77},
+    {nom:"Sonia Vera",           rol:"Cocina",         coste:2264.19},
+    {nom:"Genesis Lam",          rol:"Cocina",         coste:5.00},
+    {nom:"Lourdes Martinez",     rol:"Sala",           coste:2489.67},
+    {nom:"Aina Rosallo",         rol:"Sala",           coste:13.00},
+    {nom:"Brigitte Leiba",       rol:"Sala",           coste:30.00},
+    {nom:"Jonathan Calero",      rol:"Sala",           coste:92.00},
+  ],
 };
 
 const BENCHMARK = 30;
@@ -254,11 +318,18 @@ function renderMes() {
     tbody.appendChild(tr);
 
     // Fila detall
-    const empList = (EMPLEATS[m.mes] || []).map(e => `
+    const empByDept = {};
+    (EMPLEATS[m.mes] || []).forEach(e => {
+      if (!empByDept[e.rol]) empByDept[e.rol] = [];
+      empByDept[e.rol].push(e);
+    });
+    const empList = Object.entries(empByDept).map(([dept, emps]) => `
+      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin:10px 0 4px">${dept}</div>
+      ${emps.map(e => `
       <div class="emp-row">
-        <div><div class="emp-name">${e.nom}</div><div class="emp-rol">${e.rol}</div></div>
+        <div class="emp-name">${e.nom}</div>
         <div class="emp-cost">${fmt(e.coste)}</div>
-      </div>`).join('');
+      </div>`).join('')}`).join('');
 
     const det = document.createElement('tr');
     det.className = 'detail-row' + (isOpen ? ' open' : '');
