@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal vs Facturació · La Taperia de Caldes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F4F5F7; --surface: #FFFFFF; --border: #E4E7EC;
+  --ink: #111827; --ink-soft: #4B5563; --ink-faint: #9CA3AF;
+  --purple: #7C3AED; --purple-bg: #EDE9FE;
+  --green: #16A34A; --green-bg: #DCFCE7;
+  --amber: #B45309; --amber-bg: #FEF3C7;
+  --red: #DC2626;   --red-bg: #FEE2E2;
+  --blue: #2563EB;  --blue-bg: #DBEAFE;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+}
+body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
+.page { max-width:1100px; margin:0 auto; padding:36px 24px 80px; }
+
+.back { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:500; color:var(--ink-faint); text-decoration:none; margin-bottom:28px; transition:color .15s; }
+.back:hover { color:var(--purple); }
+
+.page-header { margin-bottom:32px; }
+.page-header h1 { font-size:26px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
+.page-header p { font-size:14px; color:var(--ink-soft); }
+
+/* KPI row */
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:28px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; }
+.kpi.hl { border-color:var(--purple); }
+.kpi-label { font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
+.kpi-val { font-size:24px; font-weight:800; letter-spacing:-.5px; }
+.kpi-sub { font-size:11.5px; color:var(--ink-faint); margin-top:4px; font-weight:500; }
+
+/* Card */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:20px; box-shadow:var(--shadow); }
+.card-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
+.card-header h2 { font-size:15px; font-weight:700; }
+.chart-wrap { padding:20px; height:340px; position:relative; }
+
+/* Table */
+table { width:100%; border-collapse:collapse; font-size:13.5px; }
+thead th { background:var(--bg); padding:10px 16px; text-align:right; font-size:11px; font-weight:700; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase; border-bottom:1px solid var(--border); }
+thead th:first-child { text-align:left; }
+tbody td { padding:13px 16px; border-bottom:1px solid #F3F4F6; text-align:right; font-weight:500; }
+tbody td:first-child { text-align:left; font-weight:700; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover { background:#F9FAFB; }
+tbody tr.highlight { background:var(--purple-bg); font-weight:700; }
+tfoot td { padding:13px 16px; text-align:right; font-weight:700; font-size:14px; background:var(--bg); border-top:2px solid var(--border); }
+tfoot td:first-child { text-align:left; }
+
+.pill { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:.06em; text-transform:uppercase; border:1px solid; }
+.pill.ok   { color:var(--green); background:var(--green-bg); border-color:#BBF7D0; }
+.pill.warn { color:var(--amber); background:var(--amber-bg); border-color:#FDE68A; }
+.pill.bad  { color:var(--red);   background:var(--red-bg);   border-color:#FECACA; }
+.pill.cur  { color:var(--purple); background:var(--purple-bg); border-color:#C4B5FD; }
+
+.note { font-size:11.5px; color:var(--ink-faint); padding:10px 20px 14px; border-top:1px solid var(--border); }
+
+@media(max-width:640px){ .page{padding:20px 14px 60px;} .kpi-val{font-size:20px;} table{font-size:12px;} thead th,tbody td,tfoot td{padding:9px 10px;} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a class="back" href="/">← Tornar al portal</a>
+
+  <div class="page-header">
+    <h1>👥 Personal vs Facturació</h1>
+    <p>Comparativa mensual del cost de personal sobre la facturació neta 2026</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi hl">
+      <div class="kpi-label">% mitjà personal / factur.</div>
+      <div class="kpi-val" id="k-pct-mitjana">—</div>
+      <div class="kpi-sub">Mitjana mesos amb dades</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Cost personal acumulat</div>
+      <div class="kpi-val" id="k-cost-total">—</div>
+      <div class="kpi-sub">Tots els mesos 2026</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Facturació acumulada</div>
+      <div class="kpi-val" id="k-fact-total">—</div>
+      <div class="kpi-sub">Tots els mesos 2026</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Millor mes (% + baix)</div>
+      <div class="kpi-val" id="k-best">—</div>
+      <div class="kpi-sub" id="k-best-sub">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Pitjor mes (% + alt)</div>
+      <div class="kpi-val" id="k-worst">—</div>
+      <div class="kpi-sub" id="k-worst-sub">—</div>
+    </div>
+  </div>
+
+  <!-- Gràfic -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Evolució mensual</h2>
+      <span class="pill cur">2026</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Taula -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Detall per mes</h2>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Facturació</th>
+          <th>Cost personal</th>
+          <th>% Personal</th>
+          <th>Objectiu ≤35%</th>
+          <th>Desviació</th>
+        </tr>
+      </thead>
+      <tbody id="taula-body"></tbody>
+      <tfoot id="taula-foot"></tfoot>
+    </table>
+    <div class="note">
+      * Cost personal = nòmina bruta + SS empresa estimada (33%). Actualitza les nòmines a <a href="/costes_personal" style="color:var(--purple)">Costos de Personal</a>.
+      Facturació = total net (Caixa 1 + Caixa 2) des de ventas_2026.json i cierres_diarios.json.
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   DADES — edita aquesta secció
+═══════════════════════════════════════ */
+
+// Facturació neta mensual (€) — des de BD TPV (Caixa 1 + Caixa 2)
+const FACTURACIO = {
+  1: 22939.92,
+  2: 22470.19,
+  3: 16372.77,
+  4: 30141.92,  // valor TPV (no cierres parcials)
+  5: 33575.64,
+  6: 19663.33,  // parcial fins 20/06
+};
+
+// Cost de personal mensual (nòmina bruta total).
+// Edita amb les dades reals. 0 = sense dades.
+const NOMINA_BRUTA = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+  6: 0,
+};
+
+// Mes en curs (per marcar a la taula)
+const MES_ACTUAL = 6;
+const OBJECTIU_PCT = 35;  // % màxim desitjat
+const SS_PCT = 0.33;
+
+/* ═══════════════════════════════════════ */
+
+const MESOS = ["","Gener","Febrer","Març","Abril","Maig","Juny",
+               "Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
+const fmt  = n => n.toLocaleString('ca-ES',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+const fmtk = n => (n/1000).toFixed(1) + 'k €';
+
+// Calcula cost total (nomina + SS)
+function costTotal(mes) {
+  const b = NOMINA_BRUTA[mes] || 0;
+  return b * (1 + SS_PCT);
+}
+
+function pctClass(p) {
+  if (p === null) return 'cur';
+  if (p <= 30) return 'ok';
+  if (p <= OBJECTIU_PCT) return 'warn';
+  return 'bad';
+}
+
+const mesos = Object.keys(FACTURACIO).map(Number);
+
+// KPIs
+let sumFact = 0, sumCost = 0, pctsAmbDades = [];
+mesos.forEach(m => {
+  const f = FACTURACIO[m] || 0;
+  const c = costTotal(m);
+  sumFact += f;
+  sumCost += c;
+  if (c > 0 && f > 0) pctsAmbDades.push({ m, pct: c / f * 100 });
+});
+
+const mitjana = pctsAmbDades.length ? pctsAmbDades.reduce((s,x) => s + x.pct, 0) / pctsAmbDades.length : null;
+const best  = pctsAmbDades.length ? pctsAmbDades.reduce((a,b) => a.pct < b.pct ? a : b) : null;
+const worst = pctsAmbDades.length ? pctsAmbDades.reduce((a,b) => a.pct > b.pct ? a : b) : null;
+
+document.getElementById('k-pct-mitjana').textContent = mitjana ? mitjana.toFixed(1) + '%' : '— (sense dades)';
+document.getElementById('k-pct-mitjana').style.color = mitjana ? (mitjana <= 30 ? 'var(--green)' : mitjana <= 35 ? 'var(--amber)' : 'var(--red)') : 'var(--ink-faint)';
+document.getElementById('k-cost-total').textContent  = sumCost > 0 ? fmtk(sumCost) : '— (sense dades)';
+document.getElementById('k-fact-total').textContent  = fmtk(sumFact);
+document.getElementById('k-best').textContent        = best  ? best.pct.toFixed(1) + '%'  : '—';
+document.getElementById('k-best-sub').textContent    = best  ? MESOS[best.m]  : 'sense dades';
+document.getElementById('k-worst').textContent       = worst ? worst.pct.toFixed(1) + '%' : '—';
+document.getElementById('k-worst-sub').textContent   = worst ? MESOS[worst.m] : 'sense dades';
+
+// Taula
+const tbody = document.getElementById('taula-body');
+let tSumFact = 0, tSumCost = 0;
+mesos.forEach(m => {
+  const f = FACTURACIO[m] || 0;
+  const c = costTotal(m);
+  const p = (c > 0 && f > 0) ? c / f * 100 : null;
+  const desv = p !== null ? p - OBJECTIU_PCT : null;
+  tSumFact += f; tSumCost += c;
+  const isCur = m === MES_ACTUAL;
+  const cls = isCur ? ' class="highlight"' : '';
+  tbody.innerHTML += `<tr${cls}>
+    <td>${MESOS[m]}${isCur ? ' <span class="pill cur">actual</span>' : ''}</td>
+    <td>${f > 0 ? fmt(f) : '—'}</td>
+    <td>${c > 0 ? fmt(c) : '<span style="color:var(--ink-faint)">sense dades</span>'}</td>
+    <td>${p !== null ? `<strong>${p.toFixed(1)}%</strong>` : '—'}</td>
+    <td><span class="pill ${pctClass(p)}">${p !== null ? (p <= OBJECTIU_PCT ? 'OK' : 'SUPERAT') : '—'}</span></td>
+    <td style="color:${desv !== null ? (desv <= 0 ? 'var(--green)' : 'var(--red)') : 'var(--ink-faint)'}">
+      ${desv !== null ? (desv > 0 ? '+' : '') + desv.toFixed(1) + ' pp' : '—'}
+    </td>
+  </tr>`;
+});
+
+const tPct = tSumCost > 0 && tSumFact > 0 ? (tSumCost / tSumFact * 100) : null;
+document.getElementById('taula-foot').innerHTML = `<tr>
+  <td>TOTAL / MITJANA</td>
+  <td>${fmt(tSumFact)}</td>
+  <td>${tSumCost > 0 ? fmt(tSumCost) : '—'}</td>
+  <td>${tPct !== null ? tPct.toFixed(1) + '%' : '—'}</td>
+  <td></td><td></td>
+</tr>`;
+
+// Gràfic
+const labels = mesos.map(m => MESOS[m].substring(0,3));
+const factData = mesos.map(m => FACTURACIO[m] || 0);
+const costData = mesos.map(m => costTotal(m) || null);
+const pctData  = mesos.map(m => {
+  const f = FACTURACIO[m]; const c = costTotal(m);
+  return (c && f) ? parseFloat((c / f * 100).toFixed(1)) : null;
+});
+
+const ctx = document.getElementById('chart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'Facturació (€)',
+        data: factData,
+        backgroundColor: 'rgba(37,99,235,.15)',
+        borderColor: 'rgba(37,99,235,.6)',
+        borderWidth: 1.5,
+        borderRadius: 6,
+        yAxisID: 'y',
+      },
+      {
+        label: 'Cost personal (€)',
+        data: costData,
+        backgroundColor: 'rgba(124,58,237,.25)',
+        borderColor: 'rgba(124,58,237,.8)',
+        borderWidth: 1.5,
+        borderRadius: 6,
+        yAxisID: 'y',
+      },
+      {
+        label: '% Personal / Factur.',
+        data: pctData,
+        type: 'line',
+        borderColor: '#DC2626',
+        backgroundColor: 'rgba(220,38,38,.08)',
+        borderWidth: 2.5,
+        pointRadius: 5,
+        pointBackgroundColor: '#DC2626',
+        tension: 0.3,
+        yAxisID: 'y2',
+        fill: false,
+      },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, boxWidth: 12 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.datasetIndex < 2) return ` ${ctx.dataset.label}: ${ctx.raw !== null ? ctx.raw.toLocaleString('ca-ES') + ' €' : '—'}`;
+            return ` % Personal: ${ctx.raw !== null ? ctx.raw + '%' : '—'}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        position: 'left',
+        ticks: { font: { family:'Inter', size:11 }, callback: v => (v/1000).toFixed(0) + 'k €' },
+        grid: { color: '#F3F4F6' },
+      },
+      y2: {
+        position: 'right',
+        min: 0, max: 60,
+        ticks: { font: { family:'Inter', size:11 }, callback: v => v + '%' },
+        grid: { drawOnChartArea: false },
+      },
+      x: { ticks: { font: { family:'Inter', size:12 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Línia objectiu
+Chart.register({
+  id: 'objectiuLine',
+  afterDraw(chart) {
+    const y2 = chart.scales['y2'];
+    if (!y2) return;
+    const ctx2 = chart.ctx;
+    const yPos = y2.getPixelForValue(OBJECTIU_PCT);
+    ctx2.save();
+    ctx2.setLineDash([6, 4]);
+    ctx2.strokeStyle = 'rgba(180,83,9,.5)';
+    ctx2.lineWidth = 1.5;
+    ctx2.beginPath();
+    ctx2.moveTo(chart.chartArea.left, yPos);
+    ctx2.lineTo(chart.chartArea.right, yPos);
+    ctx2.stroke();
+    ctx2.restore();
+    ctx2.save();
+    ctx2.font = '11px Inter';
+    ctx2.fillStyle = 'rgba(180,83,9,.8)';
+    ctx2.fillText('Objectiu 35%', chart.chartArea.right - 80, yPos - 5);
+    ctx2.restore();
+  }
+});
+</script>
+</body>
+</html>
