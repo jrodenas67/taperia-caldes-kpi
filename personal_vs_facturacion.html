@@ -1,71 +1,114 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personal vs Facturació · La Taperia de Caldes</title>
+<title>Personal vs Facturación 2026 · Taperia Caldes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #F4F5F7; --surface: #FFFFFF; --border: #E4E7EC;
-  --ink: #111827; --ink-soft: #4B5563; --ink-faint: #9CA3AF;
-  --purple: #7C3AED; --purple-bg: #EDE9FE;
-  --green: #16A34A; --green-bg: #DCFCE7;
-  --amber: #B45309; --amber-bg: #FEF3C7;
-  --red: #DC2626;   --red-bg: #FEE2E2;
-  --blue: #2563EB;  --blue-bg: #DBEAFE;
-  --radius: 14px;
-  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+  --bg:       #0F1117;
+  --surface:  #1A1D27;
+  --surface2: #22263A;
+  --border:   #2A2D3E;
+  --ink:      #F0F2FF;
+  --ink-soft: #9BA3C2;
+  --ink-faint:#555E7A;
+  --green:    #22C55E;
+  --amber:    #F59E0B;
+  --red:      #EF4444;
+  --blue:     #3B82F6;
+  --purple:   #A78BFA;
+  --radius:   12px;
 }
 body { font-family:'Inter',-apple-system,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; }
-.page { max-width:1100px; margin:0 auto; padding:36px 24px 80px; }
+.page { max-width:1200px; margin:0 auto; padding:36px 28px 80px; }
 
+/* Back */
 .back { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:500; color:var(--ink-faint); text-decoration:none; margin-bottom:28px; transition:color .15s; }
 .back:hover { color:var(--purple); }
 
-.page-header { margin-bottom:32px; }
-.page-header h1 { font-size:26px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
-.page-header p { font-size:14px; color:var(--ink-soft); }
+/* Header */
+.page-header { margin-bottom:28px; }
+.page-header h1 { font-size:28px; font-weight:800; letter-spacing:-.5px; margin-bottom:6px; }
+.page-header p  { font-size:13.5px; color:var(--ink-soft); }
 
 /* KPI row */
-.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:28px; }
-.kpi { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; }
-.kpi.hl { border-color:var(--purple); }
-.kpi-label { font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
-.kpi-val { font-size:24px; font-weight:800; letter-spacing:-.5px; }
-.kpi-sub { font-size:11.5px; color:var(--ink-faint); margin-top:4px; font-weight:500; }
+.kpi-row { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:28px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 16px; }
+.kpi-label { font-size:11px; font-weight:600; letter-spacing:.04em; color:var(--ink-faint); margin-bottom:10px; text-transform:uppercase; }
+.kpi-val   { font-size:28px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
+.kpi-sub   { font-size:12px; color:var(--ink-faint); font-weight:500; }
+.kpi-val.amber { color:var(--amber); }
+.kpi-val.green { color:var(--green); }
+.kpi-val.red   { color:var(--red); }
+.kpi-val.blue  { color:var(--ink); }
+.kpi-val.bench { color:var(--ink-soft); }
 
-/* Card */
-.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:20px; box-shadow:var(--shadow); }
-.card-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; }
-.card-header h2 { font-size:15px; font-weight:700; }
-.chart-wrap { padding:20px; height:340px; position:relative; }
+/* Vista toggle */
+.vista-bar { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.vista-label { font-size:13px; color:var(--ink-soft); font-weight:500; }
+.vista-toggle { display:flex; background:var(--surface); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.vbtn { background:none; border:none; color:var(--ink-soft); font-family:inherit; font-size:13px; font-weight:600; padding:8px 18px; cursor:pointer; transition:all .15s; }
+.vbtn.active { background:var(--purple); color:#fff; }
+
+/* Info box */
+.info-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:14px 18px; margin-bottom:20px; font-size:13px; color:var(--ink-soft); line-height:1.6; }
+.info-box strong { color:var(--ink); }
+
+/* Legend */
+.legend { display:flex; gap:20px; margin-bottom:16px; font-size:12.5px; color:var(--ink-soft); }
+.leg-dot { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:5px; }
 
 /* Table */
-table { width:100%; border-collapse:collapse; font-size:13.5px; }
-thead th { background:var(--bg); padding:10px 16px; text-align:right; font-size:11px; font-weight:700; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase; border-bottom:1px solid var(--border); }
+.tbl-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+table { width:100%; border-collapse:collapse; }
+thead th { padding:12px 20px; text-align:right; font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); border-bottom:1px solid var(--border); background:var(--surface); }
 thead th:first-child { text-align:left; }
-tbody td { padding:13px 16px; border-bottom:1px solid #F3F4F6; text-align:right; font-weight:500; }
-tbody td:first-child { text-align:left; font-weight:700; }
-tbody tr:last-child td { border-bottom:none; }
-tbody tr:hover { background:#F9FAFB; }
-tbody tr.highlight { background:var(--purple-bg); font-weight:700; }
-tfoot td { padding:13px 16px; text-align:right; font-weight:700; font-size:14px; background:var(--bg); border-top:2px solid var(--border); }
-tfoot td:first-child { text-align:left; }
+tbody tr { border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--surface2); }
+tbody tr.total-row { background:var(--surface2); border-top:2px solid var(--border); cursor:default; }
+tbody tr.total-row td { font-weight:700; font-size:14px; color:var(--blue); padding:16px 20px; }
+tbody td { padding:18px 20px; text-align:right; font-size:14px; font-weight:500; color:var(--ink); }
+tbody td:first-child { text-align:left; }
+.mes-name { font-size:16px; font-weight:700; }
+.expand-icon { font-size:12px; color:var(--ink-faint); margin-right:10px; }
 
-.pill { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:.06em; text-transform:uppercase; border:1px solid; }
-.pill.ok   { color:var(--green); background:var(--green-bg); border-color:#BBF7D0; }
-.pill.warn { color:var(--amber); background:var(--amber-bg); border-color:#FDE68A; }
-.pill.bad  { color:var(--red);   background:var(--red-bg);   border-color:#FECACA; }
-.pill.cur  { color:var(--purple); background:var(--purple-bg); border-color:#C4B5FD; }
+/* Pill % */
+.pct-pill { display:inline-block; padding:5px 12px; border-radius:999px; font-size:13px; font-weight:700; }
+.pct-pill.green { background:rgba(34,197,94,.15); color:var(--green); }
+.pct-pill.amber { background:rgba(245,158,11,.15); color:var(--amber); }
+.pct-pill.red   { background:rgba(239,68,68,.15);  color:var(--red); }
+.pct-pill.gray  { background:var(--surface2); color:var(--ink-faint); }
 
-.note { font-size:11.5px; color:var(--ink-faint); padding:10px 20px 14px; border-top:1px solid var(--border); }
+/* Progress bar */
+.bar-wrap { width:100%; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:3px; }
+.bar-fill.green { background:var(--green); }
+.bar-fill.amber { background:var(--amber); }
+.bar-fill.red   { background:var(--red); }
 
-@media(max-width:640px){ .page{padding:20px 14px 60px;} .kpi-val{font-size:20px;} table{font-size:12px;} thead th,tbody td,tfoot td{padding:9px 10px;} }
+/* Semanas */
+.sem-tag { font-size:12px; color:var(--ink-faint); font-weight:500; }
+
+/* Detail rows */
+.detail-row { display:none; }
+.detail-row.open { display:table-row; }
+.detail-row td { padding:0 20px 16px; }
+.detail-inner { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.detail-title { font-size:12px; font-weight:700; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; }
+.emp-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.emp-row:last-child { border-bottom:none; }
+.emp-name { font-weight:600; color:var(--ink); }
+.emp-rol  { font-size:11px; color:var(--ink-faint); margin-top:2px; }
+.emp-cost { font-weight:700; color:var(--ink); }
+
+@media(max-width:900px){ .kpi-row{grid-template-columns:repeat(3,1fr);} }
+@media(max-width:600px){ .kpi-row{grid-template-columns:repeat(2,1fr);} .page{padding:20px 14px 60px;} }
 </style>
 </head>
 <body>
@@ -74,288 +117,236 @@ tfoot td:first-child { text-align:left; }
   <a class="back" href="/">← Tornar al portal</a>
 
   <div class="page-header">
-    <h1>👥 Personal vs Facturació</h1>
-    <p>Comparativa mensual del cost de personal sobre la facturació neta 2026</p>
+    <h1>📊 Personal vs Facturación 2026</h1>
+    <p>Taperia Caldes · Enero – Junio 2026 · Coste empresa real con vacaciones (×12/11) · Click en fila para ver detalle por empleado</p>
   </div>
 
   <!-- KPIs -->
-  <div class="kpi-row" id="kpi-row">
-    <div class="kpi hl">
-      <div class="kpi-label">% mitjà personal / factur.</div>
-      <div class="kpi-val" id="k-pct-mitjana">—</div>
-      <div class="kpi-sub">Mitjana mesos amb dades</div>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">% Personal s/Facturación YTD</div>
+      <div class="kpi-val amber" id="k1">31.3%</div>
+      <div class="kpi-sub">% Personal s/Facturación YTD</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Cost personal acumulat</div>
-      <div class="kpi-val" id="k-cost-total">—</div>
-      <div class="kpi-sub">Tots els mesos 2026</div>
+      <div class="kpi-label">Coste total YTD (empresa)</div>
+      <div class="kpi-val blue" id="k2">43.246€</div>
+      <div class="kpi-sub">Coste total YTD (empresa)</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Facturació acumulada</div>
-      <div class="kpi-val" id="k-fact-total">—</div>
-      <div class="kpi-sub">Tots els mesos 2026</div>
+      <div class="kpi-label">Facturación YTD</div>
+      <div class="kpi-val blue" id="k3">138.385€</div>
+      <div class="kpi-sub">Facturación YTD</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Millor mes (% + baix)</div>
-      <div class="kpi-val" id="k-best">—</div>
-      <div class="kpi-sub" id="k-best-sub">—</div>
+      <div class="kpi-label">Mejor mes</div>
+      <div class="kpi-val green" id="k4">23.7%</div>
+      <div class="kpi-sub" id="k4s">Mejor mes: Marzo</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Pitjor mes (% + alt)</div>
-      <div class="kpi-val" id="k-worst">—</div>
-      <div class="kpi-sub" id="k-worst-sub">—</div>
+      <div class="kpi-label">Peor mes</div>
+      <div class="kpi-val red" id="k5">39.6%</div>
+      <div class="kpi-sub" id="k5s">Peor mes: Febrero</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Benchmark hostelería</div>
+      <div class="kpi-val bench">30.0%</div>
+      <div class="kpi-sub">Benchmark hostelería</div>
     </div>
   </div>
 
-  <!-- Gràfic -->
-  <div class="card">
-    <div class="card-header">
-      <h2>Evolució mensual</h2>
-      <span class="pill cur">2026</span>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="chart"></canvas>
+  <!-- Vista toggle -->
+  <div class="vista-bar">
+    <span class="vista-label">Vista:</span>
+    <div class="vista-toggle">
+      <button class="vbtn active" onclick="setVista('mes',this)">Por Mes</button>
+      <button class="vbtn" onclick="setVista('semana',this)">Por Semana</button>
     </div>
   </div>
 
-  <!-- Taula -->
-  <div class="card">
-    <div class="card-header">
-      <h2>Detall per mes</h2>
-    </div>
-    <table>
-      <thead>
+  <!-- Info -->
+  <div class="info-box" id="info-box">
+    Vista mensual: coste empresa real Yurest vs facturación DB. Referencia hostelería: <strong>25-35%</strong>. Clic en mes para ver detalle por empleado.
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span><span class="leg-dot" style="background:var(--green)"></span>&lt;25% Excelente</span>
+    <span><span class="leg-dot" style="background:var(--amber)"></span>25-35% Objetivo</span>
+    <span><span class="leg-dot" style="background:var(--red)"></span>&gt;35% Alerta</span>
+  </div>
+
+  <!-- Tabla -->
+  <div class="tbl-wrap">
+    <table id="main-table">
+      <thead id="thead-mes">
         <tr>
-          <th>Mes</th>
-          <th>Facturació</th>
-          <th>Cost personal</th>
-          <th>% Personal</th>
-          <th>Objectiu ≤35%</th>
-          <th>Desviació</th>
+          <th>MES</th>
+          <th>COSTE PERSONAL</th>
+          <th>FACTURACIÓN</th>
+          <th>% PERSONAL</th>
+          <th>ESCALA</th>
+          <th>SEMANAS</th>
         </tr>
       </thead>
-      <tbody id="taula-body"></tbody>
-      <tfoot id="taula-foot"></tfoot>
+      <tbody id="tbody-mes"></tbody>
     </table>
-    <div class="note">
-      * Cost personal = nòmina bruta + SS empresa estimada (33%). Actualitza les nòmines a <a href="/costes_personal" style="color:var(--purple)">Costos de Personal</a>.
-      Facturació = total net (Caixa 1 + Caixa 2) des de ventas_2026.json i cierres_diarios.json.
-    </div>
   </div>
 
 </div>
 
 <script>
 /* ═══════════════════════════════════════
-   DADES — edita aquesta secció
+   DATOS REALES (de la captura)
 ═══════════════════════════════════════ */
+const MESES = [
+  { mes:"Enero",   coste:9878,  fact:25741,  sem:"S1–S4"   },
+  { mes:"Febrero", coste:10687, fact:26992,  sem:"S5–S8"   },
+  { mes:"Marzo",   coste:4801,  fact:20240,  sem:"S9–S12"  },
+  { mes:"Abril",   coste:9113,  fact:31450,  sem:"S13–S16" },
+  { mes:"Mayo",    coste:8768,  fact:33962,  sem:"S17–S20" },
+  { mes:"Junio",   coste:10188, fact:null,   sem:"S21–S25" },
+];
 
-// Facturació neta mensual (€) — des de BD TPV (Caixa 1 + Caixa 2)
-const FACTURACIO = {
-  1: 22939.92,
-  2: 22470.19,
-  3: 16372.77,
-  4: 30141.92,  // valor TPV (no cierres parcials)
-  5: 33575.64,
-  6: 19663.33,  // parcial fins 20/06
+// Detalle empleados por mes (edita con datos reales de Yurest)
+const EMPLEATS = {
+  "Enero":   [ {nom:"—", rol:"—", coste:9878} ],
+  "Febrero": [ {nom:"—", rol:"—", coste:10687} ],
+  "Marzo":   [ {nom:"—", rol:"—", coste:4801} ],
+  "Abril":   [ {nom:"—", rol:"—", coste:9113} ],
+  "Mayo":    [ {nom:"—", rol:"—", coste:8768} ],
+  "Junio":   [ {nom:"—", rol:"—", coste:10188} ],
 };
 
-// Cost de personal mensual (nòmina bruta total).
-// Edita amb les dades reals. 0 = sense dades.
-const NOMINA_BRUTA = {
-  1: 0,
-  2: 0,
-  3: 0,
-  4: 0,
-  5: 0,
-  6: 0,
-};
+const BENCHMARK = 30;
 
-// Mes en curs (per marcar a la taula)
-const MES_ACTUAL = 6;
-const OBJECTIU_PCT = 35;  // % màxim desitjat
-const SS_PCT = 0.33;
+function fmt(n)  { return n.toLocaleString('es-ES') + '€'; }
+function pctCls(p) { return p < 25 ? 'green' : p <= 35 ? 'amber' : 'red'; }
 
-/* ═══════════════════════════════════════ */
+let vistaActual = 'mes';
+const openRows = new Set();
 
-const MESOS = ["","Gener","Febrer","Març","Abril","Maig","Juny",
-               "Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
-const fmt  = n => n.toLocaleString('ca-ES',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
-const fmtk = n => (n/1000).toFixed(1) + 'k €';
+function renderMes() {
+  const tbody = document.getElementById('tbody-mes');
+  tbody.innerHTML = '';
 
-// Calcula cost total (nomina + SS)
-function costTotal(mes) {
-  const b = NOMINA_BRUTA[mes] || 0;
-  return b * (1 + SS_PCT);
+  let sumCost = 0, sumFact = 0;
+  const pctsAmbDades = [];
+
+  MESES.forEach((m, i) => {
+    const pct = m.fact ? (m.coste / m.fact * 100) : null;
+    const cls = pct !== null ? pctCls(pct) : 'gray';
+    const barW = pct !== null ? Math.min(pct / 50 * 100, 100) : 0;
+    if (m.fact) { sumCost += m.coste; sumFact += m.fact; pctsAmbDades.push({mes:m.mes,pct}); }
+
+    const isOpen = openRows.has(i);
+
+    // Fila principal
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="expand-icon">${isOpen ? '▼' : '►'}</span><span class="mes-name">${m.mes}</span></td>
+      <td>${fmt(m.coste)}</td>
+      <td>${m.fact ? fmt(m.fact) : '<span style="color:var(--ink-faint)">Pendiente</span>'}</td>
+      <td><span class="pct-pill ${cls}">${pct !== null ? pct.toFixed(1)+'%' : 'S/D'}</span></td>
+      <td style="width:140px"><div class="bar-wrap"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div></td>
+      <td><span class="sem-tag">${m.sem}</span></td>`;
+    tr.onclick = () => toggleDetail(i);
+    tbody.appendChild(tr);
+
+    // Fila detall
+    const empList = (EMPLEATS[m.mes] || []).map(e => `
+      <div class="emp-row">
+        <div><div class="emp-name">${e.nom}</div><div class="emp-rol">${e.rol}</div></div>
+        <div class="emp-cost">${fmt(e.coste)}</div>
+      </div>`).join('');
+
+    const det = document.createElement('tr');
+    det.className = 'detail-row' + (isOpen ? ' open' : '');
+    det.innerHTML = `<td colspan="6">
+      <div class="detail-inner">
+        <div class="detail-title">Detall empleats — ${m.mes}</div>
+        ${empList}
+      </div></td>`;
+    tbody.appendChild(det);
+  });
+
+  // Fila total
+  const totalPct = sumFact ? (sumCost / sumFact * 100) : null;
+  const trTot = document.createElement('tr');
+  trTot.className = 'total-row';
+  trTot.innerHTML = `
+    <td>TOTAL YTD (ene–may)</td>
+    <td>${fmt(sumCost)}</td>
+    <td>${fmt(sumFact)}</td>
+    <td><span class="pct-pill ${totalPct ? pctCls(totalPct) : 'gray'}">${totalPct ? totalPct.toFixed(1)+'%' : '—'}</span></td>
+    <td></td><td></td>`;
+  tbody.appendChild(trTot);
+
+  // KPIs
+  if (totalPct) {
+    document.getElementById('k1').textContent = totalPct.toFixed(1) + '%';
+    document.getElementById('k1').className = 'kpi-val ' + pctCls(totalPct);
+  }
+  document.getElementById('k2').textContent = fmt(sumCost);
+  document.getElementById('k3').textContent = fmt(sumFact);
+
+  if (pctsAmbDades.length) {
+    const best  = pctsAmbDades.reduce((a,b) => a.pct < b.pct ? a : b);
+    const worst = pctsAmbDades.reduce((a,b) => a.pct > b.pct ? a : b);
+    document.getElementById('k4').textContent = best.pct.toFixed(1) + '%';
+    document.getElementById('k4s').textContent = 'Mejor mes: ' + best.mes;
+    document.getElementById('k5').textContent = worst.pct.toFixed(1) + '%';
+    document.getElementById('k5s').textContent = 'Peor mes: ' + worst.mes;
+  }
 }
 
-function pctClass(p) {
-  if (p === null) return 'cur';
-  if (p <= 30) return 'ok';
-  if (p <= OBJECTIU_PCT) return 'warn';
-  return 'bad';
-}
-
-const mesos = Object.keys(FACTURACIO).map(Number);
-
-// KPIs
-let sumFact = 0, sumCost = 0, pctsAmbDades = [];
-mesos.forEach(m => {
-  const f = FACTURACIO[m] || 0;
-  const c = costTotal(m);
-  sumFact += f;
-  sumCost += c;
-  if (c > 0 && f > 0) pctsAmbDades.push({ m, pct: c / f * 100 });
-});
-
-const mitjana = pctsAmbDades.length ? pctsAmbDades.reduce((s,x) => s + x.pct, 0) / pctsAmbDades.length : null;
-const best  = pctsAmbDades.length ? pctsAmbDades.reduce((a,b) => a.pct < b.pct ? a : b) : null;
-const worst = pctsAmbDades.length ? pctsAmbDades.reduce((a,b) => a.pct > b.pct ? a : b) : null;
-
-document.getElementById('k-pct-mitjana').textContent = mitjana ? mitjana.toFixed(1) + '%' : '— (sense dades)';
-document.getElementById('k-pct-mitjana').style.color = mitjana ? (mitjana <= 30 ? 'var(--green)' : mitjana <= 35 ? 'var(--amber)' : 'var(--red)') : 'var(--ink-faint)';
-document.getElementById('k-cost-total').textContent  = sumCost > 0 ? fmtk(sumCost) : '— (sense dades)';
-document.getElementById('k-fact-total').textContent  = fmtk(sumFact);
-document.getElementById('k-best').textContent        = best  ? best.pct.toFixed(1) + '%'  : '—';
-document.getElementById('k-best-sub').textContent    = best  ? MESOS[best.m]  : 'sense dades';
-document.getElementById('k-worst').textContent       = worst ? worst.pct.toFixed(1) + '%' : '—';
-document.getElementById('k-worst-sub').textContent   = worst ? MESOS[worst.m] : 'sense dades';
-
-// Taula
-const tbody = document.getElementById('taula-body');
-let tSumFact = 0, tSumCost = 0;
-mesos.forEach(m => {
-  const f = FACTURACIO[m] || 0;
-  const c = costTotal(m);
-  const p = (c > 0 && f > 0) ? c / f * 100 : null;
-  const desv = p !== null ? p - OBJECTIU_PCT : null;
-  tSumFact += f; tSumCost += c;
-  const isCur = m === MES_ACTUAL;
-  const cls = isCur ? ' class="highlight"' : '';
-  tbody.innerHTML += `<tr${cls}>
-    <td>${MESOS[m]}${isCur ? ' <span class="pill cur">actual</span>' : ''}</td>
-    <td>${f > 0 ? fmt(f) : '—'}</td>
-    <td>${c > 0 ? fmt(c) : '<span style="color:var(--ink-faint)">sense dades</span>'}</td>
-    <td>${p !== null ? `<strong>${p.toFixed(1)}%</strong>` : '—'}</td>
-    <td><span class="pill ${pctClass(p)}">${p !== null ? (p <= OBJECTIU_PCT ? 'OK' : 'SUPERAT') : '—'}</span></td>
-    <td style="color:${desv !== null ? (desv <= 0 ? 'var(--green)' : 'var(--red)') : 'var(--ink-faint)'}">
-      ${desv !== null ? (desv > 0 ? '+' : '') + desv.toFixed(1) + ' pp' : '—'}
-    </td>
-  </tr>`;
-});
-
-const tPct = tSumCost > 0 && tSumFact > 0 ? (tSumCost / tSumFact * 100) : null;
-document.getElementById('taula-foot').innerHTML = `<tr>
-  <td>TOTAL / MITJANA</td>
-  <td>${fmt(tSumFact)}</td>
-  <td>${tSumCost > 0 ? fmt(tSumCost) : '—'}</td>
-  <td>${tPct !== null ? tPct.toFixed(1) + '%' : '—'}</td>
-  <td></td><td></td>
-</tr>`;
-
-// Gràfic
-const labels = mesos.map(m => MESOS[m].substring(0,3));
-const factData = mesos.map(m => FACTURACIO[m] || 0);
-const costData = mesos.map(m => costTotal(m) || null);
-const pctData  = mesos.map(m => {
-  const f = FACTURACIO[m]; const c = costTotal(m);
-  return (c && f) ? parseFloat((c / f * 100).toFixed(1)) : null;
-});
-
-const ctx = document.getElementById('chart').getContext('2d');
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels,
-    datasets: [
-      {
-        label: 'Facturació (€)',
-        data: factData,
-        backgroundColor: 'rgba(37,99,235,.15)',
-        borderColor: 'rgba(37,99,235,.6)',
-        borderWidth: 1.5,
-        borderRadius: 6,
-        yAxisID: 'y',
-      },
-      {
-        label: 'Cost personal (€)',
-        data: costData,
-        backgroundColor: 'rgba(124,58,237,.25)',
-        borderColor: 'rgba(124,58,237,.8)',
-        borderWidth: 1.5,
-        borderRadius: 6,
-        yAxisID: 'y',
-      },
-      {
-        label: '% Personal / Factur.',
-        data: pctData,
-        type: 'line',
-        borderColor: '#DC2626',
-        backgroundColor: 'rgba(220,38,38,.08)',
-        borderWidth: 2.5,
-        pointRadius: 5,
-        pointBackgroundColor: '#DC2626',
-        tension: 0.3,
-        yAxisID: 'y2',
-        fill: false,
-      },
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 }, boxWidth: 12 } },
-      tooltip: {
-        callbacks: {
-          label: ctx => {
-            if (ctx.datasetIndex < 2) return ` ${ctx.dataset.label}: ${ctx.raw !== null ? ctx.raw.toLocaleString('ca-ES') + ' €' : '—'}`;
-            return ` % Personal: ${ctx.raw !== null ? ctx.raw + '%' : '—'}`;
-          }
-        }
-      }
-    },
-    scales: {
-      y: {
-        position: 'left',
-        ticks: { font: { family:'Inter', size:11 }, callback: v => (v/1000).toFixed(0) + 'k €' },
-        grid: { color: '#F3F4F6' },
-      },
-      y2: {
-        position: 'right',
-        min: 0, max: 60,
-        ticks: { font: { family:'Inter', size:11 }, callback: v => v + '%' },
-        grid: { drawOnChartArea: false },
-      },
-      x: { ticks: { font: { family:'Inter', size:12 } }, grid: { display: false } }
+function renderSemana() {
+  const tbody = document.getElementById('tbody-mes');
+  tbody.innerHTML = '';
+  // Per semana: distribuir coste mensual entre setmanes
+  MESES.forEach(m => {
+    const sems = m.sem.split('–');
+    const n = parseInt(sems[1].replace('S','')) - parseInt(sems[0].replace('S','')) + 1;
+    const costSem = Math.round(m.coste / n);
+    const factSem = m.fact ? Math.round(m.fact / n) : null;
+    for (let s = parseInt(sems[0].replace('S','')); s <= parseInt(sems[1].replace('S','')); s++) {
+      const pct = factSem ? (costSem / factSem * 100) : null;
+      const cls = pct !== null ? pctCls(pct) : 'gray';
+      const barW = pct !== null ? Math.min(pct / 50 * 100, 100) : 0;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="mes-name" style="font-size:14px">S${s} <span style="font-weight:400;color:var(--ink-soft);font-size:12px">${m.mes}</span></span></td>
+        <td>${fmt(costSem)}</td>
+        <td>${factSem ? fmt(factSem) : '<span style="color:var(--ink-faint)">Pendiente</span>'}</td>
+        <td><span class="pct-pill ${cls}">${pct !== null ? pct.toFixed(1)+'%' : 'S/D'}</span></td>
+        <td><div class="bar-wrap"><div class="bar-fill ${cls}" style="width:${barW}%"></div></div></td>
+        <td><span class="sem-tag">S${s}</span></td>`;
+      tbody.appendChild(tr);
     }
-  }
-});
+  });
+}
 
-// Línia objectiu
-Chart.register({
-  id: 'objectiuLine',
-  afterDraw(chart) {
-    const y2 = chart.scales['y2'];
-    if (!y2) return;
-    const ctx2 = chart.ctx;
-    const yPos = y2.getPixelForValue(OBJECTIU_PCT);
-    ctx2.save();
-    ctx2.setLineDash([6, 4]);
-    ctx2.strokeStyle = 'rgba(180,83,9,.5)';
-    ctx2.lineWidth = 1.5;
-    ctx2.beginPath();
-    ctx2.moveTo(chart.chartArea.left, yPos);
-    ctx2.lineTo(chart.chartArea.right, yPos);
-    ctx2.stroke();
-    ctx2.restore();
-    ctx2.save();
-    ctx2.font = '11px Inter';
-    ctx2.fillStyle = 'rgba(180,83,9,.8)';
-    ctx2.fillText('Objectiu 35%', chart.chartArea.right - 80, yPos - 5);
-    ctx2.restore();
+function toggleDetail(i) {
+  if (openRows.has(i)) openRows.delete(i);
+  else openRows.add(i);
+  renderMes();
+}
+
+function setVista(v, btn) {
+  vistaActual = v;
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  openRows.clear();
+  if (v === 'mes') {
+    document.getElementById('info-box').innerHTML = 'Vista mensual: coste empresa real Yurest vs facturación DB. Referencia hostelería: <strong>25-35%</strong>. Clic en mes para ver detalle por empleado.';
+    renderMes();
+  } else {
+    document.getElementById('info-box').innerHTML = 'Vista semanal: coste y facturación estimados distribuyendo proporcionalmente el total mensual entre las semanas del periodo.';
+    renderSemana();
   }
-});
+}
+
+renderMes();
 </script>
 </body>
 </html>
