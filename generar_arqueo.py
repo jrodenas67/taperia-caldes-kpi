@@ -66,8 +66,8 @@ def main() -> int:
     print("📨 Descargando cierres de Gmail (2025 + 2026)...")
     cierres = fetch_cierres(days=600)
     if not cierres:
-        print("⚠  No se obtuvo ningún cierre desde Gmail. Nada que hacer.")
-        return 0
+        print("❌ No se obtuvo ningún cierre desde Gmail. Revisa los secrets GMAIL_* en GitHub.")
+        return 1  # falla visible en Actions para diagnosticar credenciales caducadas
 
     # Orden por fecha (descendente para encontrar el último)
     cierres_ord = sorted(cierres, key=lambda c: c["fecha"])
