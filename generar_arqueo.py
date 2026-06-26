@@ -89,12 +89,29 @@ def main() -> int:
 
     # ── cierres_diarios.json (todos los cierres del año) ──────────────────
     año_actual = datetime.date.today().year
+    # Cargar excedentes manuales (Contado Caixa 1) preservándolos en el merge
+    excedentes: dict = {}
+    exc_path = Path("excedentes.json")
+    if exc_path.exists():
+        try:
+            excedentes = json.loads(exc_path.read_text())
+        except json.JSONDecodeError:
+            pass
+    # Preservar c1_contado ya grabado en cierres_diarios anteriores
+    diarios_prev: dict = {}
+    if DIARIOS.exists():
+        try:
+            diarios_prev = json.loads(DIARIOS.read_text())
+        except json.JSONDecodeError:
+            pass
     diarios = {}
     for c in cierres_ord:
         if c["fecha"].year != año_actual:
             continue
         f = c["fecha"].strftime("%Y-%m-%d")
-        diarios[f] = {
+        prev = diarios_prev.get(f, {})
+        c1 = excedentes.get(f, prev.get("c1_contado"))
+        entry = {
             "fecha":        f,
             "num_cierre":   str(c["numero"]),
             "contado":      neto(c["efectivo"]),
@@ -103,8 +120,12 @@ def main() -> int:
             "tickets_rest": neto(c["tickets"]),
             "total":        neto(c["total"]),
         }
+        if c1 is not None:
+            entry["c1_contado"] = c1
+        diarios[f] = entry
     DIARIOS.write_text(json.dumps(diarios, indent=2, ensure_ascii=False))
-    print(f"✅ cierres_diarios.json: {len(diarios)} cierres del {año_actual}")
+    print(f"✅ cierres_diarios.json: {len(diarios)} cierres del {año_actual} "
+          f"({sum(1 for v in diarios.values() if 'c1_contado' in v)} amb excedent)")
 
     # ── historico_caja.json ───────────────────────────────────────────────
     # Cargamos el existente para preservar campos como "previsto" y "evento"
