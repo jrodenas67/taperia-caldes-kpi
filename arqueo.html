@@ -412,6 +412,7 @@ function syncBancDefault() {
 // ── DB ─────────────────────────────────────────────────────────────────────
 let historicoDB = [];
 let cierresDiarios = {};   // cierre de caja (BD) — declarat aquí per evitar TDZ al reconcile
+let excedentes = {};       // Contado Caixa 1 (Excedente WhatsApp) — carregat de excedentes.json
 let ultimoCierre = null;
 fetch('historico_caja.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : [])
@@ -486,6 +487,11 @@ document.getElementById('a-fecha').value = today;
 document.getElementById('b-fecha').value = today;
 
 // ── Últim cierre ───────────────────────────────────────────────────────────
+fetch('excedentes.json?_=' + Date.now())
+  .then(r => r.ok ? r.json() : {})
+  .then(data => { excedentes = data || {}; })
+  .catch(() => {});
+
 fetch('cierres_diarios.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : {})
   .then(data => {
@@ -520,6 +526,7 @@ function carregarCierre() {
   document.getElementById('a-contado').value = d.contado != null ? d.contado.toFixed(2) : '';
   document.getElementById('a-visa').value    = d.visa    != null ? d.visa.toFixed(2)    : '';
   document.getElementById('a-passo').value   = d.passo   != null ? d.passo.toFixed(2)   : '';
+  if (excedentes[d.fecha] != null) document.getElementById('a-c1-contado').value = excedentes[d.fecha];
   const brut = (d.contado || 0) + (d.visa || 0) + (d.passo || 0);
   document.getElementById('a-total-net').value  = brut.toFixed(2);
   document.getElementById('a-total-brut').value = (brut * 1.10).toFixed(2);
@@ -563,7 +570,7 @@ function fillForm(rec) {
   document.getElementById('a-invitaciones').value= rec.invitaciones || '';
   document.getElementById('a-personal').value    = rec.personal     || '';
   document.getElementById('a-retiros').value     = rec.retiros      || '';
-  document.getElementById('a-c1-contado').value  = rec.c1_contado   || '';
+  document.getElementById('a-c1-contado').value  = rec.c1_contado != null && rec.c1_contado !== '' ? rec.c1_contado : (excedentes[rec.fecha] != null ? excedentes[rec.fecha] : '');
   document.getElementById('a-c1-visa').value     = rec.c1_visa      || '';
   document.getElementById('a-ingreso').value     = rec.ingreso      || '';
 
