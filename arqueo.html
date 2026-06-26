@@ -282,7 +282,7 @@ td.neg{color:var(--red);font-weight:600}
             <th class="rn">Desv.</th>
             <th class="rn">Total Net</th>
             <th class="rn">Contado C1</th>
-            <th class="rn">Total + C1</th>
+            <th class="rn">Facturació</th>
           </tr>
         </thead>
         <tbody id="resumBody"></tbody>
@@ -733,6 +733,8 @@ function renderResum() {
     const g = byMonth[key];
     const totalMes = g.recs.reduce((s, r) => s + (r.total || 0), 0);
     const c1Mes = g.recs.reduce((s, r) => s + (r.c1_contado != null ? Number(r.c1_contado) : (excedentes[r.fecha] != null ? Number(excedentes[r.fecha]) : 0)), 0);
+    const contadoBrutMes = g.recs.reduce((s, r) => s + ((cierresDiarios[r.fecha] || {}).contado || 0) * 1.10, 0);
+    const facturacioMes = totalMes + (c1Mes - contadoBrutMes);
     const card = document.createElement('div');
     card.className = 'month-card';
     card.innerHTML = `
@@ -740,7 +742,7 @@ function renderResum() {
       <div class="mc-total">${totalMes.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
       <div class="mc-unit">€ vendes netes</div>
       <div class="mc-days">${g.recs.length} dies registrats</div>
-      ${c1Mes > 0 ? `<div class="mc-days" style="color:var(--terra);font-weight:600;margin-top:4px">Contado C1: ${c1Mes.toLocaleString('ca-ES',{minimumFractionDigits:2})} € · Total: ${(totalMes+c1Mes).toLocaleString('ca-ES',{minimumFractionDigits:2})} €</div>` : ''}`;
+      ${c1Mes > 0 ? `<div class="mc-days" style="color:var(--terra);font-weight:600;margin-top:4px">Contado C1: ${c1Mes.toLocaleString('ca-ES',{minimumFractionDigits:2})} € · Facturació: ${facturacioMes.toLocaleString('ca-ES',{minimumFractionDigits:2})} €</div>` : ''}`;
     cardsEl.appendChild(card);
   });
 
@@ -757,19 +759,22 @@ function renderResum() {
       const g = byMonth[mesKey];
       const totalMes = g.recs.reduce((s, rec) => s + (rec.total || 0), 0);
       const c1Mes = g.recs.reduce((s, rec) => s + (rec.c1_contado != null ? Number(rec.c1_contado) : (excedentes[rec.fecha] != null ? Number(excedentes[rec.fecha]) : 0)), 0);
+      const contadoBrutMes = g.recs.reduce((s, rec) => s + ((cierresDiarios[rec.fecha] || {}).contado || 0) * 1.10, 0);
+      const facturacioMes = totalMes + (c1Mes - contadoBrutMes);
       const tr = document.createElement('tr');
       tr.className = 'month-row';
       tr.innerHTML = `<td colspan="3">${MESOS[g.m - 1]} ${y} · ${g.recs.length} dies</td>
         <td class="rn rb">${totalMes.toLocaleString('ca-ES', {minimumFractionDigits:2})} €</td>
         <td class="rn rb" style="color:var(--terra)">${c1Mes > 0 ? c1Mes.toLocaleString('ca-ES', {minimumFractionDigits:2}) + ' €' : '—'}</td>
-        <td class="rn rb" style="color:var(--blue);font-weight:700">${c1Mes > 0 ? (totalMes+c1Mes).toLocaleString('ca-ES', {minimumFractionDigits:2}) + ' €' : '—'}</td>`;
+        <td class="rn rb" style="color:var(--blue);font-weight:700">${c1Mes > 0 ? facturacioMes.toLocaleString('ca-ES', {minimumFractionDigits:2}) + ' €' : '—'}</td>`;
       tbody.appendChild(tr);
     }
     const [yy, mm, dd] = r.fecha.split('-');
     const total = r.total || 0;
     const previsto = r.previsto || 0;
     const c1 = r.c1_contado != null && r.c1_contado !== '' ? Number(r.c1_contado) : (excedentes[r.fecha] != null ? Number(excedentes[r.fecha]) : 0);
-    const totalC1 = total + c1;
+    const contadoBrut = ((cierresDiarios[r.fecha] || {}).contado || 0) * 1.10;
+    const facturacio = total + (c1 - contadoBrut);
     const desv = previsto > 0 ? ((total - previsto) / previsto * 100) : null;
     const dClass = desv === null ? '' : desv >= 0 ? 'pos' : 'neg';
     const dStr   = desv !== null ? `${desv >= 0 ? '+' : ''}${desv.toFixed(1)}%` : '—';
@@ -780,7 +785,7 @@ function renderResum() {
       <td class="rn ${dClass}">${dStr}</td>
       <td class="rn rb pos">${total.toFixed(2)} €</td>
       <td class="rn" style="color:${c1 > 0 ? 'var(--terra)' : 'var(--muted)'}">${c1 > 0 ? c1.toLocaleString('ca-ES', {minimumFractionDigits:2}) + ' €' : '—'}</td>
-      <td class="rn" style="color:${c1 > 0 ? 'var(--blue)' : 'var(--muted)'}; font-weight:${c1 > 0 ? '600' : '400'}">${c1 > 0 ? totalC1.toLocaleString('ca-ES', {minimumFractionDigits:2}) + ' €' : '—'}</td>`;
+      <td class="rn" style="color:${c1 > 0 ? 'var(--blue)' : 'var(--muted)'}; font-weight:${c1 > 0 ? '600' : '400'}">${c1 > 0 ? facturacio.toLocaleString('ca-ES', {minimumFractionDigits:2}) + ' €' : '—'}</td>`;
     tbody.appendChild(tr);
   });
 }
