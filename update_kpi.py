@@ -79,26 +79,28 @@ def main() -> int:
         except json.JSONDecodeError:
             ventas = {}
 
-    # Cargar c1_contado (Excedente Caixa 1) de cierres_diarios.json
-    c1_por_fecha: dict[str, float] = {}
+    # Cargar cierres_diarios (contado neto + c1_contado) para cálculo de Facturación
+    diarios_data: dict = {}
     if DIARIOS.exists():
         try:
-            for fecha, d in json.loads(DIARIOS.read_text()).items():
-                if d.get("c1_contado") is not None:
-                    c1_por_fecha[fecha] = float(d["c1_contado"])
+            diarios_data = json.loads(DIARIOS.read_text())
         except (json.JSONDecodeError, AttributeError):
             pass
 
     # Agrupar totales 2026 por mes
+    # Facturación = C2_total_neto + (C1_excedente - C2_contado_brut)
+    #             = C2_total_neto + C1 - C2_contado_neto×1.10
     por_mes: dict[int, dict] = {}
     for e in historico:
         f = e.get("fecha", "")
         if not f.startswith("2026-"):
             continue
         mm = int(f[5:7])
-        g = por_mes.setdefault(mm, {"total": 0.0, "c1": 0.0, "dias": 0, "previsto": 0.0})
+        g = por_mes.setdefault(mm, {"total": 0.0, "c1": 0.0, "contado_brut": 0.0, "dias": 0, "previsto": 0.0})
         g["total"] += float(e.get("total", 0) or 0)
-        g["c1"]    += c1_por_fecha.get(f, 0.0)
+        d = diarios_data.get(f, {})
+        g["c1"]           += float(d.get("c1_contado") or 0)
+        g["contado_brut"] += float(d.get("contado") or 0) * 1.10
         g["previsto"] += float(e.get("previsto", 0) or 0)
         if (e.get("total", 0) or 0) > 0:
             g["dias"] += 1
@@ -116,7 +118,7 @@ def main() -> int:
             continue  # enero–mayo: fijos, no se tocan
         nombre = MESES_ES[mm]
         g = por_mes[mm]
-        v2026 = _r2(g["total"] + g["c1"])  # Caixa 2 (Gmail) + Caixa 1 (excedentes)
+        v2026 = _r2(g["total"] + g["c1"] - g["contado_brut"])  # Facturación = C2 + (C1 - Contado c/IVA)
         dias = g["dias"]
 
         # Override manual: ventas_2026.json manda si existe (para meses históricos fijos)
@@ -161,8 +163,7 @@ def main() -> int:
             "incentivo": incentivo, "efectivo": v2026,
         }
         by_mes[nombre] = row
-        c1_mes = _r2(g["c1"])
-        actualizados.append(f"{nombre}: {v2026:.2f} € (C2={g['total']:.2f}+C1={c1_mes:.2f}, {dias} dies, fins obj {hastaObj:+.2f})")
+        actualizados.append(f"{nombre}: {v2026:.2f} € (C2={g['total']:.2f}+C1={g['c1']:.2f}-ContadoBrut={g['contado_brut']:.2f}, {dias} dies, fins obj {hastaObj:+.2f})")
 
     # Reconstruir array en orden de calendario
     orden = {n: i for i, n in enumerate(MESES_ES) if n}

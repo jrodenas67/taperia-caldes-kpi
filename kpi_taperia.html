@@ -516,6 +516,74 @@
     color: var(--gold);
   }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style id="__modcss">
+:root{--bg:#F6F7F9;--card:#FFFFFF;--ink:#15181D;--ink-soft:#5B626E;--ink-faint:#8A92A0;--line:#ECEEF1;--line-soft:#F2F4F6;--brand:#E8722A;--brand-deep:#C9591A;--brand-soft:#FCEEE3;--green:#16794D;--green-soft:#E7F4EC;--red:#DC2626;--amber:#B45309;--radius:18px;--shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);}
+html,body{background:var(--bg)!important;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif!important;color:var(--ink)!important;margin:0!important;-webkit-font-smoothing:antialiased;}
+header{background:var(--card)!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important;position:relative;}
+header::before,header::after{display:none!important;background:none!important;content:none!important;}
+.header-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:20px 28px!important;gap:20px;}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand-logo{width:46px;height:46px;border-radius:13px!important;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--brand),var(--brand-deep))!important;color:#fff!important;font-weight:800!important;font-size:17px!important;letter-spacing:.5px;box-shadow:0 4px 12px rgba(232,114,42,.28);font-family:'Inter',sans-serif!important;}
+.brand-text h1{font-family:'Inter',sans-serif!important;font-size:20px!important;font-weight:700!important;color:var(--ink)!important;margin:0!important;letter-spacing:-.2px;}
+.brand-text .period,.brand-text small,.brand-text span{color:var(--ink-faint)!important;font-weight:500!important;letter-spacing:.06em;text-transform:uppercase;font-size:11px!important;}
+.header-meta{text-align:right;font-family:'Inter',sans-serif!important;}
+.header-meta .period,.period{color:var(--amber)!important;font-style:normal!important;font-weight:600!important;font-size:13px!important;}
+.header-meta .updated,.updated{color:var(--ink-faint)!important;font-size:12px!important;font-weight:500!important;}
+.gold-line{height:1px!important;background:var(--line)!important;background-image:none!important;}
+main{max-width:1180px!important;margin:0 auto!important;padding:34px 28px 60px!important;}
+.section-header{display:flex;align-items:center;gap:12px;margin:38px 0 18px!important;}
+.section-header h2{font-family:'Inter',sans-serif!important;font-size:22px!important;font-weight:700!important;color:var(--ink)!important;margin:0!important;letter-spacing:-.3px;}
+.section-pill{background:var(--brand-soft)!important;color:var(--brand-deep)!important;border:none!important;border-radius:999px!important;padding:5px 13px!important;font-size:11px!important;font-weight:700!important;letter-spacing:.08em;text-transform:uppercase;font-family:'Inter',sans-serif!important;}
+.chart-card,.tk-card,.com-card{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:var(--radius)!important;box-shadow:var(--shadow)!important;padding:24px!important;}
+.chart-card{margin-bottom:22px!important;}
+.chart-title{font-family:'Inter',sans-serif!important;font-size:16px!important;font-weight:700!important;color:var(--ink)!important;margin:0 0 3px!important;letter-spacing:-.2px;}
+.chart-subtitle{font-size:13px!important;color:var(--ink-faint)!important;margin:0 0 16px!important;font-weight:500!important;}
+.legend-row{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px!important;font-size:12.5px!important;color:var(--ink-soft)!important;font-weight:500!important;}
+.chart-wrap{height:380px!important;position:relative;}
+.inc-table,.trams-table{width:100%!important;border-collapse:separate!important;border-spacing:0!important;font-family:'Inter',sans-serif!important;font-size:13.5px!important;}
+.inc-table thead th,.trams-table thead th{background:transparent!important;color:var(--ink-faint)!important;font-weight:600!important;font-size:11px!important;letter-spacing:.07em;text-transform:uppercase;text-align:right;padding:10px 14px!important;border:none!important;border-bottom:1px solid var(--line)!important;}
+.inc-table thead th:first-child,.trams-table thead th:first-child{text-align:left;}
+.inc-table tbody td,.trams-table tbody td{padding:13px 14px!important;text-align:right;border:none!important;border-bottom:1px solid var(--line-soft)!important;color:var(--ink)!important;font-weight:500!important;}
+.inc-table tbody td:first-child,.trams-table tbody td:first-child{text-align:left;font-weight:600!important;color:var(--ink)!important;}
+.inc-table tbody tr:hover{background:var(--line-soft)!important;}
+.inc-table tbody tr:last-child td,.trams-table tbody tr:last-child td{border-bottom:none!important;}
+.pos,.up,.incentiu-pos{color:var(--green)!important;font-weight:700!important;}
+.neg,.down{color:var(--red)!important;font-weight:700!important;}
+.comissio-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))!important;gap:18px!important;margin-top:18px!important;}
+.com-card{position:relative;overflow:hidden;text-align:center;padding-top:26px!important;}
+.com-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;}
+.com-card.superada::before{background:var(--green)!important;}
+.com-card.pendent::before{background:var(--brand)!important;}
+.c-mes{font-size:11px!important;font-weight:700!important;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)!important;margin-bottom:12px!important;}
+.c-badge{display:inline-block;font-size:12px!important;font-weight:600!important;padding:5px 12px!important;border-radius:999px!important;margin-bottom:14px!important;}
+.com-card.superada .c-badge{background:var(--green-soft)!important;color:var(--green)!important;}
+.com-card.pendent .c-badge{background:var(--brand-soft)!important;color:var(--brand-deep)!important;}
+.c-falta{font-size:26px!important;font-weight:800!important;letter-spacing:-.5px;margin:2px 0!important;}
+.com-card.superada .c-falta{color:var(--green)!important;}
+.com-card.pendent .c-falta{color:var(--ink)!important;}
+.c-falta-label{font-size:12px!important;color:var(--ink-faint)!important;font-weight:500!important;}
+hr.c-sep,.c-sep{border:none!important;border-top:1px solid var(--line)!important;margin:18px 0!important;}
+.c-com-label{font-size:11px!important;font-weight:700!important;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)!important;margin-bottom:6px!important;}
+.c-com-valor{font-size:22px!important;font-weight:800!important;letter-spacing:-.3px;}
+.com-card.superada .c-com-valor{color:var(--green)!important;}
+.com-card.pendent .c-com-valor{color:var(--ink-faint)!important;}
+.c-com-sub{font-size:12px!important;color:var(--ink-faint)!important;margin-top:4px!important;font-weight:500!important;}
+.ticket-kpi-row{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important;gap:18px!important;margin:18px 0!important;}
+.tk-card{text-align:center;}
+.tram-badge{display:inline-block;padding:4px 11px!important;border-radius:999px!important;font-size:12px!important;font-weight:700!important;}
+.tram-0{background:var(--line)!important;color:var(--ink-soft)!important;}
+.tram-1{background:var(--brand-soft)!important;color:var(--brand-deep)!important;}
+.tram-2{background:#FFF4D6!important;color:var(--amber)!important;}
+.tram-3{background:var(--green-soft)!important;color:var(--green)!important;}
+.active-tram,.trams-table tbody tr.active-tram td{background:var(--green-soft)!important;}
+.active-tram td:first-child{box-shadow:inset 3px 0 0 var(--green)!important;}
+footer{color:var(--ink-faint)!important;font-size:12px!important;text-align:center;padding:30px 0 40px!important;font-weight:500!important;}
+@media(max-width:680px){.header-inner{flex-direction:column;align-items:flex-start;gap:12px;}.header-meta{text-align:left;}main{padding:22px 16px 48px!important;}.chart-wrap{height:300px!important;}}
+</style>
 </head>
 <body>
 
@@ -643,7 +711,7 @@
 
 <script>
 // ── Data ──────────────────────────────────────────────────────────────────
-const OBJECTIU = [{"mes": "Enero", "v2025": 22382.26, "prevision": 23053.73, "v2026": 25876.45, "pct24": 15.6, "diferencia": 671.47, "dias": 23, "invDia": 29.19, "hastaObj": 2822.73, "incentivo": 282.27, "efectivo": 25741.47}, {"mes": "Febrero", "v2025": 22499.24, "prevision": 23174.22, "v2026": 27744.92, "pct24": 23.3, "diferencia": 674.98, "dias": 16, "invDia": 42.19, "hastaObj": 4570.7, "incentivo": 457.07, "efectivo": 26991.51}, {"mes": "Marzo", "v2025": 21443.45, "prevision": 22086.75, "v2026": 19903.08, "pct24": -7.2, "diferencia": 643.3, "dias": 15, "invDia": 42.89, "hastaObj": -2183.68, "incentivo": 0.0, "efectivo": 20240.31}, {"mes": "Abril", "v2025": 31530.01, "prevision": 32475.91, "v2026": 30141.92, "pct24": -4.4, "diferencia": 945.9, "dias": 22, "invDia": 43.0, "hastaObj": -2333.99, "incentivo": 0.0, "efectivo": 31449.79}, {"mes": "Mayo", "v2025": 29362.16, "prevision": 30243.02, "v2026": 33575.64, "pct24": 14.4, "diferencia": 880.86, "dias": 23, "invDia": 38.3, "hastaObj": 3332.62, "incentivo": 333.26, "efectivo": 37397.63}, {"mes": "Junio", "v2025": 33832.98, "prevision": 34847.97, "v2026": 19663.33, "pct24": null, "diferencia": 1014.99, "dias": 18, "invDia": 46.13, "hastaObj": -15184.64, "incentivo": 0.0, "efectivo": 19663.33}];
+const OBJECTIU = [{"mes": "Enero", "v2025": 22382.26, "prevision": 23053.73, "v2026": 25876.45, "pct24": 15.6, "diferencia": 671.47, "dias": 23, "invDia": 29.19, "hastaObj": 2822.73, "incentivo": 282.27, "efectivo": 25741.47}, {"mes": "Febrero", "v2025": 22499.24, "prevision": 23174.22, "v2026": 27744.92, "pct24": 23.3, "diferencia": 674.98, "dias": 16, "invDia": 42.19, "hastaObj": 4570.7, "incentivo": 457.07, "efectivo": 26991.51}, {"mes": "Marzo", "v2025": 21443.45, "prevision": 22086.75, "v2026": 19903.08, "pct24": -7.2, "diferencia": 643.3, "dias": 15, "invDia": 42.89, "hastaObj": -2183.68, "incentivo": 0.0, "efectivo": 20240.31}, {"mes": "Abril", "v2025": 31530.01, "prevision": 32475.91, "v2026": 30141.92, "pct24": -4.4, "diferencia": 945.9, "dias": 22, "invDia": 43.0, "hastaObj": -2333.99, "incentivo": 0.0, "efectivo": 31449.79}, {"mes": "Mayo", "v2025": 29362.16, "prevision": 30243.02, "v2026": 33575.64, "pct24": 14.4, "diferencia": 880.86, "dias": 23, "invDia": 38.3, "hastaObj": 3332.62, "incentivo": 333.26, "efectivo": 37397.63}, {"mes": "Junio", "v2025": 33832.98, "prevision": 34847.97, "v2026": 22747.41, "pct24": null, "diferencia": 1014.99, "dias": 18, "invDia": 46.13, "hastaObj": -12100.56, "incentivo": 0.0, "efectivo": 22747.41}];
 
 const TICKET = [{"mes": "Enero", "ticket": 12.56, "pax": 1828, "vendes": 22953.64}, {"mes": "Febrero", "ticket": 12.9, "pax": 1739, "vendes": 22438.92}, {"mes": "Marzo", "ticket": 12.28, "pax": 1334, "vendes": 16377.02}, {"mes": "Abril", "ticket": 13.46, "pax": 1834, "vendes": 24685.28}, {"mes": "Mayo", "ticket": 16.35, "pax": 1189, "vendes": 19443.4}];
 
