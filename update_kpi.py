@@ -32,6 +32,7 @@ HISTORICO  = Path("historico_caja.json")
 REF_MESES  = Path("ref_meses.json")        # respaldo: {"6": {"v2025": x, "dias": n}, ...}
 OBJETIVOS  = Path("objetivos_2026.json")   # oficial (BD TPV): manda siempre
 VENTAS     = Path("ventas_2026.json")      # override manual de v2026 (total Caixa 2+1) por mes
+DIARIOS    = Path("cierres_diarios.json")  # incluye c1_contado (Excedente Caixa 1)
 
 ARQUEO_FROM = (2026, 6)  # primer mes alimentado por el arqueo (junio 2026)
 
@@ -78,6 +79,16 @@ def main() -> int:
         except json.JSONDecodeError:
             ventas = {}
 
+    # Cargar c1_contado (Excedente Caixa 1) de cierres_diarios.json
+    c1_por_fecha: dict[str, float] = {}
+    if DIARIOS.exists():
+        try:
+            for fecha, d in json.loads(DIARIOS.read_text()).items():
+                if d.get("c1_contado") is not None:
+                    c1_por_fecha[fecha] = float(d["c1_contado"])
+        except (json.JSONDecodeError, AttributeError):
+            pass
+
     # Agrupar totales 2026 por mes
     por_mes: dict[int, dict] = {}
     for e in historico:
@@ -85,8 +96,9 @@ def main() -> int:
         if not f.startswith("2026-"):
             continue
         mm = int(f[5:7])
-        g = por_mes.setdefault(mm, {"total": 0.0, "dias": 0, "previsto": 0.0})
+        g = por_mes.setdefault(mm, {"total": 0.0, "c1": 0.0, "dias": 0, "previsto": 0.0})
         g["total"] += float(e.get("total", 0) or 0)
+        g["c1"]    += c1_por_fecha.get(f, 0.0)
         g["previsto"] += float(e.get("previsto", 0) or 0)
         if (e.get("total", 0) or 0) > 0:
             g["dias"] += 1
@@ -104,11 +116,10 @@ def main() -> int:
             continue  # enero–mayo: fijos, no se tocan
         nombre = MESES_ES[mm]
         g = por_mes[mm]
-        v2026 = _r2(g["total"])  # base automática: Caixa 2 (cierres de Gmail)
+        v2026 = _r2(g["total"] + g["c1"])  # Caixa 2 (Gmail) + Caixa 1 (excedentes)
         dias = g["dias"]
 
-        # Override manual del total (Caixa 2 + Caixa 1) mientras no se automatice
-        # la captura de Caixa 1. Si existe ventas_2026.json para este mes, manda.
+        # Override manual: ventas_2026.json manda si existe (para meses históricos fijos)
         ov = ventas.get(str(mm)) or ventas.get(mm)
         if isinstance(ov, dict):
             ov = ov.get("total")
@@ -150,7 +161,8 @@ def main() -> int:
             "incentivo": incentivo, "efectivo": v2026,
         }
         by_mes[nombre] = row
-        actualizados.append(f"{nombre}: {v2026:.2f} € ({dias} dies, fins obj {hastaObj:+.2f})")
+        c1_mes = _r2(g["c1"])
+        actualizados.append(f"{nombre}: {v2026:.2f} € (C2={g['total']:.2f}+C1={c1_mes:.2f}, {dias} dies, fins obj {hastaObj:+.2f})")
 
     # Reconstruir array en orden de calendario
     orden = {n: i for i, n in enumerate(MESES_ES) if n}
