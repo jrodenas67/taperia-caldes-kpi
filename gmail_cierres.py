@@ -173,7 +173,7 @@ def fetch_cierres(days: int = 90) -> list[dict]:
         return []
 
     since = (datetime.date.today() - datetime.timedelta(days=days)).strftime("%Y/%m/%d")
-    query = f'subject:"Cierre de caja" has:attachment after:{since}'
+    query = f'subject:"Cierre de caja" has:attachment in:anywhere after:{since}'
     print(f"   Gmail query: {query}")
 
     try:
