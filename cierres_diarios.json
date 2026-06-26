@@ -1006,5 +1006,32 @@
     "passo": 0.0,
     "tickets_rest": 0.0,
     "total": 1327.5
+  },
+  "2026-06-21": {
+    "fecha": "2026-06-21",
+    "num_cierre": "1481",
+    "contado": 45.5,
+    "visa": 1394.91,
+    "passo": 191.73,
+    "tickets_rest": 191.73,
+    "total": 1632.14
+  },
+  "2026-06-24": {
+    "fecha": "2026-06-24",
+    "num_cierre": "1482",
+    "contado": 189.36,
+    "visa": 1039.45,
+    "passo": 0.0,
+    "tickets_rest": 0.0,
+    "total": 1228.82
+  },
+  "2026-06-25": {
+    "fecha": "2026-06-25",
+    "num_cierre": "1483",
+    "contado": 19.23,
+    "visa": 294.59,
+    "passo": 26.09,
+    "tickets_rest": 26.09,
+    "total": 339.91
   }
 }

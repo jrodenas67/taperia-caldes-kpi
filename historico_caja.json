@@ -670,5 +670,23 @@
     "previsto": 2365.3,
     "evento": "",
     "total": 1327.5
+  },
+  {
+    "fecha": "2026-06-21",
+    "previsto": 1762.05,
+    "evento": "",
+    "total": 1632.14
+  },
+  {
+    "fecha": "2026-06-24",
+    "previsto": 550.63,
+    "evento": "",
+    "total": 1228.82
+  },
+  {
+    "fecha": "2026-06-25",
+    "previsto": 1244.38,
+    "evento": "",
+    "total": 339.91
   }
 ]
