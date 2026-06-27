@@ -701,9 +701,7 @@ function renderResum() {
     const m = manualByFecha[r.fecha];
     return m ? { ...r, ...m, fromDB: true } : { ...r, fromDB: true };
   });
-  manual.forEach(r => {
-    if (!historicoDB.find(d => d.fecha === r.fecha)) all.push(r);
-  });
+  // No afegim entrades manuals sense cierre real de Gmail (evita fantasmes per dates sense treball)
   all.sort((a, b) => a.fecha.localeCompare(b.fecha));
 
   // Lookup Contado C1 (Excedent) per data
