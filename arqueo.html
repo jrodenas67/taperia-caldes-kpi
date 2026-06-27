@@ -336,6 +336,10 @@ td.neg{color:var(--red);font-weight:600}
     <div id="banc-list"></div>
   </div>
 
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="saveBancConfirm()">💾 Guardar</button>
+  </div>
+
 </div><!-- /page-banc -->
 
 </div><!-- /main -->
@@ -820,7 +824,7 @@ function renderBanc() {
     div.className = 'banc-item' + (item.pagat ? ' pagat' : '');
     const [y, m, d] = item.fecha.split('-');
     div.innerHTML = `
-      <input type="checkbox" ${item.pagat ? 'checked' : ''} onchange="toggleBanc('${item.id}',this.checked)" title="${item.pagat ? 'Marcar com a pendent' : 'Marcar com a ingressat'}"/>
+      <input type="checkbox" ${item.pagat ? 'checked disabled' : ''} onchange="toggleBanc('${item.id}',this.checked)" title="${item.pagat ? '✓ Ingressat al banc' : 'Marca quan ingressis al banc'}"/>
       <span class="banc-item-date">${d}/${m}/${y}</span>
       <span class="banc-item-amount">${(item.importe||0).toLocaleString('ca-ES',{minimumFractionDigits:2})} €</span>
       <span class="banc-item-desc">${item.desc || '—'}</span>
@@ -851,7 +855,14 @@ function toggleBanc(id, pagat) {
   const idx = items.findIndex(i => i.id === id);
   if (idx >= 0) { items[idx].pagat = pagat; saveBancStore(items); }
   renderBanc();
-  toast(pagat ? '✓ Marcat com a ingressat' : '↩ Marcat com a pendent', 'ok');
+  toast(pagat ? '✓ Marcat — prem Guardar per confirmar' : '↩ Marcat com a pendent', 'ok');
+}
+
+function saveBancConfirm() {
+  const items = loadBancStore();
+  const n = items.filter(i => i.pagat).length;
+  saveBancStore(items);
+  toast(`💾 Guardat — ${n} ingressat${n !== 1 ? 's' : ''} al banc (no es poden desmarcar)`, 'ok');
 }
 
 function deleteBanc(id) {
