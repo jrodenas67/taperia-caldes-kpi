@@ -167,20 +167,33 @@ def main() -> int:
     }
     previstos_actualizados = 0
     for entry in historico:
-        if entry.get("evento", "").strip():
-            continue
         try:
             fecha = datetime.date.fromisoformat(entry["fecha"])
         except ValueError:
             continue
-        ref = fecha - datetime.timedelta(days=364)
-        ref_val = ventas_anteriores.get(ref, 0)
-        if ref_val >= 50:
-            # Referència vàlida: vendes del mateix dia de la setmana de l'any anterior
-            nuevo = round(ref_val * 1.03, 2)
+        evento = entry.get("evento", "").strip()
+        if evento:
+            # Dia d'event: previst = vendes del mateix event de l'any anterior
+            ref_evento = next(
+                (e for e in reversed(historico)
+                 if e.get("evento", "").strip().lower() == evento.lower()
+                 and e["fecha"] < entry["fecha"]
+                 and float(e.get("total", 0) or 0) >= 50),
+                None
+            )
+            if ref_evento:
+                nuevo = round(float(ref_evento["total"]) * 1.03, 2)
+            else:
+                continue  # sense referència d'event anterior: no tocar el previst manual
         else:
-            # Referència anormal (dia atípic, cierre parcial, etc.) → mediana dels últims 8 mateixos dies de setmana
-            nuevo = _previsto_estimado(entry["fecha"], historico)
+            # Dia normal: mateix dia de la setmana 364 dies enrere (52 setmanes exactes)
+            ref = fecha - datetime.timedelta(days=364)
+            ref_val = ventas_anteriores.get(ref, 0)
+            if ref_val >= 50:
+                nuevo = round(ref_val * 1.03, 2)
+            else:
+                # Referència anormal (dia tancat, cierre parcial) → mediana dels últims 8 mateixos dies
+                nuevo = _previsto_estimado(entry["fecha"], historico)
         if nuevo > 0 and entry.get("previsto") != nuevo:
             entry["previsto"] = nuevo
             previstos_actualizados += 1
