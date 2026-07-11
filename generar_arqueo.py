@@ -174,11 +174,16 @@ def main() -> int:
         except ValueError:
             continue
         ref = fecha - datetime.timedelta(days=364)
-        if ref in ventas_anteriores:
-            nuevo = round(ventas_anteriores[ref] * 1.03, 2)
-            if entry.get("previsto") != nuevo:
-                entry["previsto"] = nuevo
-                previstos_actualizados += 1
+        ref_val = ventas_anteriores.get(ref, 0)
+        if ref_val >= 50:
+            # Referència vàlida: vendes del mateix dia de la setmana de l'any anterior
+            nuevo = round(ref_val * 1.03, 2)
+        else:
+            # Referència anormal (dia atípic, cierre parcial, etc.) → mediana dels últims 8 mateixos dies de setmana
+            nuevo = _previsto_estimado(entry["fecha"], historico)
+        if nuevo > 0 and entry.get("previsto") != nuevo:
+            entry["previsto"] = nuevo
+            previstos_actualizados += 1
 
     HISTORICO.write_text(json.dumps(historico, indent=2, ensure_ascii=False))
     print(f"✅ historico_caja.json: {len(historico)} entradas "
