@@ -1194,5 +1194,59 @@
     "passo": 105.27,
     "tickets_rest": 105.27,
     "total": 619.73
+  },
+  "2026-07-03": {
+    "fecha": "2026-07-03",
+    "num_cierre": "1489",
+    "contado": 0.0,
+    "visa": 1405.05,
+    "passo": 77.0,
+    "tickets_rest": 77.0,
+    "total": 1482.05
+  },
+  "2026-07-04": {
+    "fecha": "2026-07-04",
+    "num_cierre": "1490",
+    "contado": 70.95,
+    "visa": 1987.18,
+    "passo": 39.0,
+    "tickets_rest": 39.0,
+    "total": 2097.14
+  },
+  "2026-07-05": {
+    "fecha": "2026-07-05",
+    "num_cierre": "1491",
+    "contado": 116.73,
+    "visa": 943.0,
+    "passo": 78.27,
+    "tickets_rest": 78.27,
+    "total": 1138.0
+  },
+  "2026-07-08": {
+    "fecha": "2026-07-08",
+    "num_cierre": "1492",
+    "contado": 19.5,
+    "visa": 430.5,
+    "passo": 69.82,
+    "tickets_rest": 69.82,
+    "total": 519.82
+  },
+  "2026-07-09": {
+    "fecha": "2026-07-09",
+    "num_cierre": "1493",
+    "contado": 0.0,
+    "visa": 407.82,
+    "passo": 24.45,
+    "tickets_rest": 24.45,
+    "total": 432.27
+  },
+  "2026-07-10": {
+    "fecha": "2026-07-10",
+    "num_cierre": "1494",
+    "contado": 0.0,
+    "visa": 575.05,
+    "passo": 9.91,
+    "tickets_rest": 9.91,
+    "total": 584.95
   }
 }

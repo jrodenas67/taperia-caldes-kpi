@@ -718,5 +718,41 @@
     "previsto": 660.6,
     "evento": "",
     "total": 619.73
+  },
+  {
+    "fecha": "2026-07-03",
+    "previsto": 1852.36,
+    "evento": "",
+    "total": 1482.05
+  },
+  {
+    "fecha": "2026-07-04",
+    "previsto": 1.31,
+    "evento": "",
+    "total": 2097.14
+  },
+  {
+    "fecha": "2026-07-05",
+    "previsto": 1468.64,
+    "evento": "",
+    "total": 1138.0
+  },
+  {
+    "fecha": "2026-07-08",
+    "previsto": 1311.43,
+    "evento": "",
+    "total": 519.82
+  },
+  {
+    "fecha": "2026-07-09",
+    "previsto": 1072.14,
+    "evento": "",
+    "total": 432.27
+  },
+  {
+    "fecha": "2026-07-10",
+    "previsto": 1684.99,
+    "evento": "",
+    "total": 584.95
   }
 ]
