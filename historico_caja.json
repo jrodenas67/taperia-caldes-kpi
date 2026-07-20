@@ -784,5 +784,17 @@
     "previsto": 1045.36,
     "evento": "",
     "total": 1296.36
+  },
+  {
+    "fecha": "2026-07-18",
+    "previsto": 2121.99,
+    "evento": "",
+    "total": 2402.5
+  },
+  {
+    "fecha": "2026-07-19",
+    "previsto": 1676.06,
+    "evento": "",
+    "total": 501.14
   }
 ]
