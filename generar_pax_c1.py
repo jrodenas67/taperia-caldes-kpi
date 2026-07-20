@@ -26,7 +26,11 @@ def main():
         print(f"⚠  BD no trobada: {DB}")
         return 1
 
-    conn = sqlite3.connect(DB)
+    # Copiem la BD localment per evitar bloquejos d'OneDrive/altres processos
+    import shutil, tempfile
+    tmp = Path(tempfile.mktemp(suffix=".db"))
+    shutil.copy2(DB, tmp)
+    conn = sqlite3.connect(tmp)
     cur = conn.cursor()
 
     # pax + vendes de C1 Mediodía+Noche, 1 vegada per ticket (juny en endavant)
@@ -54,6 +58,7 @@ def main():
         data[mes] = {"pax": int(pax or 0), "vendes": round(float(vendes or 0), 2)}
 
     conn.close()
+    tmp.unlink(missing_ok=True)
 
     OUT.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
     print(f"✅ pax_caja1.json actualitzat ({len(data)} mesos):")
