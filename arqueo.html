@@ -440,27 +440,36 @@ function reconcileBancFromArqueos() {
     if (r && r.fecha && contadoByFecha[r.fecha] === undefined)
       contadoByFecha[r.fecha] = Number(r.contado) || 0;
   });
-  const current = loadBancStore();
-  const fechas = new Set(current.map(i => i.fecha));
+
+  // Netejar entrades amb dates invàlides (anys fora de rang 2020-2099)
+  let current = loadBancStore().filter(i => {
+    if (!i.fecha || !i.fecha.match(/^\d{4}-\d{2}-\d{2}$/)) return false;
+    const y = parseInt(i.fecha.substring(0, 4));
+    return y >= 2020 && y <= 2099;
+  });
+
   const deleted = new Set(loadBancDeleted());
   let changed = 0;
   Object.keys(contadoByFecha).forEach(fecha => {
     const contado = contadoByFecha[fecha];
-    if (contado <= 0 || fechas.has(fecha) || deleted.has(fecha)) return;
-    current.push({
-      id: 'arq-' + fecha,
-      fecha,
-      importe: parseFloat((contado * 1.10).toFixed(2)),
-      desc: `Contado c/IVA ${fmtDate(fecha)}`,
-      pagat: false
-    });
-    fechas.add(fecha);
-    changed++;
+    if (contado <= 0 || deleted.has(fecha)) return;
+    const efectiu = parseFloat((contado * 1.10).toFixed(2));
+    const desc = `Efectiu ${fmtDate(fecha)}`;
+    const idx = current.findIndex(i => i.fecha === fecha && !i.pagat);
+    if (idx >= 0) {
+      // Actualitza import si ha canviat (corregeix imports incorrectes)
+      if (current[idx].importe !== efectiu || current[idx].desc !== desc) {
+        current[idx].importe = efectiu;
+        current[idx].desc = desc;
+        changed++;
+      }
+    } else {
+      current.push({ id: 'arq-' + fecha, fecha, importe: efectiu, desc, pagat: false });
+      changed++;
+    }
   });
-  if (changed > 0) {
-    current.sort((a, b) => a.fecha.localeCompare(b.fecha));
-    saveBancStore(current);
-  }
+  current.sort((a, b) => a.fecha.localeCompare(b.fecha));
+  saveBancStore(current);
   return changed;
 }
 
@@ -669,7 +678,7 @@ function saveArqueo() {
         id: Date.now().toString(),
         fecha,
         importe: contadoBrut,
-        desc: `Contado c/IVA ${fmtDate(fecha)}`,
+        desc: `Efectiu ${fmtDate(fecha)}`,
         pagat: false
       });
       toast('✓ Arqueo guardat · 🏦 Afegit a Pendent Banc', 'ok');
