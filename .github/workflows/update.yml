@@ -24,7 +24,10 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dependencias
-        run: pip install requests pypdf --quiet
+        run: pip install requests pypdf playwright --quiet
+
+      - name: Instalar Chromium (per a Camarero10)
+        run: python -m playwright install chromium --with-deps
 
       - name: Regenerar JSONs desde Gmail (cierres + referencia 2025)
         env:
@@ -35,6 +38,12 @@ jobs:
 
       - name: Actualizar panel KPI (mes en curso) desde el histórico
         run: python update_kpi.py
+
+      - name: Actualitzar Ticket Mitjà (comensals Camarero10)
+        env:
+          CAMARERO10_USER: ${{ secrets.CAMARERO10_USER }}
+          CAMARERO10_PASS: ${{ secrets.CAMARERO10_PASS }}
+        run: python update_ticket.py
 
       - name: Commit cambios
         run: |
