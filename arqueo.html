@@ -430,15 +430,13 @@ fetch('historico_caja.json?_=' + Date.now())
 // del navegador ni d'haver premut "Guardar". L'arqueo local és només respaldo per
 // a dies que no estiguin al cierre. No toca les partides marcades com a ingressades.
 function reconcileBancFromArqueos() {
-  const contadoByFecha = {};
-  // Font principal: cierre de caja a la BD
+  // Font: c1_contado (Excedent Caixa 1) de cada cierre, no el C2 neto
+  const c1ByFecha = {};
   Object.values(cierresDiarios || {}).forEach(c => {
-    if (c && c.fecha) contadoByFecha[c.fecha] = Number(c.contado) || 0;
-  });
-  // Respaldo: arqueos locals per a dies sense cierre a la BD
-  loadStore().forEach(r => {
-    if (r && r.fecha && contadoByFecha[r.fecha] === undefined)
-      contadoByFecha[r.fecha] = Number(r.contado) || 0;
+    if (c && c.fecha) {
+      const c1 = Number(c.c1_contado) || 0;
+      if (c1 > 0) c1ByFecha[c.fecha] = c1;
+    }
   });
 
   // Netejar entrades amb dates invàlides (anys fora de rang 2020-2099)
@@ -450,20 +448,40 @@ function reconcileBancFromArqueos() {
 
   const deleted = new Set(loadBancDeleted());
   let changed = 0;
-  Object.keys(contadoByFecha).forEach(fecha => {
-    const contado = contadoByFecha[fecha];
-    if (contado <= 0 || deleted.has(fecha)) return;
-    const efectiu = parseFloat((contado * 1.10).toFixed(2));
+  Object.keys(c1ByFecha).forEach(fecha => {
+    const efectiu = c1ByFecha[fecha];
+    if (efectiu <= 0 || deleted.has(fecha)) return;
     const desc = `Efectiu ${fmtDate(fecha)}`;
-    const idx = current.findIndex(i => i.fecha === fecha && !i.pagat);
-    if (idx >= 0) {
-      // Actualitza import si ha canviat (corregeix imports incorrectes)
-      if (current[idx].importe !== efectiu || current[idx].desc !== desc) {
-        current[idx].importe = efectiu;
-        current[idx].desc = desc;
+
+    const idxPending = current.findIndex(i => i.fecha === fecha && !i.pagat && !i.desc.startsWith('Correcció'));
+    const idxPagat   = current.findIndex(i => i.fecha === fecha && i.pagat);
+
+    if (idxPending >= 0) {
+      // Actualitza entrada pendent si l'import o descripció han canviat
+      if (current[idxPending].importe !== efectiu || current[idxPending].desc !== desc) {
+        current[idxPending].importe = efectiu;
+        current[idxPending].desc = desc;
         changed++;
       }
+    } else if (idxPagat >= 0) {
+      // Entrada ja ingressada amb import incorrecte → afegir correcció (no tocar la pagada)
+      const diff = parseFloat((efectiu - current[idxPagat].importe).toFixed(2));
+      if (Math.abs(diff) > 0.01) {
+        const corrId = 'corr-' + fecha;
+        const alreadyCorr = current.findIndex(i => i.id === corrId);
+        if (alreadyCorr < 0) {
+          const sign = diff > 0 ? '+' : '';
+          current.push({
+            id: corrId, fecha,
+            importe: diff,
+            desc: `Correcció Efectiu ${fmtDate(fecha)} (${sign}${diff}€ sobre ${current[idxPagat].importe}€ ingressat)`,
+            pagat: false
+          });
+          changed++;
+        }
+      }
     } else {
+      // Cap entrada per aquesta data → crear-la
       current.push({ id: 'arq-' + fecha, fecha, importe: efectiu, desc, pagat: false });
       changed++;
     }
