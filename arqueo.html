@@ -358,16 +358,99 @@ function loadStore() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch { return []; }
 }
 function saveStore(data) { localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
-function loadBancStore() {
+// ─────────────────────────────────────────────────────────────────────────
+// PENDENT BANC — ARQUITECTURA DE PROJECCIÓ PURA
+// ─────────────────────────────────────────────────────────────────────────
+// La llista de Pendent Banc es CONSTRUEIX SEMPRE des de la font de veritat
+// (cierres_diarios.json = PDF del cierre). Els imports d'"Efectiu" MAI es
+// guarden al navegador → és estructuralment impossible que quedin duplicats
+// o desfasats. A localStorage només hi ha l'ESTAT de l'usuari:
+//   · INGRESSAT_KEY : { "2026-01-15": {dep: 30.00, ts} }  dates ingressades + import snapshot
+//   · CORREC_KEY    : [ {id, fecha, importe, desc, pagat} ]  correccions MANUALS
+//   · BANC_DELETED  : [ "YYYY-MM-DD" ]  dates amagades per l'usuari
+const INGRESSAT_KEY = 'taperia_banc_ingressat_v2';
+const CORREC_KEY    = 'taperia_banc_correc_v2';
+
+function loadIngressat() { try { return JSON.parse(localStorage.getItem(INGRESSAT_KEY) || '{}'); } catch { return {}; } }
+function saveIngressat(o){ localStorage.setItem(INGRESSAT_KEY, JSON.stringify(o)); }
+function loadCorrec()    { try { return JSON.parse(localStorage.getItem(CORREC_KEY) || '[]'); } catch { return []; } }
+function saveCorrec(a)   { localStorage.setItem(CORREC_KEY, JSON.stringify(a)); }
+
+// Efectiu del PDF per data = contado net × 1,10 (única font d'imports d'Efectiu)
+function efectiuByFecha() {
+  const map = {};
+  Object.values(cierresDiarios || {}).forEach(c => {
+    if (c && c.fecha && Number(c.contado) > 0)
+      map[c.fecha] = parseFloat((Number(c.contado) * 1.10).toFixed(2));
+  });
+  // Respaldo: arqueos locals per a dies que encara no són al JSON del servidor
+  loadStore().forEach(r => {
+    if (r && r.fecha && map[r.fecha] === undefined && Number(r.contado) > 0)
+      map[r.fecha] = parseFloat((Number(r.contado) * 1.10).toFixed(2));
+  });
+  return map;
+}
+
+// Migració única de l'antic model (BANC_KEY amb imports guardats) → només conserva
+// l'estat d'ingressat de les partides marcades; la resta (brossa) es descarta.
+function migrateBancV1() {
+  if (localStorage.getItem('taperia_banc_migrated_v2')) return;
   try {
     const raw = localStorage.getItem(BANC_KEY);
-    if (raw) return JSON.parse(raw);
-    // Primera vegada: carregar dades de l'Excel
-    saveBancStore(BANC_DEFAULT);
-    return BANC_DEFAULT.map(i => ({...i}));
-  } catch { return BANC_DEFAULT.map(i => ({...i})); }
+    if (raw) {
+      const old = JSON.parse(raw);
+      const ing = loadIngressat();
+      old.forEach(i => {
+        if (i && i.pagat && i.fecha && /^\d{4}-\d{2}-\d{2}$/.test(i.fecha)) {
+          const y = parseInt(i.fecha.substring(0, 4));
+          if (y >= 2020 && y <= 2099 && ing[i.fecha] === undefined)
+            ing[i.fecha] = { dep: Number(i.importe) || 0, ts: i.ts || '' };
+        }
+      });
+      saveIngressat(ing);
+    }
+  } catch {}
+  localStorage.removeItem(BANC_KEY);           // elimina la brossa antiga per sempre
+  localStorage.setItem('taperia_banc_migrated_v2', '1');
 }
-function saveBancStore(data) { localStorage.setItem(BANC_KEY, JSON.stringify(data)); }
+
+// Construeix la llista de Pendent Banc des de zero cada vegada (idempotent, sense duplicats)
+function buildBancList() {
+  const efectiu   = efectiuByFecha();
+  const ingressat = loadIngressat();
+  const deleted   = new Set(loadBancDeleted());
+  const rows = [];
+
+  Object.keys(efectiu).forEach(fecha => {
+    if (deleted.has(fecha)) return;
+    const E   = efectiu[fecha];
+    const ing = ingressat[fecha];          // {dep, ts} si ingressat; undefined si no
+    rows.push({
+      id: 'ef-' + fecha, fecha, importe: E,
+      desc: `Efectiu ${fmtDate(fecha)}`,
+      pagat: ing !== undefined,
+    });
+    // Correcció AUTOMÀTICA: si l'import ingressat difereix del PDF actual, mostra la diferència
+    if (ing !== undefined) {
+      const diff = parseFloat((E - Number(ing.dep || 0)).toFixed(2));
+      if (Math.abs(diff) > 0.01)
+        rows.push({ id: 'autocorr-' + fecha, fecha, importe: diff,
+                    desc: `Correcció ${fmtDate(fecha)}`, pagat: false, auto: true });
+    }
+  });
+
+  // Correccions MANUALS afegides per l'usuari
+  loadCorrec().forEach(c => {
+    if (c && c.fecha && /^\d{4}-\d{2}-\d{2}$/.test(c.fecha)) rows.push({ ...c });
+  });
+
+  rows.sort((a, b) => a.fecha.localeCompare(b.fecha));
+  return rows;
+}
+
+// Compatibilitat: totes les crides existents obtenen la llista construïda en viu
+function loadBancStore() { return buildBancList(); }
+function saveBancStore() { /* no-op: la llista es deriva de la font de veritat */ }
 
 // Fechas que l'usuari ha esborrat manualment i que el reconcile NO ha de tornar
 // a crear des del cierre de caja.
@@ -387,7 +470,7 @@ function unmarkBancDeleted(fecha) {
   saveBancDeleted(loadBancDeleted().filter(f => f !== fecha));
 }
 
-// syncBancDefault retirada — reconcileBancFromArqueos construeix tot des de cierresDiarios
+// syncBancDefault i reconcile retirats — buildBancList construeix tot en viu des de cierresDiarios
 
 // ── DB ─────────────────────────────────────────────────────────────────────
 let historicoDB = [];
@@ -404,66 +487,8 @@ fetch('historico_caja.json?_=' + Date.now())
 // de Gmail). Així el Resum Mensual i el Pendent Banc surten de la BD i no depenen
 // del navegador ni d'haver premut "Guardar". L'arqueo local és només respaldo per
 // a dies que no estiguin al cierre. No toca les partides marcades com a ingressades.
-function reconcileBancFromArqueos() {
-  // Efectiu del PDF per data (contado net × 1.10)
-  const efectiuByFecha = {};
-  Object.values(cierresDiarios || {}).forEach(c => {
-    if (c && c.fecha && Number(c.contado) > 0)
-      efectiuByFecha[c.fecha] = parseFloat((Number(c.contado) * 1.10).toFixed(2));
-  });
-
-  // Conserva NOMÉS: (1) entrades ja ingressades (pagat=true) vàlides,
-  //                  (2) entrades afegides manualment per l'usuari (id = timestamp 13+ dígits)
-  // Tot el resta (BANC_DEFAULT, arq-, corr-, dates invàlides) es descarta i es reconstrueix.
-  const all = loadBancStore();
-  const kept = all.filter(i => {
-    if (!i.fecha || !i.fecha.match(/^\d{4}-\d{2}-\d{2}$/)) return false;
-    const y = parseInt(i.fecha.substring(0, 4));
-    if (y < 2020 || y > 2099) return false;
-    if (i.pagat) return true;                        // ingressat → conserva sempre
-    if (/^\d{13,}$/.test(String(i.id))) return true; // afegit manualment → conserva
-    return false;                                     // auto-generat → descarta
-  });
-
-  // Índex de pagats per data
-  const pagatByFecha = {};
-  kept.filter(i => i.pagat).forEach(i => {
-    pagatByFecha[i.fecha] = (pagatByFecha[i.fecha] || 0) + (i.importe || 0);
-  });
-
-  const deleted = new Set(loadBancDeleted());
-  const current = [...kept];
-
-  Object.keys(efectiuByFecha).sort().forEach(fecha => {
-    if (deleted.has(fecha)) return;
-    const efectiu = efectiuByFecha[fecha];
-    const totalPagat = parseFloat((pagatByFecha[fecha] || 0).toFixed(2));
-
-    if (totalPagat > 0) {
-      // Ja hi ha import ingressat: afegeix correcció si l'efectiu real difereix
-      const diff = parseFloat((efectiu - totalPagat).toFixed(2));
-      if (Math.abs(diff) > 0.01) {
-        const jaCorr = current.find(i => i.id === 'corr-' + fecha);
-        if (!jaCorr)
-          current.push({ id: 'corr-' + fecha, fecha, importe: diff, desc: `Correcció ${fmtDate(fecha)}`, pagat: false });
-      }
-    } else {
-      // Sense import ingressat: una sola entrada pendent amb el valor exacte del PDF
-      const jaPendent = current.find(i => i.fecha === fecha && !i.pagat);
-      if (!jaPendent)
-        current.push({ id: 'arq-' + fecha, fecha, importe: efectiu, desc: `Efectiu ${fmtDate(fecha)}`, pagat: false });
-      else if (jaPendent.importe !== efectiu) {
-        jaPendent.importe = efectiu;
-        jaPendent.desc = `Efectiu ${fmtDate(fecha)}`;
-      }
-    }
-  });
-
-  current.sort((a, b) => a.fecha.localeCompare(b.fecha));
-  saveBancStore(current);
-}
-
-reconcileBancFromArqueos();
+// La llista es deriva en viu amb buildBancList(); només cal migrar l'estat antic un cop.
+migrateBancV1();
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 function nav(el, page) {
@@ -471,8 +496,8 @@ function nav(el, page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('page-' + page).classList.add('active');
-  if (page === 'resum') { reconcileBancFromArqueos(); renderResum(); }
-  if (page === 'banc')  { reconcileBancFromArqueos(); renderBanc(); }
+  if (page === 'resum') { renderResum(); }
+  if (page === 'banc')  { renderBanc(); }
 }
 
 // ── Live date ──────────────────────────────────────────────────────────────
@@ -498,8 +523,7 @@ fetch('cierres_diarios.json?_=' + Date.now())
   .then(r => r.ok ? r.json() : {})
   .then(data => {
     cierresDiarios = data || {};
-    // Deriva Pendent Banc / Contado del cierre de caja (BD) en quant arriba
-    reconcileBancFromArqueos();
+    // Pendent Banc es deriva en viu de cierresDiarios (buildBancList) — re-render en arribar
     if (document.getElementById('page-resum').classList.contains('active')) renderResum();
     if (document.getElementById('page-banc').classList.contains('active'))  renderBanc();
   })
@@ -651,27 +675,11 @@ function saveArqueo() {
   store.sort((a, b) => a.fecha.localeCompare(b.fecha));
   saveStore(store);
 
-  // ── Sync Pendent Banc: Contado (neto c/IVA) = contado × 1,10 ──
+  // ── Sync Pendent Banc: l'entrada d'Efectiu es deriva sola de l'arqueo (contado × 1,10) ──
   const contadoBrut = parseFloat((v('a-contado') * 1.10).toFixed(2));
   if (contadoBrut > 0) {
-    unmarkBancDeleted(fecha);  // guardar és alta explícita: torna a permetre aquesta data
-    const bancItems = loadBancStore();
-    const existIdx = bancItems.findIndex(i => i.fecha === fecha && !i.pagat);
-    if (existIdx >= 0) {
-      bancItems[existIdx].importe = contadoBrut;
-      bancItems[existIdx].desc = `Contado c/IVA ${fmtDate(fecha)}`;
-      toast('✓ Arqueo guardat · 🏦 Pendent Banc actualitzat', 'ok');
-    } else {
-      bancItems.push({
-        id: Date.now().toString(),
-        fecha,
-        importe: contadoBrut,
-        desc: `Efectiu ${fmtDate(fecha)}`,
-        pagat: false
-      });
-      toast('✓ Arqueo guardat · 🏦 Afegit a Pendent Banc', 'ok');
-    }
-    saveBancStore(bancItems);
+    unmarkBancDeleted(fecha);  // guardar és alta explícita: torna a mostrar aquesta data
+    toast('✓ Arqueo guardat · 🏦 Pendent Banc actualitzat', 'ok');
     if (document.getElementById('page-banc').classList.contains('active')) renderBanc();
   } else {
     toast('✓ Arqueo guardat', 'ok');
@@ -700,14 +708,6 @@ function renderResum() {
   });
   // No afegim entrades manuals sense cierre real de Gmail (evita fantasmes per dates sense treball)
   all.sort((a, b) => a.fecha.localeCompare(b.fecha));
-
-  // Lookup Contado C1 (Excedent) per data
-  const bancItems = loadBancStore();
-  const bancByFecha = {};
-  bancItems.forEach(i => {
-    if (!bancByFecha[i.fecha]) bancByFecha[i.fecha] = 0;
-    bancByFecha[i.fecha] += i.importe || 0;
-  });
 
   if (!all.length) {
     document.getElementById('resumBody').innerHTML =
@@ -818,55 +818,74 @@ function renderBanc() {
     const div = document.createElement('div');
     div.className = 'banc-item' + (item.pagat ? ' pagat' : '');
     const [y, m, d] = item.fecha.split('-');
+    const delBtn = item.auto
+      ? '<span class="banc-item-del" style="opacity:.25;cursor:default" title="Correcció automàtica (es recalcula sola)">•</span>'
+      : `<button class="banc-item-del" onclick="deleteBanc('${item.id}')" title="Eliminar">✕</button>`;
     div.innerHTML = `
       <input type="checkbox" ${item.pagat ? 'checked disabled' : ''} onchange="toggleBanc('${item.id}',this.checked)" title="${item.pagat ? '✓ Ingressat al banc' : 'Marca quan ingressis al banc'}"/>
       <span class="banc-item-date">${d}/${m}/${y}</span>
       <span class="banc-item-amount">${(item.importe||0).toLocaleString('ca-ES',{minimumFractionDigits:2})} €</span>
       <span class="banc-item-desc">${item.desc || '—'}</span>
-      <button class="banc-item-del" onclick="deleteBanc('${item.id}')" title="Eliminar">✕</button>`;
+      ${delBtn}`;
     listEl.appendChild(div);
   });
 }
 
+// Afegir una CORRECCIÓ manual (registre nou amb data + import + concepte)
 function addBanc() {
   const fecha   = document.getElementById('b-fecha').value;
   const importe = parseFloat(document.getElementById('b-importe').value);
   const desc    = document.getElementById('b-desc').value.trim();
-  if (!fecha || !importe || importe <= 0) {
+  if (!fecha || isNaN(importe) || importe === 0) {
     toast('⚠ Posa la data i un import vàlid', 'err'); return;
   }
-  const items = loadBancStore();
-  items.push({ id: Date.now().toString(), fecha, importe, desc, pagat: false });
-  saveBancStore(items);
-  unmarkBancDeleted(fecha);  // alta explícita: torna a permetre el reconcile per a aquesta data
+  const arr = loadCorrec();
+  arr.push({
+    id: 'm-' + Date.now(), fecha, importe,
+    desc: desc || `Correcció ${fmtDate(fecha)}`,
+    pagat: false
+  });
+  saveCorrec(arr);
   document.getElementById('b-importe').value = '';
   document.getElementById('b-desc').value    = '';
   renderBanc();
-  toast('✓ Partida afegida', 'ok');
+  toast('✓ Correcció afegida', 'ok');
 }
 
+// Marcar/desmarcar ingressat. Els 'ef-' guarden l'estat + snapshot de l'import del PDF.
 function toggleBanc(id, pagat) {
-  const items = loadBancStore();
-  const idx = items.findIndex(i => i.id === id);
-  if (idx >= 0) { items[idx].pagat = pagat; saveBancStore(items); }
+  if (id.startsWith('ef-')) {
+    const fecha = id.slice(3);
+    const ing = loadIngressat();
+    if (pagat) ing[fecha] = { dep: efectiuByFecha()[fecha] || 0, ts: new Date().toISOString() };
+    else       delete ing[fecha];
+    saveIngressat(ing);
+  } else {
+    // correcció manual → estat ingressat propi
+    const arr = loadCorrec();
+    const idx = arr.findIndex(c => c.id === id);
+    if (idx >= 0) { arr[idx].pagat = pagat; saveCorrec(arr); }
+  }
   renderBanc();
-  toast(pagat ? '✓ Marcat — prem Guardar per confirmar' : '↩ Marcat com a pendent', 'ok');
+  toast(pagat ? '✓ Ingressat al banc' : '↩ Marcat com a pendent', 'ok');
 }
 
 function saveBancConfirm() {
-  const items = loadBancStore();
-  const n = items.filter(i => i.pagat).length;
-  saveBancStore(items);
+  const n = buildBancList().filter(i => i.pagat).length;
   toast(`💾 Guardat — ${n} ingressat${n !== 1 ? 's' : ''} al banc (no es poden desmarcar)`, 'ok');
 }
 
 function deleteBanc(id) {
+  if (id.startsWith('autocorr-')) return;         // les auto-correccions no s'eliminen a mà
   if (!confirm('Eliminar aquesta partida?')) return;
-  const items = loadBancStore();
-  const item = items.find(i => i.id === id);
-  // Recorda la data perquè el reconcile no la torni a crear des del cierre
-  if (item) markBancDeleted(item.fecha);
-  saveBancStore(items.filter(i => i.id !== id));
+  if (id.startsWith('ef-')) {
+    const fecha = id.slice(3);
+    markBancDeleted(fecha);                        // amaga la data del Pendent Banc
+    const ing = loadIngressat();                  // i neteja el seu estat d'ingressat si en tenia
+    if (ing[fecha] !== undefined) { delete ing[fecha]; saveIngressat(ing); }
+  } else {
+    saveCorrec(loadCorrec().filter(c => c.id !== id));   // correcció manual
+  }
   renderBanc();
   toast('Partida eliminada', 'ok');
 }
