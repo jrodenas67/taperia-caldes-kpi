@@ -379,13 +379,20 @@ function saveCorrec(a)   { localStorage.setItem(CORREC_KEY, JSON.stringify(a)); 
 // Efectiu del PDF per data = contado net × 1,10 (única font d'imports d'Efectiu)
 function efectiuByFecha() {
   const map = {};
+  // El PDF (cierres_diarios) MANA SEMPRE. Registrem TOTES les dates que hi surten,
+  // fins i tot amb contado=0, perquè el respaldo local no les pugui ressuscitar.
+  const dinsPDF = new Set();
   Object.values(cierresDiarios || {}).forEach(c => {
-    if (c && c.fecha && Number(c.contado) > 0)
-      map[c.fecha] = parseFloat((Number(c.contado) * 1.10).toFixed(2));
+    if (c && c.fecha) {
+      dinsPDF.add(c.fecha);
+      if (Number(c.contado) > 0)
+        map[c.fecha] = parseFloat((Number(c.contado) * 1.10).toFixed(2));
+    }
   });
-  // Respaldo: arqueos locals per a dies que encara no són al JSON del servidor
+  // Respaldo: arqueos locals NOMÉS per a dates que el PDF encara no conté gens
+  // (no per a dates que el PDF ja reporta amb 0€ → aquestes queden fora expressament).
   loadStore().forEach(r => {
-    if (r && r.fecha && map[r.fecha] === undefined && Number(r.contado) > 0)
+    if (r && r.fecha && !dinsPDF.has(r.fecha) && Number(r.contado) > 0)
       map[r.fecha] = parseFloat((Number(r.contado) * 1.10).toFixed(2));
   });
   return map;
