@@ -453,37 +453,45 @@ function reconcileBancFromArqueos() {
     if (efectiu <= 0 || deleted.has(fecha)) return;
     const desc = `Efectiu ${fmtDate(fecha)}`;
 
-    const idxPending = current.findIndex(i => i.fecha === fecha && !i.pagat && !i.desc.startsWith('Correcció'));
-    const idxPagat   = current.findIndex(i => i.fecha === fecha && i.pagat);
+    // Suma total ja ingressat per aquesta data (pot haver-hi més d'una entrada pagada)
+    const pagatEntries = current.filter(i => i.fecha === fecha && i.pagat);
+    const totalPagat   = parseFloat(pagatEntries.reduce((s, i) => s + (i.importe || 0), 0).toFixed(2));
 
-    if (idxPending >= 0) {
-      // Actualitza entrada pendent si l'import o descripció han canviat
-      if (current[idxPending].importe !== efectiu || current[idxPending].desc !== desc) {
-        current[idxPending].importe = efectiu;
-        current[idxPending].desc = desc;
-        changed++;
-      }
-    } else if (idxPagat >= 0) {
-      // Entrada ja ingressada amb import incorrecte → afegir correcció (no tocar la pagada)
-      const diff = parseFloat((efectiu - current[idxPagat].importe).toFixed(2));
-      if (Math.abs(diff) > 0.01) {
-        const corrId = 'corr-' + fecha;
-        const alreadyCorr = current.findIndex(i => i.id === corrId);
-        if (alreadyCorr < 0) {
-          const sign = diff > 0 ? '+' : '';
-          current.push({
-            id: corrId, fecha,
-            importe: diff,
-            desc: `Correcció Efectiu ${fmtDate(fecha)} (${sign}${diff}€ sobre ${current[idxPagat].importe}€ ingressat)`,
-            pagat: false
-          });
+    if (pagatEntries.length > 0) {
+      // Hi ha imports ja ingressats → elimina pendents d'Efectiu (estan duplicats) i
+      // afegeix/actualitza una entrada de Diferència amb el que falta ingressar
+      current = current.filter(i => !(i.fecha === fecha && !i.pagat && !i.id.startsWith('corr-')));
+      const diff = parseFloat((efectiu - totalPagat).toFixed(2));
+      const corrId = 'corr-' + fecha;
+      const corrIdx = current.findIndex(i => i.id === corrId);
+      if (diff > 0.01) {
+        const corrDesc = `Diferència Efectiu ${fmtDate(fecha)}`;
+        if (corrIdx < 0) {
+          current.push({ id: corrId, fecha, importe: diff, desc: corrDesc, pagat: false });
+          changed++;
+        } else if (current[corrIdx].importe !== diff || current[corrIdx].desc !== corrDesc) {
+          current[corrIdx].importe = diff;
+          current[corrIdx].desc = corrDesc;
           changed++;
         }
+      } else if (corrIdx >= 0) {
+        // Ja estava tot ingressat → elimina la correcció obsoleta
+        current.splice(corrIdx, 1);
+        changed++;
       }
     } else {
-      // Cap entrada per aquesta data → crear-la
-      current.push({ id: 'arq-' + fecha, fecha, importe: efectiu, desc, pagat: false });
-      changed++;
+      // Sense imports ingressats → crea/actualitza entrada pendent normal
+      const idxPending = current.findIndex(i => i.fecha === fecha && !i.pagat && !i.id.startsWith('corr-'));
+      if (idxPending >= 0) {
+        if (current[idxPending].importe !== efectiu || current[idxPending].desc !== desc) {
+          current[idxPending].importe = efectiu;
+          current[idxPending].desc = desc;
+          changed++;
+        }
+      } else {
+        current.push({ id: 'arq-' + fecha, fecha, importe: efectiu, desc, pagat: false });
+        changed++;
+      }
     }
   });
   current.sort((a, b) => a.fecha.localeCompare(b.fecha));
