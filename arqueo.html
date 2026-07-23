@@ -371,10 +371,24 @@ function saveStore(data) { localStorage.setItem(STORE_KEY, JSON.stringify(data))
 const INGRESSAT_KEY = 'taperia_banc_ingressat_v2';
 const CORREC_KEY    = 'taperia_banc_correc_v2';
 
+// Validacions CONFIRMADES pel banc (extracte BBVA "Ingreso En Efectivo", 23/07/2026).
+// Font de veritat permanent i independent del navegador. dep = import ingressat.
+const INGRESSAT_BANC = {"2026-01-02":133.5,"2026-01-03":291.35,"2026-01-04":9.75,"2026-01-07":26.0,"2026-01-09":153.15,"2026-01-10":595.71,"2026-01-15":30.0,"2026-01-16":599.1,"2026-01-17":288.95,"2026-01-18":247.65,"2026-01-21":47.7,"2026-01-22":51.65,"2026-01-23":18.9,"2026-01-24":393.15,"2026-01-25":759.1,"2026-01-29":7.8,"2026-01-30":295.2,"2026-01-31":549.2,"2026-02-01":296.25,"2026-02-05":83.0,"2026-02-06":214.6,"2026-02-08":369.05,"2026-02-13":46.26,"2026-02-18":108.15,"2026-02-20":24.23};
+
 function loadIngressat() { try { return JSON.parse(localStorage.getItem(INGRESSAT_KEY) || '{}'); } catch { return {}; } }
 function saveIngressat(o){ localStorage.setItem(INGRESSAT_KEY, JSON.stringify(o)); }
 function loadCorrec()    { try { return JSON.parse(localStorage.getItem(CORREC_KEY) || '[]'); } catch { return []; } }
 function saveCorrec(a)   { localStorage.setItem(CORREC_KEY, JSON.stringify(a)); }
+
+// Sembra les validacions del banc a cada càrrega (no destructiu: només afegeix).
+function seedIngressatBanc() {
+  const ing = loadIngressat();
+  let added = 0;
+  Object.keys(INGRESSAT_BANC).forEach(fecha => {
+    if (ing[fecha] === undefined) { ing[fecha] = { dep: INGRESSAT_BANC[fecha], ts: 'BBVA' }; added++; }
+  });
+  if (added) saveIngressat(ing);
+}
 
 // Efectiu del PDF per data = contado net × 1,10 (única font d'imports d'Efectiu)
 function efectiuByFecha() {
@@ -508,9 +522,11 @@ fetch('historico_caja.json?_=' + Date.now())
 // de Gmail). Així el Resum Mensual i el Pendent Banc surten de la BD i no depenen
 // del navegador ni d'haver premut "Guardar". L'arqueo local és només respaldo per
 // a dies que no estiguin al cierre. No toca les partides marcades com a ingressades.
-// La llista es deriva en viu amb buildBancList(). Recuperem les validacions antigues
-// a cada càrrega (no destructiu) perquè cap ingrés ja validat es pugui perdre mai.
+// La llista es deriva en viu amb buildBancList(). Recuperem les validacions a cada
+// càrrega (no destructiu) perquè cap ingrés ja validat es pugui perdre mai:
+//   1) les del navegador antic (BANC_KEY), 2) les confirmades pel banc (BBVA).
 importIngressatV1();
+seedIngressatBanc();
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 function nav(el, page) {
