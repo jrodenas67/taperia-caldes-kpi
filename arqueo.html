@@ -398,27 +398,28 @@ function efectiuByFecha() {
   return map;
 }
 
-// Migració única de l'antic model (BANC_KEY amb imports guardats) → només conserva
-// l'estat d'ingressat de les partides marcades; la resta (brossa) es descarta.
-function migrateBancV1() {
-  if (localStorage.getItem('taperia_banc_migrated_v2')) return;
+// Importa l'estat 'ingressat' de l'antic model (BANC_KEY). NO DESTRUCTIU i s'executa a
+// CADA càrrega: cap validació d'un ingrés ja fet es pot perdre mai. Només afegeix, mai
+// esborra. BANC_KEY es conserva sempre com a còpia de seguretat permanent.
+function importIngressatV1() {
   try {
     const raw = localStorage.getItem(BANC_KEY);
-    if (raw) {
-      const old = JSON.parse(raw);
-      const ing = loadIngressat();
-      old.forEach(i => {
-        if (i && i.pagat && i.fecha && /^\d{4}-\d{2}-\d{2}$/.test(i.fecha)) {
-          const y = parseInt(i.fecha.substring(0, 4));
-          if (y >= 2020 && y <= 2099 && ing[i.fecha] === undefined)
-            ing[i.fecha] = { dep: Number(i.importe) || 0, ts: i.ts || '' };
+    if (!raw) return;
+    const old = JSON.parse(raw);
+    const ing = loadIngressat();
+    let added = 0;
+    old.forEach(i => {
+      if (i && i.pagat && i.fecha && /^\d{4}-\d{2}-\d{2}$/.test(i.fecha)) {
+        const y = parseInt(i.fecha.substring(0, 4));
+        if (y >= 2020 && y <= 2099 && ing[i.fecha] === undefined) {
+          ing[i.fecha] = { dep: Number(i.importe) || 0, ts: i.ts || '' };
+          added++;
         }
-      });
-      saveIngressat(ing);
-    }
+      }
+    });
+    if (added) saveIngressat(ing);
   } catch {}
-  localStorage.removeItem(BANC_KEY);           // elimina la brossa antiga per sempre
-  localStorage.setItem('taperia_banc_migrated_v2', '1');
+  // IMPORTANT: no esborrem BANC_KEY — resta com a backup de les validacions per sempre.
 }
 
 // Construeix la llista de Pendent Banc des de zero cada vegada (idempotent, sense duplicats)
@@ -427,7 +428,9 @@ function buildBancList() {
   const ingressat = loadIngressat();
   const deleted   = new Set(loadBancDeleted());
   const rows = [];
+  const seen = new Set();
 
+  // 1) Dates que el PDF reporta amb efectiu > 0
   Object.keys(efectiu).forEach(fecha => {
     if (deleted.has(fecha)) return;
     const E   = efectiu[fecha];
@@ -437,6 +440,7 @@ function buildBancList() {
       desc: `Efectiu ${fmtDate(fecha)}`,
       pagat: ing !== undefined,
     });
+    seen.add(fecha);
     // Correcció AUTOMÀTICA: si l'import ingressat difereix del PDF actual, mostra la diferència
     if (ing !== undefined) {
       const diff = parseFloat((E - Number(ing.dep || 0)).toFixed(2));
@@ -446,7 +450,17 @@ function buildBancList() {
     }
   });
 
-  // Correccions MANUALS afegides per l'usuari
+  // 2) Ingressos JA VALIDATS que el PDF (encara) no reporta → MAI s'amaguen
+  Object.keys(ingressat).forEach(fecha => {
+    if (seen.has(fecha) || deleted.has(fecha)) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) return;
+    rows.push({
+      id: 'ef-' + fecha, fecha, importe: Number(ingressat[fecha].dep) || 0,
+      desc: `Efectiu ${fmtDate(fecha)}`, pagat: true,
+    });
+  });
+
+  // 3) Correccions MANUALS afegides per l'usuari
   loadCorrec().forEach(c => {
     if (c && c.fecha && /^\d{4}-\d{2}-\d{2}$/.test(c.fecha)) rows.push({ ...c });
   });
@@ -494,8 +508,9 @@ fetch('historico_caja.json?_=' + Date.now())
 // de Gmail). Així el Resum Mensual i el Pendent Banc surten de la BD i no depenen
 // del navegador ni d'haver premut "Guardar". L'arqueo local és només respaldo per
 // a dies que no estiguin al cierre. No toca les partides marcades com a ingressades.
-// La llista es deriva en viu amb buildBancList(); només cal migrar l'estat antic un cop.
-migrateBancV1();
+// La llista es deriva en viu amb buildBancList(). Recuperem les validacions antigues
+// a cada càrrega (no destructiu) perquè cap ingrés ja validat es pugui perdre mai.
+importIngressatV1();
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 function nav(el, page) {
@@ -825,9 +840,13 @@ function renderBanc() {
     const div = document.createElement('div');
     div.className = 'banc-item' + (item.pagat ? ' pagat' : '');
     const [y, m, d] = item.fecha.split('-');
-    const delBtn = item.auto
-      ? '<span class="banc-item-del" style="opacity:.25;cursor:default" title="Correcció automàtica (es recalcula sola)">•</span>'
-      : `<button class="banc-item-del" onclick="deleteBanc('${item.id}')" title="Eliminar">✕</button>`;
+    let delBtn;
+    if (item.pagat)
+      delBtn = '<span class="banc-item-del" style="opacity:.5;cursor:default" title="🔒 Ingrés validat — no es pot eliminar">🔒</span>';
+    else if (item.auto)
+      delBtn = '<span class="banc-item-del" style="opacity:.25;cursor:default" title="Correcció automàtica (es recalcula sola)">•</span>';
+    else
+      delBtn = `<button class="banc-item-del" onclick="deleteBanc('${item.id}')" title="Eliminar">✕</button>`;
     div.innerHTML = `
       <input type="checkbox" ${item.pagat ? 'checked disabled' : ''} onchange="toggleBanc('${item.id}',this.checked)" title="${item.pagat ? '✓ Ingressat al banc' : 'Marca quan ingressis al banc'}"/>
       <span class="banc-item-date">${d}/${m}/${y}</span>
@@ -884,12 +903,13 @@ function saveBancConfirm() {
 
 function deleteBanc(id) {
   if (id.startsWith('autocorr-')) return;         // les auto-correccions no s'eliminen a mà
+  // BLINDATGE: un ingrés ja validat (ingressat) MAI es pot eliminar
+  const item = buildBancList().find(i => i.id === id);
+  if (item && item.pagat) { toast('🔒 Un ingrés ja validat no es pot eliminar', 'err'); return; }
   if (!confirm('Eliminar aquesta partida?')) return;
   if (id.startsWith('ef-')) {
     const fecha = id.slice(3);
-    markBancDeleted(fecha);                        // amaga la data del Pendent Banc
-    const ing = loadIngressat();                  // i neteja el seu estat d'ingressat si en tenia
-    if (ing[fecha] !== undefined) { delete ing[fecha]; saveIngressat(ing); }
+    markBancDeleted(fecha);                        // amaga la data (només si NO estava validada)
   } else {
     saveCorrec(loadCorrec().filter(c => c.id !== id));   // correcció manual
   }
