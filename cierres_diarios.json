@@ -1330,5 +1330,14 @@
     "passo": 55.09,
     "tickets_rest": 55.09,
     "total": 950.45
+  },
+  "2026-07-23": {
+    "fecha": "2026-07-23",
+    "num_cierre": "1503",
+    "contado": 0.0,
+    "visa": 917.95,
+    "passo": 57.82,
+    "tickets_rest": 57.82,
+    "total": 975.77
   }
 }
